@@ -1,0 +1,61 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Plus } from "lucide-react";
+import { Button } from "@/shared/ui/button";
+import { useOrders } from "@/features/orders/hooks/use-orders";
+import { CreateOrderModal } from "@/features/orders/components/create-order-modal";
+import { KpiCard } from "../components/kpi-card";
+import { LatestOrdersTable } from "../components/latest-orders-table";
+import { RecentActivity } from "../components/recent-activity";
+
+export function DashboardPage() {
+  const navigate = useNavigate();
+  const [createOpen, setCreateOpen] = useState(false);
+  const { data: ordersData, isLoading } = useOrders({ limit: 5, offset: 0 });
+
+  return (
+    <>
+    <CreateOrderModal open={createOpen} onOpenChange={setCreateOpen} />
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-semibold">Operational Overview</h1>
+          <p className="mt-0.5 text-[13px] text-muted-foreground">
+            Real-time status of logistics and sales performance.
+          </p>
+        </div>
+        <Button onClick={() => setCreateOpen(true)}>
+          <Plus className="mr-1 h-4 w-4" />
+          Create Order
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-4 gap-4">
+        <KpiCard title="Open Orders" value={ordersData?.total ?? "..."} changePercent={12.5} />
+        <KpiCard title="In Process" value="..." changePercent={5} />
+        <KpiCard title="Ready to Ship" value="..." changePercent={-2.1} />
+        <KpiCard title="Completed" value="..." changePercent={8.3} />
+      </div>
+
+      <div className="grid grid-cols-3 gap-5">
+        <div className="col-span-2">
+          <div className="rounded-xl border border-border/60 bg-card shadow-[0_1px_3px_0_rgba(0,0,0,0.04)]">
+            <div className="flex items-center justify-between px-5 pt-5">
+              <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">Latest Orders</h2>
+              <Button
+                variant="link"
+                className="text-[13px] text-primary"
+                onClick={() => navigate("/orders")}
+              >
+                View All
+              </Button>
+            </div>
+            <LatestOrdersTable orders={ordersData?.items ?? []} isLoading={isLoading} />
+          </div>
+        </div>
+        <RecentActivity />
+      </div>
+    </div>
+    </>
+  );
+}
