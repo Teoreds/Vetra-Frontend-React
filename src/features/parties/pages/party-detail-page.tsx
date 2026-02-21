@@ -23,7 +23,7 @@ export function PartyDetailPage() {
   if (error || !party) {
     return (
       <div className="flex items-center justify-center py-20">
-        <p className="text-muted-foreground">Party not found.</p>
+        <p className="text-muted-foreground">Nessuna angrafica trovata.</p>
       </div>
     );
   }

@@ -21,12 +21,12 @@ export function ArticlesListPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold">Articles</h1>
-          <p className="mt-0.5 text-[13px] text-muted-foreground">Manage product catalog.</p>
+          <h1 className="text-xl font-semibold">Articoli</h1>
+          <p className="mt-0.5 text-[13px] text-muted-foreground">Gestisci il catalogo articoli.</p>
         </div>
         <Button>
           <Plus className="mr-1 h-4 w-4" />
-          New Article
+          Nuovo Articolo
         </Button>
       </div>
 

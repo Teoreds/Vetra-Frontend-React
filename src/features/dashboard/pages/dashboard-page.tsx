@@ -19,35 +19,35 @@ export function DashboardPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold">Operational Overview</h1>
+          <h1 className="text-xl font-semibold">Cruscotto Royalstone</h1>
           <p className="mt-0.5 text-[13px] text-muted-foreground">
-            Real-time status of logistics and sales performance.
+            Qui è possibile consultare una panoramica degli ordini e delle spedizioni.
           </p>
         </div>
         <Button onClick={() => setCreateOpen(true)}>
           <Plus className="mr-1 h-4 w-4" />
-          Create Order
+          Crea Ordine
         </Button>
       </div>
 
       <div className="grid grid-cols-4 gap-4">
-        <KpiCard title="Open Orders" value={ordersData?.total ?? "..."} changePercent={12.5} />
-        <KpiCard title="In Process" value="..." changePercent={5} />
-        <KpiCard title="Ready to Ship" value="..." changePercent={-2.1} />
-        <KpiCard title="Completed" value="..." changePercent={8.3} />
+        <KpiCard title="Ordini Aperti" value={ordersData?.total ?? "..."} changePercent={12.5} />
+        <KpiCard title="TEST" value="..." changePercent={5} />
+        <KpiCard title="Pronti da spedire" value="..." changePercent={-2.1} />
+        <KpiCard title="BOH" value="..." changePercent={8.3} />
       </div>
 
       <div className="grid grid-cols-3 gap-5">
         <div className="col-span-2">
           <div className="rounded-xl border border-border/60 bg-card shadow-[0_1px_3px_0_rgba(0,0,0,0.04)]">
             <div className="flex items-center justify-between px-5 pt-5">
-              <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">Latest Orders</h2>
+              <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">Ultimi Ordini</h2>
               <Button
                 variant="link"
                 className="text-[13px] text-primary"
                 onClick={() => navigate("/orders")}
               >
-                View All
+                Vedi Tutti
               </Button>
             </div>
             <LatestOrdersTable orders={ordersData?.items ?? []} isLoading={isLoading} />

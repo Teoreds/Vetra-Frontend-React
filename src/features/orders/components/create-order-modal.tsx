@@ -55,17 +55,17 @@ export function CreateOrderModal({ open, onOpenChange }: CreateOrderModalProps) 
     <ModalDialog
       open={open}
       onOpenChange={onOpenChange}
-      title="New Order"
-      description="Select a party and date to create a new order."
+      title="Nuovo Ordine"
+      description="Seleziona un cliente e una data per creare un nuovo ordine."
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="space-y-1.5">
-          <label className="text-[13px] font-medium">Party</label>
+          <label className="text-[13px] font-medium">Cliente</label>
           <select
             {...register("party_guid")}
             className="flex h-9 w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all focus:border-primary/40 focus:ring-2 focus:ring-ring/20"
           >
-            <option value="">Select a party…</option>
+            <option value="">Seleziona un cliente…</option>
             {parties.map((p) => (
               <option key={p.guid} value={p.guid}>
                 {p.description}
@@ -78,7 +78,7 @@ export function CreateOrderModal({ open, onOpenChange }: CreateOrderModalProps) 
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-[13px] font-medium">Order Date</label>
+          <label className="text-[13px] font-medium">Data Ordine</label>
           <input
             type="date"
             {...register("order_date")}
@@ -91,16 +91,16 @@ export function CreateOrderModal({ open, onOpenChange }: CreateOrderModalProps) 
 
         {createOrder.error && (
           <div className="rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-2">
-            <p className="text-[13px] text-destructive">Failed to create order. Please try again.</p>
+            <p className="text-[13px] text-destructive">Impossibile creare l'ordine. Riprova.</p>
           </div>
         )}
 
         <div className="flex justify-end gap-2.5 border-t border-border/60 pt-4">
           <Button variant="outline" size="sm" type="button" onClick={() => onOpenChange(false)}>
-            Cancel
+            Annulla
           </Button>
           <Button size="sm" type="submit" disabled={createOrder.isPending}>
-            {createOrder.isPending ? "Creating…" : "Create Order"}
+            {createOrder.isPending ? "Creazione in corso…" : "Crea Ordine"}
           </Button>
         </div>
       </form>

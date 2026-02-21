@@ -13,17 +13,17 @@ export function ArticlesTable({ articles, isLoading }: ArticlesTableProps) {
   const columns: Column<ArticleOut>[] = [
     {
       key: "code",
-      header: "Code",
+      header: "Codice",
       render: (row) => <span className="font-mono text-[13px] font-semibold">{row.code}</span>,
     },
     {
       key: "description",
-      header: "Description",
+      header: "Descrizione",
       render: (row) => <span className="text-[13px]">{row.description}</span>,
     },
     {
       key: "is_active",
-      header: "Status",
+      header: "Stato",
       render: (row) => (
         <span
           className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold leading-none tracking-wide ${
@@ -33,7 +33,7 @@ export function ArticlesTable({ articles, isLoading }: ArticlesTableProps) {
           }`}
         >
           <span className={`h-1.5 w-1.5 rounded-full ${row.is_active ? "bg-emerald-500" : "bg-slate-400"}`} />
-          {row.is_active ? "Active" : "Inactive"}
+          {row.is_active ? "Attivo" : "Non Attivo"}
         </span>
       ),
     },
@@ -46,7 +46,7 @@ export function ArticlesTable({ articles, isLoading }: ArticlesTableProps) {
       keyExtractor={(row) => row.guid}
       onRowClick={(row) => navigate(`/articles/${row.guid}`)}
       isLoading={isLoading}
-      emptyMessage="No articles found."
+      emptyMessage="Nessun articolo trovato."
     />
   );
 }

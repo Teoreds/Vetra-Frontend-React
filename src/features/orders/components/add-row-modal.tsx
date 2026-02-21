@@ -53,16 +53,16 @@ export function AddRowModal({ open, onOpenChange, orderGuid }: AddRowModalProps)
     <ModalDialog
       open={open}
       onOpenChange={onOpenChange}
-      title="Add Order Row"
-      description="Add a new line item to this order."
+      title="Aggiungi Riga Ordine"
+      description="Aggiungi una nuova riga di articoli a questo ordine."
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="space-y-1.5">
-          <label className="text-[13px] font-medium">Article ID</label>
+          <label className="text-[13px] font-medium">ID Articolo</label>
           <input
             {...register("article_guid")}
             className="flex h-9 w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all placeholder:text-muted-foreground/50 focus:border-primary/40 focus:ring-2 focus:ring-ring/20"
-            placeholder="UUID of the article"
+            placeholder="UUID dell'articolo"
           />
           {errors.article_guid && (
             <p className="text-[12px] text-destructive">{errors.article_guid.message}</p>
@@ -71,7 +71,7 @@ export function AddRowModal({ open, onOpenChange, orderGuid }: AddRowModalProps)
 
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
-            <label className="text-[13px] font-medium">Quantity</label>
+            <label className="text-[13px] font-medium">Quantità</label>
             <input
               type="number"
               step="any"
@@ -83,7 +83,7 @@ export function AddRowModal({ open, onOpenChange, orderGuid }: AddRowModalProps)
             )}
           </div>
           <div className="space-y-1.5">
-            <label className="text-[13px] font-medium">Unit Price</label>
+            <label className="text-[13px] font-medium">Prezzo Unitario</label>
             <input
               type="number"
               step="0.01"
@@ -97,7 +97,7 @@ export function AddRowModal({ open, onOpenChange, orderGuid }: AddRowModalProps)
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-[13px] font-medium">VAT Code (optional)</label>
+          <label className="text-[13px] font-medium">Partita IVA</label>
           <input
             {...register("vat_code")}
             className="flex h-9 w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all placeholder:text-muted-foreground/50 focus:border-primary/40 focus:ring-2 focus:ring-ring/20"
@@ -107,10 +107,10 @@ export function AddRowModal({ open, onOpenChange, orderGuid }: AddRowModalProps)
 
         <div className="flex justify-end gap-2.5 border-t border-border/60 pt-4">
           <Button variant="outline" size="sm" type="button" onClick={() => onOpenChange(false)}>
-            Cancel
+            Annulla
           </Button>
           <Button size="sm" type="submit" disabled={createRow.isPending}>
-            {createRow.isPending ? "Adding..." : "Add Row"}
+            {createRow.isPending ? "Aggiungendo..." : "Aggiungi Riga"}
           </Button>
         </div>
       </form>

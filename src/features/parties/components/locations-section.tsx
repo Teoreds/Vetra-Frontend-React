@@ -25,10 +25,10 @@ export function LocationsSection({ partyGuid }: LocationsSectionProps) {
   return (
     <div className="rounded-xl border border-border/60 bg-card p-5 shadow-[0_1px_3px_0_rgba(0,0,0,0.04)]">
       <h3 className="mb-3.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-        Locations
+        Indirizzi
       </h3>
       {locations.length === 0 ? (
-        <p className="text-[13px] text-muted-foreground">No locations linked.</p>
+        <p className="text-[13px] text-muted-foreground">Nessun indirizzo collegato.</p>
       ) : (
         <ul className="space-y-2.5">
           {locations.map((loc) => (
@@ -44,7 +44,7 @@ export function LocationsSection({ partyGuid }: LocationsSectionProps) {
               </div>
               {loc.is_primary && (
                 <span className="ml-auto rounded-full bg-primary/8 px-2 py-0.5 text-[11px] font-semibold text-primary">
-                  Primary
+                  Primario
                 </span>
               )}
             </li>

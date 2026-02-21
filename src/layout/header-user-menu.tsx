@@ -22,7 +22,7 @@ export function HeaderUserMenu() {
         <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/60" />
         <input
           type="text"
-          placeholder="Search... (Ctrl+K)"
+          placeholder="Cerca..."
           className="h-9 w-full rounded-lg border border-border/60 bg-muted/30 pl-9 pr-4 text-[13px] outline-none transition-all placeholder:text-muted-foreground/50 focus:border-primary/40 focus:bg-background focus:ring-2 focus:ring-ring/20"
         />
       </div>
@@ -38,7 +38,7 @@ export function HeaderUserMenu() {
           <DropdownMenu.Trigger asChild>
             <button className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-muted/60">
               <div className="text-right">
-                <p className="text-[13px] font-medium leading-tight">{user?.display_name ?? "Loading..."}</p>
+                <p className="text-[13px] font-medium leading-tight">{user?.display_name ?? "Caricamento..."}</p>
                 <p className="text-[11px] text-muted-foreground capitalize">{user?.role_code ?? ""}</p>
               </div>
               <Avatar.Root className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/5">
@@ -56,17 +56,17 @@ export function HeaderUserMenu() {
               className="z-50 min-w-[180px] rounded-xl border border-border/60 bg-popover p-1.5 shadow-[0_8px_30px_-6px_rgba(0,0,0,0.15)]"
             >
               <DropdownMenu.Item className="cursor-pointer rounded-lg px-3 py-2 text-[13px] outline-none transition-colors hover:bg-accent">
-                Profile
+                Profilo
               </DropdownMenu.Item>
               <DropdownMenu.Item className="cursor-pointer rounded-lg px-3 py-2 text-[13px] outline-none transition-colors hover:bg-accent">
-                Settings
+                Impostazioni
               </DropdownMenu.Item>
               <DropdownMenu.Separator className="my-1 h-px bg-border/60" />
               <DropdownMenu.Item
                 className="cursor-pointer rounded-lg px-3 py-2 text-[13px] text-destructive outline-none transition-colors hover:bg-destructive/10"
                 onClick={logout}
               >
-                Sign out
+                Esci
               </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Portal>

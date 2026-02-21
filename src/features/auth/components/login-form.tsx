@@ -42,7 +42,7 @@ export function LoginForm() {
           type="text"
           {...register("username")}
           className="flex h-9 w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all placeholder:text-muted-foreground/50 focus:border-primary/40 focus:ring-2 focus:ring-ring/20"
-          placeholder="Enter your username"
+          placeholder="Inserisci il tuo username"
         />
         {validationErrors.username && (
           <p className="text-[12px] text-destructive">{validationErrors.username}</p>
@@ -58,7 +58,7 @@ export function LoginForm() {
           type="password"
           {...register("password")}
           className="flex h-9 w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all placeholder:text-muted-foreground/50 focus:border-primary/40 focus:ring-2 focus:ring-ring/20"
-          placeholder="Enter your password"
+          placeholder="Inserisci la tua password"
         />
         {validationErrors.password && (
           <p className="text-[12px] text-destructive">{validationErrors.password}</p>
@@ -67,12 +67,12 @@ export function LoginForm() {
 
       {login.error && (
         <div className="rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-2">
-          <p className="text-[13px] text-destructive">Invalid credentials. Please try again.</p>
+          <p className="text-[13px] text-destructive">Credenziali errate. Riprova.</p>
         </div>
       )}
 
       <Button type="submit" className="w-full" disabled={login.isPending}>
-        {login.isPending ? "Signing in..." : "Sign in"}
+        {login.isPending ? "Accedendo..." : "Accedi"}
       </Button>
     </form>
   );

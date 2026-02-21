@@ -25,10 +25,10 @@ export function ContactsSection({ partyGuid }: ContactsSectionProps) {
   return (
     <div className="rounded-xl border border-border/60 bg-card p-5 shadow-[0_1px_3px_0_rgba(0,0,0,0.04)]">
       <h3 className="mb-3.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-        Contacts
+        Contatti
       </h3>
       {contacts.length === 0 ? (
-        <p className="text-[13px] text-muted-foreground">No contacts added.</p>
+        <p className="text-[13px] text-muted-foreground">Nessun contatto aggiunto.</p>
       ) : (
         <ul className="space-y-2.5">
           {contacts.map((contact) => (
@@ -48,7 +48,7 @@ export function ContactsSection({ partyGuid }: ContactsSectionProps) {
               </div>
               {contact.is_primary && (
                 <span className="ml-auto rounded-full bg-primary/8 px-2 py-0.5 text-[11px] font-semibold text-primary">
-                  Primary
+                  Primario
                 </span>
               )}
             </li>

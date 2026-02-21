@@ -18,20 +18,20 @@ export function FiltersPanel({ filters, onFilterChange, onReset }: FiltersPanelP
     <div className="w-56 space-y-5 border-r border-border/40 pr-5">
       <div>
         <h3 className="mb-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Search
+          Cerca
         </h3>
         <input
           type="text"
           value={filters.search ?? ""}
           onChange={(e) => onFilterChange({ ...filters, search: e.target.value || undefined })}
-          placeholder="Search parties..."
+          placeholder="Cerca anagrafiche..."
           className="flex h-9 w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all placeholder:text-muted-foreground/50 focus:border-primary/40 focus:ring-2 focus:ring-ring/20"
         />
       </div>
 
       <div>
         <h3 className="mb-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Type
+          Tipo
         </h3>
         <div className="space-y-1.5">
           {PARTY_TYPES.map((type) => (
@@ -50,7 +50,7 @@ export function FiltersPanel({ filters, onFilterChange, onReset }: FiltersPanelP
       </div>
 
       <Button variant="link" className="px-0 text-[13px] text-primary" onClick={onReset}>
-        Reset Filters
+        Resetta Filtri
       </Button>
     </div>
   );

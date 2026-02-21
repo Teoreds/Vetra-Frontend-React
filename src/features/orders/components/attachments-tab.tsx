@@ -17,7 +17,7 @@ export function AttachmentsTab({ orderGuid }: AttachmentsTabProps) {
 
   return (
     <div className="space-y-6">
-      <h3 className="text-[15px] font-semibold">Attachments</h3>
+      <h3 className="text-[15px] font-semibold">Allegati</h3>
       <FileUpload onFileSelect={handleFileSelect} />
       <AttachmentsList attachments={attachments} />
     </div>
@@ -27,7 +27,7 @@ export function AttachmentsTab({ orderGuid }: AttachmentsTabProps) {
 function AttachmentsList({ attachments }: { attachments: AttachmentOut[] }) {
   if (attachments.length === 0) {
     return (
-      <p className="text-sm text-muted-foreground">No attachments uploaded yet.</p>
+      <p className="text-sm text-muted-foreground">Nessun allegato caricato.</p>
     );
   }
 

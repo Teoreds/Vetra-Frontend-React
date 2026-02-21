@@ -36,7 +36,7 @@ export function ArticleDetailPage() {
   if (!article) {
     return (
       <div className="flex items-center justify-center py-20">
-        <p className="text-muted-foreground">Article not found.</p>
+        <p className="text-muted-foreground">Articolo non trovato.</p>
       </div>
     );
   }

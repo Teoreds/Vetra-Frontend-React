@@ -13,27 +13,32 @@ import { env } from "@/config/env";
 
 const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/orders", label: "Orders", icon: ShoppingCart },
-  { to: "/parties", label: "Parties", icon: Users },
-  { to: "/articles", label: "Articles", icon: Package },
-  { to: "/warehouses", label: "Warehouses", icon: Warehouse },
+  { to: "/orders", label: "Ordini", icon: ShoppingCart },
+  { to: "/parties", label: "Anagrafica", icon: Users },
+  { to: "/articles", label: "Articoli", icon: Package },
+  { to: "/warehouses", label: "Magazzino", icon: Warehouse },
 ] as const;
 
 const bottomItems = [
-  { to: "/settings", label: "Settings", icon: Settings },
-  { to: "/support", label: "Support", icon: HelpCircle },
+  { to: "/settings", label: "Impostazioni", icon: Settings },
+  { to: "/support", label: "Supporto", icon: HelpCircle },
 ] as const;
 
 export function SidebarNav() {
   return (
     <aside className="flex h-screen w-60 flex-col border-r border-sidebar-border bg-sidebar">
       <div className="flex items-center gap-3 px-5 py-5">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
-          <ShoppingCart className="h-4 w-4" />
-        </div>
+<div className="flex h-8 w-8 items-center justify-center rounded-xl overflow-hidden shadow-sm">
+  <img
+    src="/logo.svg"
+    alt="Logo"
+    className="h-full w-full object-cover"
+  />
+</div>
+
         <div>
           <p className="text-sm font-semibold text-foreground leading-none">{env.APP_NAME}</p>
-          <p className="mt-0.5 text-[11px] text-muted-foreground">B2B Portal</p>
+          <p className="mt-0.5 text-[11px] text-muted-foreground">Gestionale Ordini</p>
         </div>
       </div>
 

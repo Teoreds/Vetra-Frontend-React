@@ -21,12 +21,12 @@ export function PartiesListPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold">Parties</h1>
-          <p className="mt-0.5 text-[13px] text-muted-foreground">Manage customers, suppliers, and carriers.</p>
+          <h1 className="text-xl font-semibold">Anagrafiche</h1>
+          <p className="mt-0.5 text-[13px] text-muted-foreground">Gestisci clienti, fornitori, trasporti ed altro.</p>
         </div>
         <Button>
           <Plus className="mr-1 h-4 w-4" />
-          New Party
+          Nuova Anagrafica
         </Button>
       </div>
 

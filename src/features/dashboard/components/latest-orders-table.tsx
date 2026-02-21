@@ -16,7 +16,7 @@ export function LatestOrdersTable({ orders, isLoading }: LatestOrdersTableProps)
   const columns: Column<OrderOut>[] = [
     {
       key: "guid",
-      header: "Order ID",
+      header: "ID Ordine",
       render: (row) => (
         <span className="font-medium text-primary">
           #{row.guid.slice(0, 8).toUpperCase()}
@@ -25,17 +25,17 @@ export function LatestOrdersTable({ orders, isLoading }: LatestOrdersTableProps)
     },
     {
       key: "party",
-      header: "Customer",
+      header: "Cliente",
       render: (row) => <span className="text-sm">{row.party_guid.slice(0, 8)}...</span>,
     },
     {
       key: "order_date",
-      header: "Date",
+      header: "Data",
       render: (row) => <span className="text-sm">{formatDate(row.order_date)}</span>,
     },
     {
       key: "status_code",
-      header: "Status",
+      header: "Stato",
       render: (row) => (
         <StatusBadge
           variant={getStatusVariant(row.status_code)}
@@ -52,7 +52,7 @@ export function LatestOrdersTable({ orders, isLoading }: LatestOrdersTableProps)
       keyExtractor={(row) => row.guid}
       onRowClick={(row) => navigate(`/orders/${row.guid}`)}
       isLoading={isLoading}
-      emptyMessage="No recent orders."
+      emptyMessage="Nessun ordine recente."
     />
   );
 }

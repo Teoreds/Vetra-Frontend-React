@@ -38,12 +38,12 @@ export function CommitmentsTab({ orderGuid: _orderGuid }: CommitmentsTabProps) {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-[15px] font-semibold">Commitments</h3>
+      <h3 className="text-[15px] font-semibold">Impegni Cliente</h3>
       <DataTable
         columns={columns}
         data={commitments}
         keyExtractor={(row) => row.guid}
-        emptyMessage="No commitments generated yet."
+        emptyMessage="Nessun impegno cliente generato."
       />
     </div>
   );

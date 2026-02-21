@@ -13,12 +13,12 @@ export function PartiesTable({ parties, isLoading }: PartiesTableProps) {
   const columns: Column<PartyOut>[] = [
     {
       key: "description",
-      header: "Name",
+      header: "Nome",
       render: (row) => <span className="text-[13px] font-semibold">{row.description}</span>,
     },
     {
       key: "type_code",
-      header: "Type",
+      header: "Tipo",
       render: (row) => (
         <span className="rounded-full bg-muted px-2.5 py-1 text-[11px] font-semibold capitalize tracking-wide">
           {row.type_code.toLowerCase()}
@@ -27,7 +27,7 @@ export function PartiesTable({ parties, isLoading }: PartiesTableProps) {
     },
     {
       key: "vat_number",
-      header: "VAT Number",
+      header: "Partita IVA",
       render: (row) => (
         <span className="text-[13px] text-muted-foreground font-mono">{row.vat_number ?? "—"}</span>
       ),
@@ -41,7 +41,7 @@ export function PartiesTable({ parties, isLoading }: PartiesTableProps) {
       keyExtractor={(row) => row.guid}
       onRowClick={(row) => navigate(`/parties/${row.guid}`)}
       isLoading={isLoading}
-      emptyMessage="No parties found."
+      emptyMessage="Nessuna anagrafica trovata."
     />
   );
 }
