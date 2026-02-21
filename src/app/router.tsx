@@ -7,6 +7,7 @@ import { LoginPage } from "@/features/auth/pages/login-page";
 import { DashboardPage } from "@/features/dashboard/pages/dashboard-page";
 import { OrderListPage } from "@/features/orders/pages/order-list-page";
 import { OrderDetailPage } from "@/features/orders/pages/order-detail-page";
+import { NewOrderPage } from "@/features/orders/pages/new-order-page";
 import { PartiesListPage } from "@/features/parties/pages/parties-list-page";
 import { PartyDetailPage } from "@/features/parties/pages/party-detail-page";
 import { ArticlesListPage } from "@/features/articles/pages/articles-list-page";
@@ -33,6 +34,7 @@ export const router = createBrowserRouter([
           { index: true, element: <Navigate to="/dashboard" replace /> },
           { path: "/dashboard", element: <DashboardPage /> },
           { path: "/orders", element: <OrderListPage /> },
+          { path: "/orders/new", element: <NewOrderPage /> },
           { path: "/orders/:id", element: <OrderDetailPage /> },
           { path: "/parties", element: <PartiesListPage /> },
           { path: "/parties/:id", element: <PartyDetailPage /> },

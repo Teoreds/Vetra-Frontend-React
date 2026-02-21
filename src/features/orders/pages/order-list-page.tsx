@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { Plus, Download, Printer } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/shared/ui/button";
 import { PaginationControls } from "@/shared/ui/pagination-controls";
 import { useOrders } from "../hooks/use-orders";
 import { OrdersTable } from "../components/orders-table";
 import { FiltersPanel } from "../components/filters-panel";
-import { CreateOrderModal } from "../components/create-order-modal";
 import type { OrderListParams } from "../api/orders.api";
 
 const DEFAULT_LIMIT = 20;
 
 export function OrderListPage() {
-  const [createOpen, setCreateOpen] = useState(false);
+  const navigate = useNavigate();
   const [filters, setFilters] = useState<OrderListParams>({
     offset: 0,
     limit: DEFAULT_LIMIT,
@@ -20,8 +20,6 @@ export function OrderListPage() {
   const { data, isLoading } = useOrders(filters);
 
   return (
-    <>
-    <CreateOrderModal open={createOpen} onOpenChange={setCreateOpen} />
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
@@ -44,7 +42,7 @@ export function OrderListPage() {
           <Button variant="outline" size="icon" className="h-8 w-8">
             <Printer className="h-3.5 w-3.5" />
           </Button>
-          <Button onClick={() => setCreateOpen(true)}>
+          <Button onClick={() => navigate("/orders/new")}>
             <Plus className="mr-1 h-4 w-4" />
             New Order
           </Button>
@@ -72,6 +70,5 @@ export function OrderListPage() {
         </div>
       </div>
     </div>
-    </>
   );
 }

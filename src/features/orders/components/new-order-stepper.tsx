@@ -1,0 +1,79 @@
+import { Check } from "lucide-react";
+import { cn } from "@/shared/lib/utils";
+
+export interface StepConfig {
+  label: string;
+  description: string;
+}
+
+interface NewOrderStepperProps {
+  steps: StepConfig[];
+  currentStep: number; // 1-based
+}
+
+export function NewOrderStepper({ steps, currentStep }: NewOrderStepperProps) {
+  return (
+    <nav aria-label="Avanzamento creazione ordine">
+      <ol className="mx-auto flex w-fit items-center">
+        {steps.map((step, index) => {
+          const stepNumber = index + 1;
+          const isCompleted = stepNumber < currentStep;
+          const isActive = stepNumber === currentStep;
+          const isLast = index === steps.length - 1;
+
+          return (
+            <li key={step.label} className="flex items-center">
+              {/* Circle + label */}
+              <div className="flex flex-col items-center gap-1">
+                <div
+                  className={cn(
+                    "flex h-8 w-8 items-center justify-center rounded-full border-2 text-[12px] font-semibold transition-all duration-200",
+                    isCompleted &&
+                      "border-primary bg-primary text-primary-foreground shadow-[0_0_0_3px_rgba(37,99,235,0.10)]",
+                    isActive &&
+                      "border-primary bg-background text-primary shadow-[0_0_0_3px_rgba(37,99,235,0.10)]",
+                    !isCompleted && !isActive && "border-border bg-background text-muted-foreground",
+                  )}
+                >
+                  {isCompleted ? (
+                    <Check className="h-3.5 w-3.5 stroke-[2.5]" />
+                  ) : (
+                    <span>{stepNumber}</span>
+                  )}
+                </div>
+                <div className="text-center">
+                  <p
+                    className={cn(
+                      "text-[11px] font-semibold leading-tight whitespace-nowrap",
+                      isActive && "text-primary",
+                      isCompleted && "text-foreground",
+                      !isCompleted && !isActive && "text-muted-foreground",
+                    )}
+                  >
+                    {step.label}
+                  </p>
+                  <p className="text-[10px] text-muted-foreground whitespace-nowrap">
+                    {step.description}
+                  </p>
+                </div>
+              </div>
+
+              {/* Connector — fixed width, sits mid-circle */}
+              {!isLast && (
+                <div
+                  className="mx-3 mb-5 h-px w-14 shrink-0 transition-colors duration-300"
+                  style={{
+                    backgroundColor:
+                      stepNumber < currentStep
+                        ? "var(--color-primary)"
+                        : "var(--color-border)",
+                  }}
+                />
+              )}
+            </li>
+          );
+        })}
+      </ol>
+    </nav>
+  );
+}
