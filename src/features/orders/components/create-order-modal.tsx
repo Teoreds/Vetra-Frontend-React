@@ -1,8 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { z } from "zod/v4";
 import { ModalDialog } from "@/shared/ui/modal-dialog";
 import { Button } from "@/shared/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
+import { DatePicker } from "@/shared/ui/date-picker";
 import { useParties } from "@/features/parties/hooks/use-parties";
 import { useCreateOrder } from "../hooks/use-create-order";
 
@@ -27,8 +29,8 @@ export function CreateOrderModal({ open, onOpenChange }: CreateOrderModalProps) 
   const today = new Date().toISOString().slice(0, 10);
 
   const {
-    register,
     handleSubmit,
+    control,
     reset,
     formState: { errors },
   } = useForm<CreateOrderFormValues>({
@@ -61,17 +63,24 @@ export function CreateOrderModal({ open, onOpenChange }: CreateOrderModalProps) 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="space-y-1.5">
           <label className="text-[13px] font-medium">Cliente</label>
-          <select
-            {...register("party_guid")}
-            className="flex h-9 w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all focus:border-primary/40 focus:ring-2 focus:ring-ring/20"
-          >
-            <option value="">Seleziona un cliente…</option>
-            {parties.map((p) => (
-              <option key={p.guid} value={p.guid}>
-                {p.description}
-              </option>
-            ))}
-          </select>
+          <Controller
+            control={control}
+            name="party_guid"
+            render={({ field }) => (
+              <Select value={field.value ?? ""} onValueChange={field.onChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleziona un cliente…" />
+                </SelectTrigger>
+                <SelectContent>
+                  {parties.map((p) => (
+                    <SelectItem key={p.guid} value={p.guid}>
+                      {p.description}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
           {errors.party_guid && (
             <p className="text-[12px] text-destructive">{errors.party_guid.message}</p>
           )}
@@ -79,10 +88,12 @@ export function CreateOrderModal({ open, onOpenChange }: CreateOrderModalProps) 
 
         <div className="space-y-1.5">
           <label className="text-[13px] font-medium">Data Ordine</label>
-          <input
-            type="date"
-            {...register("order_date")}
-            className="flex h-9 w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all focus:border-primary/40 focus:ring-2 focus:ring-ring/20"
+          <Controller
+            control={control}
+            name="order_date"
+            render={({ field }) => (
+              <DatePicker value={field.value} onChange={field.onChange} />
+            )}
           />
           {errors.order_date && (
             <p className="text-[12px] text-destructive">{errors.order_date.message}</p>

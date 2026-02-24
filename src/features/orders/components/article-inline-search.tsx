@@ -78,7 +78,7 @@ export function ArticleInlineSearch({ onSelect }: ArticleInlineSearchProps) {
         className={cn(
           "flex items-center gap-2.5 rounded-lg border bg-background px-3 py-2 transition-all",
           open
-            ? "border-primary/40 ring-2 ring-ring/20"
+            ? "border-primary ring-2 ring-ring/20"
             : "border-border/60 hover:border-border",
         )}
       >
@@ -97,7 +97,7 @@ export function ArticleInlineSearch({ onSelect }: ArticleInlineSearchProps) {
           onFocus={() => setOpen(true)}
           onKeyDown={handleKeyDown}
           placeholder="Aggiungi articolo…"
-          className="flex-1 bg-transparent text-[13px] outline-none placeholder:text-muted-foreground/60"
+          className="article-search-input flex-1 bg-transparent text-[13px] outline-none focus:outline-none focus-visible:outline-none placeholder:text-muted-foreground/60"
         />
         {open && search && (
           <button

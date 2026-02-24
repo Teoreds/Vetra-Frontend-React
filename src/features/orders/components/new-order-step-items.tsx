@@ -224,13 +224,13 @@ export function NewOrderStepItems({
                 <Badge variant="default">{commitment.fields.length}</Badge>
               </div>
               <p className="text-[12px] text-muted-foreground">
-                Articoli da ordinare dal fornitore per soddisfare la richiesta.
+                Articoli da ordinare dal fornitore.
               </p>
             </CardHeader>
             <CardContent className="pt-0">
               {commitment.fields.length === 0 ? (
                 <p className="py-6 text-center text-[13px] text-muted-foreground">
-                  Nessun articolo in impegno. Usa "Aggiungi articolo" per iniziare.
+                  Nessun articolo in impegno.
                 </p>
               ) : (
                 <div className="max-h-64 overflow-y-auto">
@@ -320,7 +320,7 @@ export function NewOrderStepItems({
               Indietro
             </Button>
             <Button type="submit">
-              Avanti — Revisione
+              Revisione
               <ArrowRight className="ml-1.5 h-4 w-4" />
             </Button>
           </div>

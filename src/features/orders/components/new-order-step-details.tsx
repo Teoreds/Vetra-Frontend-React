@@ -1,8 +1,10 @@
-import { useForm, useWatch } from "react-hook-form";
+import { useForm, useWatch, Controller } from "react-hook-form";
 import { z } from "zod/v4";
 import { ArrowRight, MapPin, Loader2 } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
+import { DatePicker } from "@/shared/ui/date-picker";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { useParties } from "@/features/parties/hooks/use-parties";
 import { usePartyLocations } from "@/features/parties/hooks/use-party-locations";
 
@@ -19,17 +21,13 @@ interface NewOrderStepDetailsProps {
   onNext: (data: Step1Data) => void;
 }
 
-const selectCls =
-  "flex h-9 w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all focus:border-primary/40 focus:ring-2 focus:ring-ring/20 disabled:opacity-50";
-const inputCls =
-  "flex h-9 w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all focus:border-primary/40 focus:ring-2 focus:ring-ring/20";
 
 export function NewOrderStepDetails({ defaultValues, onNext }: NewOrderStepDetailsProps) {
   const today = new Date().toISOString().slice(0, 10);
   const { data: partiesData } = useParties({ limit: 200 });
   const parties = partiesData?.items ?? [];
 
-  const { register, handleSubmit, control, formState: { errors } } = useForm<Step1Data>({
+  const { handleSubmit, control, formState: { errors } } = useForm<Step1Data>({
     defaultValues: { order_date: today, ...defaultValues },
   });
 
@@ -58,14 +56,24 @@ export function NewOrderStepDetails({ defaultValues, onNext }: NewOrderStepDetai
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <label className="text-[13px] font-medium">Cliente</label>
-              <select {...register("party_guid")} className={selectCls}>
-                <option value="">Seleziona un cliente…</option>
-                {parties.map((p) => (
-                  <option key={p.guid} value={p.guid}>
-                    {p.description}
-                  </option>
-                ))}
-              </select>
+              <Controller
+                control={control}
+                name="party_guid"
+                render={({ field }) => (
+                  <Select value={field.value ?? ""} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleziona un cliente…" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {parties.map((p) => (
+                        <SelectItem key={p.guid} value={p.guid}>
+                          {p.description}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
               {errors.party_guid && (
                 <p className="text-[12px] text-destructive">{errors.party_guid.message}</p>
               )}
@@ -73,10 +81,16 @@ export function NewOrderStepDetails({ defaultValues, onNext }: NewOrderStepDetai
 
             <div className="space-y-1.5">
               <label className="text-[13px] font-medium">Data Ordine</label>
-              <input
-                type="date"
-                {...register("order_date")}
-                className={inputCls}
+              <Controller
+                control={control}
+                name="order_date"
+                render={({ field }) => (
+                  <DatePicker
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Seleziona una data…"
+                  />
+                )}
               />
               {errors.order_date && (
                 <p className="text-[12px] text-destructive">{errors.order_date.message}</p>
@@ -100,19 +114,29 @@ export function NewOrderStepDetails({ defaultValues, onNext }: NewOrderStepDetai
                   Nessun indirizzo associato al cliente selezionato.
                 </p>
               ) : (
-                <select
-                  {...register("shipping_location_guid")}
-                  className={selectCls}
-                  disabled={isLoadingLocations}
-                >
-                  <option value="">Nessuna preferenza…</option>
-                  {locations.map((loc) => (
-                    <option key={loc.guid} value={loc.location_guid}>
-                      {loc.type_code.charAt(0).toUpperCase() + loc.type_code.slice(1).toLowerCase()}
-                      {loc.is_primary ? " — Primario" : ""}
-                    </option>
-                  ))}
-                </select>
+                <Controller
+                  control={control}
+                  name="shipping_location_guid"
+                  render={({ field }) => (
+                    <Select
+                      value={field.value ?? ""}
+                      onValueChange={field.onChange}
+                      disabled={isLoadingLocations}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Nessuna preferenza…" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {locations.map((loc) => (
+                          <SelectItem key={loc.guid} value={loc.location_guid}>
+                            {loc.type_code.charAt(0).toUpperCase() + loc.type_code.slice(1).toLowerCase()}
+                            {loc.is_primary ? " — Primario" : ""}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
               )}
             </div>
           )}

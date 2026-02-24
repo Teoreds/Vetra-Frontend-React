@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 133 133" width="133" height="133">
+  <defs>
+    <!-- tratteggio diagonale -->
+    <pattern id="hatch" patternUnits="userSpaceOnUse" width="3" height="8" patternTransform="rotate(30)">
+      <line x1="0" y1="0" x2="0" y2="8" stroke="#111" stroke-width="2"/>
+    </pattern>
+  </defs>
+
+  <!-- Faccia blu scura (sinistra, triangolo) -->
+  <polygon
+    points="64,15 32,43 45,59"
+    fill="#3b82f6"
+    stroke="#111"
+    stroke-width="3"
+    stroke-linejoin="round"
+  />
+
+  <!-- Faccia blu chiara (tetto, destra, quadrilatero) -->
+  <polygon
+    points="64,15 102,54 82,82 45,59"
+    fill="#60a5fa"
+    stroke="#111"
+    stroke-width="3"
+    stroke-linejoin="round"
+  />
+
+  <!-- Faccia destra tratteggiata -->
+  <polygon
+    points="102,54 89,123 75,123 82,82"
+    fill="url(#hatch)"
+    stroke="#111"
+    stroke-width="3"
+    stroke-linejoin="round"
+  />
+
+  <!-- Faccia frontale (bianca) -->
+  <polygon
+    points="32,43 45,59 43,123"
+    fill="#fffff"
+    stroke="#111"
+    stroke-width="3"
+    stroke-linejoin="round"
+  />
+
+  <!-- Linee interne (spigoli) -->
+  <line x1="64" y1="15" x2="45" y2="59" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+  <line x1="45" y1="59" x2="43" y2="123" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+  <line x1="82" y1="82" x2="75" y2="123" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+	
+    <polygon
+    points="32,43 45,59 43,123"
+    fill="#f1f5f9"
+    stroke="#111"
+    stroke-width="3"
+    stroke-linejoin="round"
+  />
+  
+  <!-- Base -->
+  <line x1="43" y1="123" x2="89" y2="123" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+</svg>
+
+

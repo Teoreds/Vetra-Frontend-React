@@ -1,21 +1,16 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { useOrders } from "@/features/orders/hooks/use-orders";
-import { CreateOrderModal } from "@/features/orders/components/create-order-modal";
 import { KpiCard } from "../components/kpi-card";
 import { LatestOrdersTable } from "../components/latest-orders-table";
 import { RecentActivity } from "../components/recent-activity";
 
 export function DashboardPage() {
   const navigate = useNavigate();
-  const [createOpen, setCreateOpen] = useState(false);
   const { data: ordersData, isLoading } = useOrders({ limit: 5, offset: 0 });
 
   return (
-    <>
-    <CreateOrderModal open={createOpen} onOpenChange={setCreateOpen} />
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
@@ -24,7 +19,7 @@ export function DashboardPage() {
             Qui è possibile consultare una panoramica degli ordini e delle spedizioni.
           </p>
         </div>
-        <Button onClick={() => setCreateOpen(true)}>
+        <Button onClick={() => navigate("/orders/new")}>
           <Plus className="mr-1 h-4 w-4" />
           Crea Ordine
         </Button>
@@ -56,6 +51,5 @@ export function DashboardPage() {
         <RecentActivity />
       </div>
     </div>
-    </>
   );
 }

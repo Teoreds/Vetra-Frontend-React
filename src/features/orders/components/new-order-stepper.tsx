@@ -61,12 +61,12 @@ export function NewOrderStepper({ steps, currentStep }: NewOrderStepperProps) {
               {/* Connector — fixed width, sits mid-circle */}
               {!isLast && (
                 <div
-                  className="mx-3 mb-5 h-px w-14 shrink-0 transition-colors duration-300"
+                  className="mx-3 h-px w-28 shrink-0 self-start mt-4 transition-colors duration-300"
                   style={{
-                    backgroundColor:
+                    background:
                       stepNumber < currentStep
-                        ? "var(--color-primary)"
-                        : "var(--color-border)",
+                        ? "linear-gradient(to right, transparent, rgba(37,99,235,0.35), transparent)"
+                        : "linear-gradient(to right, transparent, rgba(226,232,240,0.8), transparent)",
                   }}
                 />
               )}

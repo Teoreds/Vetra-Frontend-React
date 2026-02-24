@@ -68,25 +68,31 @@ export function NewOrderPage() {
 
       {/* Step content */}
       {currentStep === 1 && (
-        <NewOrderStepDetails defaultValues={step1Data ?? undefined} onNext={handleStep1Next} />
+        <div className="mx-auto max-w-xl">
+          <NewOrderStepDetails defaultValues={step1Data ?? undefined} onNext={handleStep1Next} />
+        </div>
       )}
 
       {currentStep === 2 && step1Data && (
-        <NewOrderStepItems
-          initialAvailableRows={availableRows}
-          initialCommitmentRows={commitmentRows}
-          onNext={handleStep2Next}
-          onBack={handleBack}
-        />
+        <div className="mx-auto max-w-4xl">
+          <NewOrderStepItems
+            initialAvailableRows={availableRows}
+            initialCommitmentRows={commitmentRows}
+            onNext={handleStep2Next}
+            onBack={handleBack}
+          />
+        </div>
       )}
 
       {currentStep === 3 && step1Data && (
-        <NewOrderStepReview
-          step1Data={step1Data}
-          availableRows={availableRows}
-          commitmentRows={commitmentRows}
-          onBack={handleBack}
-        />
+        <div className="mx-auto max-w-4xl">
+          <NewOrderStepReview
+            step1Data={step1Data}
+            availableRows={availableRows}
+            commitmentRows={commitmentRows}
+            onBack={handleBack}
+          />
+        </div>
       )}
     </div>
   );

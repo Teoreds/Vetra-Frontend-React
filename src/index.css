@@ -55,6 +55,20 @@
   border-color: var(--color-border);
 }
 
+/* Article inline search: strip every browser focus indicator from the inner input */
+.article-search-input:focus,
+.article-search-input:focus-visible,
+.article-search-input:-moz-focusring {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* react-day-picker: remove today indicator entirely */
+.rdp-today:not(.rdp-selected) > .rdp-day_button {
+  color: inherit !important;
+  font-weight: inherit !important;
+}
+
 body {
   font-family:
     "Inter",
