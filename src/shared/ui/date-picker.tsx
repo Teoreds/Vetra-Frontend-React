@@ -65,14 +65,6 @@ export function DatePicker({
           align="start"
           sideOffset={4}
           className="z-50 rounded-xl border border-border bg-popover p-3 shadow-[0_8px_30px_rgba(0,0,0,0.10)] outline-none animate-in fade-in-0 zoom-in-95"
-          style={
-            {
-              "--rdp-accent-color": "#2563eb",
-              "--rdp-accent-background-color": "rgba(37,99,235,0.08)",
-              "--rdp-day-font": "inherit",
-              "--rdp-selected-border": "none",
-            } as React.CSSProperties
-          }
         >
           <DayPicker
             mode="single"

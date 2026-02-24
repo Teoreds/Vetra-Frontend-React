@@ -63,7 +63,7 @@ export function DataTable<T>({
               <th
                 key={col.key}
                 className={cn(
-                  "h-11 px-4 text-left align-middle text-xs font-medium uppercase tracking-wider text-muted-foreground",
+                  "h-11 px-4 text-left align-middle text-[11px] font-semibold uppercase tracking-wider text-slate-600",
                   col.className,
                 )}
               >
@@ -76,13 +76,14 @@ export function DataTable<T>({
           {isLoading ? (
             <SkeletonRows columns={columns.length} />
           ) : (
-            data.map((row) => (
+            data.map((row, idx) => (
               <tr
                 key={keyExtractor(row)}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
                 className={cn(
                   "border-b border-border/50 transition-colors duration-100",
                   "hover:bg-slate-50/80",
+                  idx % 2 === 1 && "bg-slate-50/50",
                   onRowClick && "cursor-pointer",
                 )}
               >

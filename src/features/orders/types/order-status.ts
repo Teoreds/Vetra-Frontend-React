@@ -37,12 +37,12 @@ export function canTransitionTo(
 }
 
 export const STATUS_LABELS: Record<OrderStatus, string> = {
-  DRAFT: "Draft",
-  CONFIRMED: "Confirmed",
-  COMMITTED: "Committed",
-  PICKING: "Picking",
-  SHIPPED: "Shipped",
-  COMPLETED: "Completed",
+  DRAFT: "Bozza",
+  CONFIRMED: "Confermato",
+  COMMITTED: "Impegnato",
+  PICKING: "In Prelievo",
+  SHIPPED: "Spedito",
+  COMPLETED: "Completato",
 };
 
 export function getStatusLabel(status: string): string {

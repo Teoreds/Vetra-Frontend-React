@@ -24,26 +24,6 @@ const statusBadgeVariants = cva(
   },
 );
 
-const dotVariants = cva("h-1.5 w-1.5 rounded-full", {
-  variants: {
-    variant: {
-      draft: "bg-slate-400",
-      confirmed: "bg-blue-500",
-      committed: "bg-indigo-500",
-      picking: "bg-amber-500",
-      shipped: "bg-emerald-500",
-      completed: "bg-green-500",
-      cancelled: "bg-red-500",
-      pending: "bg-orange-500",
-      delivered: "bg-teal-500",
-      default: "bg-slate-400",
-    },
-  },
-  defaultVariants: {
-    variant: "default",
-  },
-});
-
 export type StatusBadgeVariant = NonNullable<
   VariantProps<typeof statusBadgeVariants>["variant"]
 >;
@@ -56,7 +36,6 @@ interface StatusBadgeProps extends VariantProps<typeof statusBadgeVariants> {
 export function StatusBadge({ variant, label, className }: StatusBadgeProps) {
   return (
     <span className={cn(statusBadgeVariants({ variant }), className)}>
-      <span className={dotVariants({ variant })} />
       {label}
     </span>
   );

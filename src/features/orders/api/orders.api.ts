@@ -3,6 +3,7 @@ import { apiClient } from "@/shared/api/client";
 export interface OrderListParams {
   party_guid?: string;
   status_code?: string;
+  search?: string;
   date_from?: string;
   date_to?: string;
   offset?: number;
