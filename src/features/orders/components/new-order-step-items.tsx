@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod/v4";
-import { ArrowRight, ArrowLeft, ArrowUp, ArrowDown, Trash2 } from "lucide-react";
+import { ArrowRight, ArrowLeft, ArrowUp, ArrowDown, Trash2, Loader2 } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
 import { Separator } from "@/shared/ui/separator";
@@ -8,6 +9,7 @@ import { Badge } from "@/shared/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
 import { ArticleInlineSearch } from "./article-inline-search";
 import { NewOrderSummaryCard } from "./new-order-summary-card";
+import { ordersApi } from "../api/orders.api";
 import type { ArticleOut } from "@/features/articles/types/article.types";
 import { cn } from "@/shared/lib/utils";
 
@@ -17,6 +19,7 @@ const rowSchema = z.object({
   article_description: z.string(),
   quantity: z.coerce.number().positive("Quantità > 0"),
   unit_price: z.coerce.number().min(0, "Prezzo ≥ 0"),
+  discount_percent: z.coerce.number().min(0).max(100).default(0),
   vat_code: z.string().optional(),
 });
 
@@ -32,6 +35,9 @@ const step2Schema = z.object({
 type Step2FormValues = z.infer<typeof step2Schema>;
 
 interface NewOrderStepItemsProps {
+  orderGuid: string;
+  vatRate: number;
+  onVatRateChange: (rate: number) => void;
   initialAvailableRows: OrderRowDraft[];
   initialCommitmentRows: OrderRowDraft[];
   onNext: (data: { availableRows: OrderRowDraft[]; commitmentRows: OrderRowDraft[] }) => void;
@@ -39,16 +45,23 @@ interface NewOrderStepItemsProps {
 }
 
 export function NewOrderStepItems({
+  orderGuid,
+  vatRate,
+  onVatRateChange,
   initialAvailableRows,
   initialCommitmentRows,
   onNext,
   onBack,
 }: NewOrderStepItemsProps) {
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
   const {
     register,
     control,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<Step2FormValues>({
     defaultValues: {
@@ -63,15 +76,36 @@ export function NewOrderStepItems({
   const watchedAvailable = watch("available_rows");
   const watchedCommitment = watch("commitment_rows");
 
-  function handleArticleSelect(article: ArticleOut) {
+  async function handleArticleSelect(article: ArticleOut) {
     commitment.append({
       article_guid: article.guid,
       article_code: article.code,
       article_description: article.description,
       quantity: 1,
       unit_price: 0,
+      discount_percent: 0,
       vat_code: "",
     });
+
+    // Call preview-row to resolve discount
+    const { data } = await ordersApi.previewRow(orderGuid, {
+      article_guid: article.guid,
+      quantity: 1,
+      unit_price: 0,
+    });
+
+    if (data) {
+      const newIndex = commitment.fields.length; // index of just-appended row
+      if (typeof (data as Record<string, unknown>).resolved_discount_percent === "number") {
+        setValue(
+          `commitment_rows.${newIndex}.discount_percent`,
+          (data as Record<string, unknown>).resolved_discount_percent as number,
+        );
+      }
+      if (typeof (data as Record<string, unknown>).vat_rate === "number") {
+        onVatRateChange((data as Record<string, unknown>).vat_rate as number);
+      }
+    }
   }
 
   function moveToAvailable(index: number) {
@@ -88,9 +122,31 @@ export function NewOrderStepItems({
     commitment.append(row);
   }
 
-  const onSubmit = (values: Step2FormValues) => {
+  const onSubmit = async (values: Step2FormValues) => {
     const parsed = step2Schema.safeParse(values);
     if (!parsed.success) return;
+
+    setIsSaving(true);
+    setSaveError(null);
+
+    // Save rows sequentially
+    const allRows = [...parsed.data.available_rows, ...parsed.data.commitment_rows];
+    for (const row of allRows) {
+      const { error } = await ordersApi.createRow(orderGuid, {
+        article_guid: row.article_guid,
+        quantity: row.quantity,
+        unit_price: row.unit_price,
+        discount_percent: row.discount_percent,
+        availability_status_code: "UNKNOWN",
+      });
+      if (error) {
+        setSaveError("Errore nel salvataggio delle righe. Riprova.");
+        setIsSaving(false);
+        return;
+      }
+    }
+
+    setIsSaving(false);
     onNext({
       availableRows: parsed.data.available_rows,
       commitmentRows: parsed.data.commitment_rows,
@@ -101,6 +157,100 @@ export function NewOrderStepItems({
     "h-7 w-full rounded-md border border-border/60 bg-background px-2 text-[12px] outline-none transition-all focus:border-primary/40 focus:ring-2 focus:ring-ring/20";
   const th = "px-2 h-7";
   const td = "px-2 py-1";
+
+  function renderTable(
+    fields: { id: string }[],
+    watchedRows: OrderRowDraft[],
+    prefix: "available_rows" | "commitment_rows",
+    moveAction: (index: number) => void,
+    MoveIcon: typeof ArrowUp,
+    moveTitle: string,
+    removeAction: (index: number) => void,
+  ) {
+    return (
+      <div className="max-h-64 overflow-y-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className={th}>Articolo</TableHead>
+              <TableHead className={cn(th, "w-20")}>Qtà</TableHead>
+              <TableHead className={cn(th, "w-24")}>Prezzo</TableHead>
+              <TableHead className={cn(th, "w-20")}>Sconto %</TableHead>
+              <TableHead className={cn(th, "w-16")} />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {fields.map((field, index) => (
+              <TableRow key={field.id}>
+                <TableCell className={td}>
+                  <div>
+                    <p className="text-[12px] font-medium leading-tight">
+                      {watchedRows[index]?.article_description}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground">
+                      {watchedRows[index]?.article_code}
+                    </p>
+                  </div>
+                </TableCell>
+                <TableCell className={td}>
+                  <input
+                    type="number"
+                    step="any"
+                    min="0"
+                    {...register(`${prefix}.${index}.quantity`, { valueAsNumber: true })}
+                    className={inputCls}
+                  />
+                </TableCell>
+                <TableCell className={td}>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    {...register(`${prefix}.${index}.unit_price`, { valueAsNumber: true })}
+                    className={inputCls}
+                  />
+                </TableCell>
+                <TableCell className={td}>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    max="100"
+                    {...register(`${prefix}.${index}.discount_percent`, { valueAsNumber: true })}
+                    className={inputCls}
+                  />
+                </TableCell>
+                <TableCell className={td}>
+                  <div className="flex items-center">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6"
+                      title={moveTitle}
+                      onClick={() => moveAction(index)}
+                    >
+                        <MoveIcon className="h-3 w-3" />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 text-destructive hover:text-destructive"
+                      title="Rimuovi"
+                      onClick={() => removeAction(index)}
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -134,82 +284,15 @@ export function NewOrderStepItems({
                   Nessun articolo disponibile.
                 </p>
               ) : (
-                <div className="max-h-64 overflow-y-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className={th}>Articolo</TableHead>
-                        <TableHead className={cn(th, "w-20")}>Qtà</TableHead>
-                        <TableHead className={cn(th, "w-24")}>Prezzo</TableHead>
-                        <TableHead className={cn(th, "w-16")}>IVA %</TableHead>
-                        <TableHead className={cn(th, "w-16")} />
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {available.fields.map((field, index) => (
-                        <TableRow key={field.id}>
-                          <TableCell className={td}>
-                            <div>
-                              <p className="text-[12px] font-medium leading-tight">{watchedAvailable[index]?.article_description}</p>
-                              <p className="text-[11px] text-muted-foreground">
-                                {watchedAvailable[index]?.article_code}
-                              </p>
-                            </div>
-                          </TableCell>
-                          <TableCell className={td}>
-                            <input
-                              type="number"
-                              step="any"
-                              min="0"
-                              {...register(`available_rows.${index}.quantity`, { valueAsNumber: true })}
-                              className={inputCls}
-                            />
-                          </TableCell>
-                          <TableCell className={td}>
-                            <input
-                              type="number"
-                              step="0.01"
-                              min="0"
-                              {...register(`available_rows.${index}.unit_price`, { valueAsNumber: true })}
-                              className={inputCls}
-                            />
-                          </TableCell>
-                          <TableCell className={td}>
-                            <input
-                              {...register(`available_rows.${index}.vat_code`)}
-                              placeholder="22"
-                              className={inputCls}
-                            />
-                          </TableCell>
-                          <TableCell className={td}>
-                            <div className="flex items-center">
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                className="h-6 w-6"
-                                title="Sposta in Impegno"
-                                onClick={() => moveToCommitment(index)}
-                              >
-                                <ArrowDown className="h-3 w-3" />
-                              </Button>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                className="h-6 w-6 text-destructive hover:text-destructive"
-                                title="Rimuovi"
-                                onClick={() => available.remove(index)}
-                              >
-                                <Trash2 className="h-3 w-3" />
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
+                renderTable(
+                  available.fields,
+                  watchedAvailable ?? [],
+                  "available_rows",
+                  moveToCommitment,
+                  ArrowDown,
+                  "Sposta in Impegno",
+                  (i) => available.remove(i),
+                )
               )}
             </CardContent>
           </Card>
@@ -233,95 +316,44 @@ export function NewOrderStepItems({
                   Nessun articolo in impegno.
                 </p>
               ) : (
-                <div className="max-h-64 overflow-y-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className={th}>Articolo</TableHead>
-                        <TableHead className={cn(th, "w-20")}>Qtà</TableHead>
-                        <TableHead className={cn(th, "w-24")}>Prezzo</TableHead>
-                        <TableHead className={cn(th, "w-16")}>IVA %</TableHead>
-                        <TableHead className={cn(th, "w-16")} />
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {commitment.fields.map((field, index) => (
-                        <TableRow key={field.id}>
-                          <TableCell className={td}>
-                            <div>
-                              <p className="text-[12px] font-medium leading-tight">{watchedCommitment[index]?.article_description}</p>
-                              <p className="text-[11px] text-muted-foreground">
-                                {watchedCommitment[index]?.article_code}
-                              </p>
-                            </div>
-                          </TableCell>
-                          <TableCell className={td}>
-                            <input
-                              type="number"
-                              step="any"
-                              min="0"
-                              {...register(`commitment_rows.${index}.quantity`, { valueAsNumber: true })}
-                              className={inputCls}
-                            />
-                          </TableCell>
-                          <TableCell className={td}>
-                            <input
-                              type="number"
-                              step="0.01"
-                              min="0"
-                              {...register(`commitment_rows.${index}.unit_price`, { valueAsNumber: true })}
-                              className={inputCls}
-                            />
-                          </TableCell>
-                          <TableCell className={td}>
-                            <input
-                              {...register(`commitment_rows.${index}.vat_code`)}
-                              placeholder="22"
-                              className={inputCls}
-                            />
-                          </TableCell>
-                          <TableCell className={td}>
-                            <div className="flex items-center">
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                className="h-6 w-6"
-                                title="Sposta in Disponibili"
-                                onClick={() => moveToAvailable(index)}
-                              >
-                                <ArrowUp className="h-3 w-3" />
-                              </Button>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                className="h-6 w-6 text-destructive hover:text-destructive"
-                                title="Rimuovi"
-                                onClick={() => commitment.remove(index)}
-                              >
-                                <Trash2 className="h-3 w-3" />
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
+                renderTable(
+                  commitment.fields,
+                  watchedCommitment ?? [],
+                  "commitment_rows",
+                  moveToAvailable,
+                  ArrowUp,
+                  "Sposta in Disponibili",
+                  (i) => commitment.remove(i),
+                )
               )}
             </CardContent>
           </Card>
 
+          {/* Error */}
+          {saveError && (
+            <div className="rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3">
+              <p className="text-[13px] text-destructive">{saveError}</p>
+            </div>
+          )}
+
           {/* Navigation */}
           <div className="flex justify-between pt-2">
-            <Button type="button" variant="outline" onClick={onBack}>
+            <Button type="button" variant="outline" onClick={onBack} disabled={isSaving}>
               <ArrowLeft className="mr-1.5 h-4 w-4" />
               Indietro
             </Button>
-            <Button type="submit">
-              Revisione
-              <ArrowRight className="ml-1.5 h-4 w-4" />
+            <Button type="submit" disabled={isSaving}>
+              {isSaving ? (
+                <>
+                  <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+                  Salvataggio righe…
+                </>
+              ) : (
+                <>
+                  Revisione
+                  <ArrowRight className="ml-1.5 h-4 w-4" />
+                </>
+              )}
             </Button>
           </div>
         </div>
@@ -331,6 +363,7 @@ export function NewOrderStepItems({
           <NewOrderSummaryCard
             availableRows={watchedAvailable ?? []}
             commitmentRows={watchedCommitment ?? []}
+            vatRate={vatRate}
           />
         </div>
       </div>

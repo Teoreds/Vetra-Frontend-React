@@ -11,12 +11,10 @@ export function ArticleDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  // Articles don't have a dedicated GET /:id endpoint in this API,
-  // so we fetch from the list filtered. In production, add a GET /articles/:id endpoint.
   const { data: articles, isLoading } = useQuery({
     queryKey: articleKeys.detail(id!),
     queryFn: async () => {
-      const { data, error } = await articlesApi.list({ search: id });
+      const { data, error } = await articlesApi.list({ search: id, limit: 1 });
       if (error) throw error;
       return data;
     },

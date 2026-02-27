@@ -35,8 +35,44 @@ export const partiesApi = {
       params: { path: { party_guid: partyGuid } },
     }),
 
+  createContact: (
+    partyGuid: string,
+    body: { type_code: string; content: string; label?: string | null; is_primary: boolean },
+  ) =>
+    apiClient.POST("/parties/{party_guid}/contacts", {
+      params: { path: { party_guid: partyGuid } },
+      body,
+    }),
+
   listLocations: (partyGuid: string) =>
     apiClient.GET("/parties/{party_guid}/locations", {
       params: { path: { party_guid: partyGuid } },
     }),
+
+  getLocation: (locationGuid: string) =>
+    apiClient.GET("/locations/{location_guid}", {
+      params: { path: { location_guid: locationGuid } },
+    }),
+
+  createLocation: (body: {
+    address_line?: string | null;
+    city?: string | null;
+    province?: string | null;
+    post_code?: string | null;
+  }) => apiClient.POST("/locations", { body }),
+
+  createPartyLocation: (
+    partyGuid: string,
+    body: { location_guid: string; type_code: string; is_primary?: boolean },
+  ) =>
+    apiClient.POST("/parties/{party_guid}/locations", {
+      params: { path: { party_guid: partyGuid } },
+      body,
+    }),
+
+  createPartyDiscount: (body: {
+    party_guid: string;
+    article_type_code?: string | null;
+    discount_percent: number | string;
+  }) => apiClient.POST("/party-discounts", { body }),
 };

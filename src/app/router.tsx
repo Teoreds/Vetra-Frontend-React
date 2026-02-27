@@ -10,8 +10,10 @@ import { OrderDetailPage } from "@/features/orders/pages/order-detail-page";
 import { NewOrderPage } from "@/features/orders/pages/new-order-page";
 import { PartiesListPage } from "@/features/parties/pages/parties-list-page";
 import { PartyDetailPage } from "@/features/parties/pages/party-detail-page";
+import { NewPartyPage } from "@/features/parties/pages/new-party-page";
 import { ArticlesListPage } from "@/features/articles/pages/articles-list-page";
 import { ArticleDetailPage } from "@/features/articles/pages/article-detail-page";
+import { NewArticlePage } from "@/features/articles/pages/new-article-page";
 import { WarehousesListPage } from "@/features/warehouses/pages/warehouses-list-page";
 import { WarehouseDetailPage } from "@/features/warehouses/pages/warehouse-detail-page";
 
@@ -37,8 +39,10 @@ export const router = createBrowserRouter([
           { path: "/orders/new", element: <NewOrderPage /> },
           { path: "/orders/:id", element: <OrderDetailPage /> },
           { path: "/parties", element: <PartiesListPage /> },
+          { path: "/parties/new", element: <NewPartyPage /> },
           { path: "/parties/:id", element: <PartyDetailPage /> },
           { path: "/articles", element: <ArticlesListPage /> },
+          { path: "/articles/new", element: <NewArticlePage /> },
           { path: "/articles/:id", element: <ArticleDetailPage /> },
           { path: "/warehouses", element: <WarehousesListPage /> },
           { path: "/warehouses/:id", element: <WarehouseDetailPage /> },

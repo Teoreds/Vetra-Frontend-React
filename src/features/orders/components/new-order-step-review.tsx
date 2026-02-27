@@ -1,17 +1,21 @@
-import { ArrowLeft, CheckCircle2, CalendarDays, User, MapPin } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, ExternalLink, Loader2 } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
 import { Separator } from "@/shared/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
-import { NewOrderSummaryCard } from "./new-order-summary-card";
-import { useCreateOrderWithRows } from "../hooks/use-create-order-with-rows";
+import { ordersApi } from "../api/orders.api";
+import { orderKeys } from "../api/orders.queries";
 import { useParties } from "@/features/parties/hooks/use-parties";
 import { usePartyLocations } from "@/features/parties/hooks/use-party-locations";
+import { CalendarDays, User, MapPin } from "lucide-react";
 import type { Step1Data } from "./new-order-step-details";
 import type { OrderRowDraft } from "./new-order-step-items";
 
 interface NewOrderStepReviewProps {
+  orderGuid: string;
   step1Data: Step1Data;
   availableRows: OrderRowDraft[];
   commitmentRows: OrderRowDraft[];
@@ -33,13 +37,16 @@ function ReadOnlyTable({ rows, label }: { rows: OrderRowDraft[]; label: string }
             <TableHead>Articolo</TableHead>
             <TableHead className="w-20 text-right">Qtà</TableHead>
             <TableHead className="w-28 text-right">Prezzo</TableHead>
-            <TableHead className="w-20 text-right">IVA %</TableHead>
+            <TableHead className="w-20 text-right">Sconto %</TableHead>
             <TableHead className="w-28 text-right">Subtotale</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {rows.map((row, i) => {
-            const total = (Number(row.quantity) || 0) * (Number(row.unit_price) || 0);
+            const qty = Number(row.quantity) || 0;
+            const price = Number(row.unit_price) || 0;
+            const discPct = Number(row.discount_percent) || 0;
+            const subtotal = Number((qty * price * (1 - discPct / 100)).toFixed(2));
             return (
               <TableRow key={i}>
                 <TableCell>
@@ -48,8 +55,10 @@ function ReadOnlyTable({ rows, label }: { rows: OrderRowDraft[]; label: string }
                 </TableCell>
                 <TableCell className="text-right">{row.quantity}</TableCell>
                 <TableCell className="text-right">{fmt(Number(row.unit_price) || 0)}</TableCell>
-                <TableCell className="text-right">{row.vat_code || "—"}</TableCell>
-                <TableCell className="text-right font-medium">{fmt(total)}</TableCell>
+                <TableCell className="text-right">
+                  {discPct > 0 ? `${discPct}%` : "—"}
+                </TableCell>
+                <TableCell className="text-right font-medium">{fmt(subtotal)}</TableCell>
               </TableRow>
             );
           })}
@@ -60,12 +69,13 @@ function ReadOnlyTable({ rows, label }: { rows: OrderRowDraft[]; label: string }
 }
 
 export function NewOrderStepReview({
+  orderGuid,
   step1Data,
   availableRows,
   commitmentRows,
   onBack,
 }: NewOrderStepReviewProps) {
-  const { mutate, isPending, error } = useCreateOrderWithRows();
+  const navigate = useNavigate();
   const { data: partiesData } = useParties({ limit: 200 });
   const party = partiesData?.items.find((p) => p.guid === step1Data.party_guid);
   const { data: locations = [] } = usePartyLocations(step1Data.party_guid);
@@ -73,9 +83,28 @@ export function NewOrderStepReview({
     ? locations.find((l) => l.location_guid === step1Data.shipping_location_guid)
     : undefined;
 
-  function handleConfirm() {
-    mutate({ step1: step1Data, availableRows, commitmentRows });
-  }
+  // Fetch official totals from backend
+  const { data: orderData, isLoading: isLoadingOrder } = useQuery({
+    queryKey: orderKeys.detail(orderGuid),
+    queryFn: async () => {
+      const { data, error } = await ordersApi.get(orderGuid);
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const order = orderData as Record<string, unknown> | undefined;
+
+  // Extract backend totals (fallback to 0)
+  const totalGross = Number(order?.total_gross ?? 0);
+  const totalDiscount = Number(order?.total_discount ?? 0);
+  const totalNet = Number(order?.total_net ?? totalGross - totalDiscount);
+  const vatRate = Number(order?.vat_rate ?? 0);
+  const totalVat = Number(order?.total_vat ?? 0);
+  const grandTotal = Number(order?.total ?? totalNet + totalVat);
+
+  const isVatExempt = vatRate === 0;
+  const vatPctLabel = `${(vatRate * 100).toFixed(0)}%`;
 
   return (
     <div className="flex gap-6">
@@ -86,7 +115,7 @@ export function NewOrderStepReview({
           <CardHeader>
             <h2 className="text-[15px] font-semibold">Riepilogo Ordine</h2>
             <p className="text-[13px] text-muted-foreground">
-              Verifica i dati prima di confermare la creazione.
+              L'ordine è stato creato come bozza. Verifica i dati.
             </p>
           </CardHeader>
           <CardContent className="pt-0">
@@ -158,29 +187,91 @@ export function NewOrderStepReview({
           </CardContent>
         </Card>
 
-        {/* Error */}
-        {error && (
-          <div className="rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3">
-            <p className="text-[13px] text-destructive">{error}</p>
-          </div>
-        )}
+        {/* VAT Breakdown from backend */}
+        <Card>
+          <CardHeader>
+            <h3 className="text-[14px] font-semibold">Riepilogo IVA</h3>
+          </CardHeader>
+          <CardContent className="pt-0">
+            {isLoadingOrder ? (
+              <div className="flex items-center justify-center py-6">
+                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                <span className="ml-2 text-[13px] text-muted-foreground">Caricamento totali…</span>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[13px] text-muted-foreground">Imponibile Lordo</span>
+                    <span className="text-[13px] font-medium">{fmt(totalGross)}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[13px] text-muted-foreground">Sconto Totale</span>
+                    <span className="text-[13px] font-medium text-destructive">
+                      {totalDiscount > 0 ? `−${fmt(totalDiscount)}` : "—"}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[13px] text-muted-foreground">Imponibile Netto</span>
+                    <span className="text-[13px] font-medium">{fmt(totalNet)}</span>
+                  </div>
+                  <Separator />
+                  <div className="flex items-center justify-between">
+                    <span className="text-[13px] text-muted-foreground">
+                      {isVatExempt ? "IVA esente (lettera d'intento)" : `IVA (${vatPctLabel})`}
+                    </span>
+                    <span className="text-[13px] font-medium">
+                      {isVatExempt ? "€ 0,00" : fmt(totalVat)}
+                    </span>
+                  </div>
+                  <Separator />
+                  <div className="flex items-center justify-between">
+                    <span className="text-[14px] font-semibold">Totale</span>
+                    <span className="text-[16px] font-bold text-primary">{fmt(grandTotal)}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Navigation */}
         <div className="flex justify-between pt-2">
-          <Button type="button" variant="outline" onClick={onBack} disabled={isPending}>
+          <Button type="button" variant="outline" onClick={onBack}>
             <ArrowLeft className="mr-1.5 h-4 w-4" />
             Indietro
           </Button>
-          <Button onClick={handleConfirm} disabled={isPending}>
-            <CheckCircle2 className="mr-1.5 h-4 w-4" />
-            {isPending ? "Creazione in corso…" : "Conferma e Crea Ordine"}
+          <Button onClick={() => navigate(`/orders/${orderGuid}`)}>
+            <ExternalLink className="mr-1.5 h-4 w-4" />
+            Vai all'Ordine
           </Button>
         </div>
       </div>
 
-      {/* Sidebar */}
+      {/* Sidebar — no longer needed but keep for layout consistency */}
       <div className="w-80 shrink-0">
-        <NewOrderSummaryCard availableRows={availableRows} commitmentRows={commitmentRows} />
+        <Card className="sticky top-4">
+          <CardHeader>
+            <h3 className="text-[14px] font-semibold">Stato</h3>
+          </CardHeader>
+          <CardContent className="space-y-3 pt-0">
+            <div className="flex items-center justify-between">
+              <span className="text-[13px] text-muted-foreground">Stato ordine</span>
+              <Badge variant="secondary">DRAFT</Badge>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[13px] text-muted-foreground">Righe salvate</span>
+              <span className="text-[13px] font-semibold">
+                {availableRows.length + commitmentRows.length}
+              </span>
+            </div>
+            <Separator />
+            <p className="text-[12px] text-muted-foreground">
+              L'ordine è stato salvato come bozza con tutte le righe.
+              Puoi procedere alla pagina ordine per confermare o modificare.
+            </p>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

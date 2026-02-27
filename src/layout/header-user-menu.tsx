@@ -1,9 +1,11 @@
-import { Bell, Search } from "lucide-react";
+import { Bell } from "lucide-react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import * as Avatar from "@radix-ui/react-avatar";
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
 import { useAuthStore } from "@/features/auth/hooks/use-auth-store";
 import { Button } from "@/shared/ui/button";
+import { Breadcrumb } from "@/shared/ui/breadcrumb";
+import { TenantBadge } from "@/layout/tenant-badge";
 
 export function HeaderUserMenu() {
   const { data: user } = useCurrentUser();
@@ -18,16 +20,11 @@ export function HeaderUserMenu() {
 
   return (
     <header className="flex h-14 shrink-0 items-center justify-between border-b border-border/60 bg-background px-6">
-      <div className="relative w-72">
-        <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/60" />
-        <input
-          type="text"
-          placeholder="Cerca..."
-          className="h-9 w-full rounded-lg border border-border/60 bg-muted/30 pl-9 pr-4 text-[13px] outline-none transition-all placeholder:text-muted-foreground/50 focus:border-primary/40 focus:bg-background focus:ring-2 focus:ring-ring/20"
-        />
-      </div>
+      <Breadcrumb />
 
       <div className="flex items-center gap-2">
+        <TenantBadge />
+
         <Button variant="ghost" size="icon" className="relative h-8 w-8 text-muted-foreground">
           <Bell className="h-4 w-4" />
         </Button>

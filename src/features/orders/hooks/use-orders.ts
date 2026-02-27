@@ -6,7 +6,12 @@ export function useOrders(params?: OrderListParams) {
   return useQuery({
     queryKey: orderKeys.list(params),
     queryFn: async () => {
-      const { data, error } = await ordersApi.list(params);
+      const { search, offset, limit, ...rest } = params ?? {};
+
+      const { data, error } = search
+        ? await ordersApi.search(search, { offset, limit })
+        : await ordersApi.list({ ...rest, offset, limit });
+
       if (error) throw error;
       return data;
     },

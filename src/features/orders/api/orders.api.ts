@@ -14,6 +14,9 @@ export const ordersApi = {
   list: (params?: OrderListParams) =>
     apiClient.GET("/orders", { params: { query: params } }),
 
+  search: (q: string, params?: { offset?: number; limit?: number }) =>
+    apiClient.GET("/orders/search", { params: { query: { q, ...params } } }),
+
   get: (orderGuid: string) =>
     apiClient.GET("/orders/{order_guid}", {
       params: { path: { order_guid: orderGuid } },
@@ -48,12 +51,27 @@ export const ordersApi = {
       params: { path: { order_guid: orderGuid } },
     }),
 
+  previewRow: (
+    orderGuid: string,
+    body: {
+      article_guid: string;
+      quantity: number | string;
+      unit_price: number | string;
+      discount_percent?: number | string | null;
+    },
+  ) =>
+    apiClient.POST("/orders/{order_guid}/preview-row", {
+      params: { path: { order_guid: orderGuid } },
+      body,
+    }),
+
   createRow: (
     orderGuid: string,
     body: {
       article_guid: string;
       quantity: number | string;
       unit_price: number | string;
+      discount_percent?: number | string | null;
       vat_code?: string | null;
       availability_status_code: string;
     },

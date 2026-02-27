@@ -215,6 +215,40 @@ export interface paths {
         patch: operations["update_party_location_party_locations__party_location_guid__patch"];
         trace?: never;
     };
+    "/unit-of-measures": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List units of measure */
+        get: operations["list_unit_of_measures_unit_of_measures_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/article-types": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List article types */
+        get: operations["list_article_types_article_types_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/articles": {
         parameters: {
             query?: never;
@@ -249,6 +283,42 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/articles/{article_guid}/suppliers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List article suppliers */
+        get: operations["list_suppliers_articles__article_guid__suppliers_get"];
+        put?: never;
+        /** Link supplier to article */
+        post: operations["add_supplier_articles__article_guid__suppliers_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/articles/{article_guid}/suppliers/{party_guid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Unlink supplier from article */
+        delete: operations["remove_supplier_articles__article_guid__suppliers__party_guid__delete"];
+        options?: never;
+        head?: never;
+        /** Update article supplier */
+        patch: operations["update_supplier_articles__article_guid__suppliers__party_guid__patch"];
         trace?: never;
     };
     "/warehouses": {
@@ -287,6 +357,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/orders/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search orders by customer name or article code */
+        get: operations["search_orders_orders_search_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/orders/{order_guid}": {
         parameters: {
             query?: never;
@@ -316,6 +403,23 @@ export interface paths {
         put?: never;
         /** Create order row */
         post: operations["create_order_row_orders__order_guid__rows_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/orders/{order_guid}/preview-row": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Preview row totals without saving */
+        post: operations["preview_order_row_orders__order_guid__preview_row_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -528,6 +632,78 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/intent-letters": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List intent letters */
+        get: operations["list_intent_letters_intent_letters_get"];
+        put?: never;
+        /** Create intent letter */
+        post: operations["create_intent_letter_intent_letters_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/intent-letters/{guid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get intent letter */
+        get: operations["get_intent_letter_intent_letters__guid__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update intent letter */
+        patch: operations["update_intent_letter_intent_letters__guid__patch"];
+        trace?: never;
+    };
+    "/party-discounts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List party discounts */
+        get: operations["list_party_discounts_party_discounts_get"];
+        put?: never;
+        /** Create party discount */
+        post: operations["create_party_discount_party_discounts_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/party-discounts/{guid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get party discount */
+        get: operations["get_party_discount_party_discounts__guid__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update party discount */
+        patch: operations["update_party_discount_party_discounts__guid__patch"];
+        trace?: never;
+    };
     "/mails": {
         parameters: {
             query?: never;
@@ -677,11 +853,15 @@ export interface components {
             code: string;
             /** Description */
             description: string;
+            /** Unit Of Measure Code */
+            unit_of_measure_code: string;
             /**
              * Is Active
              * @default true
              */
             is_active: boolean;
+            /** Type Code */
+            type_code?: string | null;
         };
         /** ArticleOut */
         ArticleOut: {
@@ -699,8 +879,64 @@ export interface components {
             code: string;
             /** Description */
             description: string;
+            /** Unit Of Measure Code */
+            unit_of_measure_code: string;
             /** Is Active */
             is_active: boolean;
+            /** Type Code */
+            type_code: string | null;
+        };
+        /** ArticleSupplierCreate */
+        ArticleSupplierCreate: {
+            /**
+             * Party Guid
+             * Format: uuid
+             */
+            party_guid: string;
+            /** Supplier Code */
+            supplier_code?: string | null;
+            /** List Price */
+            list_price?: number | string | null;
+            /**
+             * Is Preferred
+             * @default false
+             */
+            is_preferred: boolean;
+        };
+        /** ArticleSupplierOut */
+        ArticleSupplierOut: {
+            /**
+             * Article Guid
+             * Format: uuid
+             */
+            article_guid: string;
+            /**
+             * Party Guid
+             * Format: uuid
+             */
+            party_guid: string;
+            /** Supplier Code */
+            supplier_code: string | null;
+            /** List Price */
+            list_price: string | null;
+            /** Is Preferred */
+            is_preferred: boolean;
+        };
+        /** ArticleSupplierUpdate */
+        ArticleSupplierUpdate: {
+            /** Supplier Code */
+            supplier_code?: string | null;
+            /** List Price */
+            list_price?: number | string | null;
+            /** Is Preferred */
+            is_preferred?: boolean | null;
+        };
+        /** ArticleTypeOut */
+        ArticleTypeOut: {
+            /** Code */
+            code: string;
+            /** Description */
+            description: string;
         };
         /** AttachmentOut */
         AttachmentOut: {
@@ -932,8 +1168,93 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
+        /** IntentLetterCreate */
+        IntentLetterCreate: {
+            /**
+             * Party Guid
+             * Format: uuid
+             */
+            party_guid: string;
+            /** Protocol Number */
+            protocol_number?: string | null;
+            /** Year */
+            year: number;
+            /** Max Amount */
+            max_amount: number | string;
+            /**
+             * Valid From
+             * Format: date
+             */
+            valid_from: string;
+            /**
+             * Valid To
+             * Format: date
+             */
+            valid_to: string;
+            /**
+             * Is Active
+             * @default true
+             */
+            is_active: boolean;
+        };
+        /** IntentLetterOut */
+        IntentLetterOut: {
+            /**
+             * Guid
+             * Format: uuid
+             */
+            guid: string;
+            /**
+             * Master Data Guid
+             * Format: uuid
+             */
+            master_data_guid: string;
+            /**
+             * Party Guid
+             * Format: uuid
+             */
+            party_guid: string;
+            /** Protocol Number */
+            protocol_number: string | null;
+            /** Year */
+            year: number;
+            /** Max Amount */
+            max_amount: string;
+            /**
+             * Valid From
+             * Format: date
+             */
+            valid_from: string;
+            /**
+             * Valid To
+             * Format: date
+             */
+            valid_to: string;
+            /** Is Active */
+            is_active: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /** IntentLetterUpdate */
+        IntentLetterUpdate: {
+            /** Protocol Number */
+            protocol_number?: string | null;
+            /** Max Amount */
+            max_amount?: number | string | null;
+            /** Valid From */
+            valid_from?: string | null;
+            /** Valid To */
+            valid_to?: string | null;
+            /** Is Active */
+            is_active?: boolean | null;
+        };
         /** LocationCreate */
         LocationCreate: {
+            /** Address Line */
+            address_line?: string | null;
             /** City */
             city?: string | null;
             /** Province */
@@ -954,6 +1275,8 @@ export interface components {
              * Format: uuid
              */
             guid: string;
+            /** Address Line */
+            address_line: string | null;
             /** City */
             city: string | null;
             /** Province */
@@ -1130,6 +1453,18 @@ export interface components {
             billing_location_guid: string | null;
             /** Shipping Location Guid */
             shipping_location_guid: string | null;
+            /** Intent Letter Guid */
+            intent_letter_guid: string | null;
+            /** Total Net */
+            total_net: string | null;
+            /** Vat Rate */
+            vat_rate: string | null;
+            /** Total Vat */
+            total_vat: string | null;
+            /** Total Gross */
+            total_gross: string | null;
+            /** Total Discount */
+            total_discount: string | null;
             /**
              * Created At
              * Format: date-time
@@ -1152,6 +1487,8 @@ export interface components {
             quantity: number | string;
             /** Unit Price */
             unit_price: number | string;
+            /** Discount Percent */
+            discount_percent?: number | string | null;
             /** Vat Code */
             vat_code?: string | null;
             /**
@@ -1159,6 +1496,8 @@ export interface components {
              * @default UNKNOWN
              */
             availability_status_code: string;
+            /** Unit Of Measure Code */
+            unit_of_measure_code?: string | null;
         };
         /** OrderRowOut */
         OrderRowOut: {
@@ -1181,10 +1520,49 @@ export interface components {
             quantity: string;
             /** Unit Price */
             unit_price: string;
+            /** Discount Percent */
+            discount_percent: string;
             /** Vat Code */
             vat_code: string | null;
             /** Availability Status Code */
             availability_status_code: string;
+            /** Unit Of Measure Code */
+            unit_of_measure_code: string;
+        };
+        /** OrderRowPreviewOut */
+        OrderRowPreviewOut: {
+            /** Resolved Discount Percent */
+            resolved_discount_percent: string;
+            /** Row Gross */
+            row_gross: string;
+            /** Row Discount */
+            row_discount: string;
+            /** Row Net */
+            row_net: string;
+            /** Order Total Discount */
+            order_total_discount: string;
+            /** Order Total Net */
+            order_total_net: string;
+            /** Vat Rate */
+            vat_rate: string;
+            /** Order Total Vat */
+            order_total_vat: string;
+            /** Order Total Gross */
+            order_total_gross: string;
+        };
+        /** OrderRowPreviewRequest */
+        OrderRowPreviewRequest: {
+            /**
+             * Article Guid
+             * Format: uuid
+             */
+            article_guid: string;
+            /** Quantity */
+            quantity: number | string;
+            /** Unit Price */
+            unit_price: number | string;
+            /** Discount Percent */
+            discount_percent?: number | string | null;
         };
         /** OrderRowUpdate */
         OrderRowUpdate: {
@@ -1194,6 +1572,8 @@ export interface components {
             unit_price?: number | string | null;
             /** Availability Status Code */
             availability_status_code?: string | null;
+            /** Unit Of Measure Code */
+            unit_of_measure_code?: string | null;
         };
         /** OrderUpdate */
         OrderUpdate: {
@@ -1235,10 +1615,32 @@ export interface components {
             /** Limit */
             limit: number;
         };
+        /** Page[IntentLetterOut] */
+        Page_IntentLetterOut_: {
+            /** Items */
+            items: components["schemas"]["IntentLetterOut"][];
+            /** Total */
+            total: number;
+            /** Offset */
+            offset: number;
+            /** Limit */
+            limit: number;
+        };
         /** Page[OrderOut] */
         Page_OrderOut_: {
             /** Items */
             items: components["schemas"]["OrderOut"][];
+            /** Total */
+            total: number;
+            /** Offset */
+            offset: number;
+            /** Limit */
+            limit: number;
+        };
+        /** Page[PartyDiscountOut] */
+        Page_PartyDiscountOut_: {
+            /** Items */
+            items: components["schemas"]["PartyDiscountOut"][];
             /** Total */
             total: number;
             /** Offset */
@@ -1276,6 +1678,56 @@ export interface components {
             vat_number?: string | null;
             /** Type Code */
             type_code: string;
+        };
+        /** PartyDiscountCreate */
+        PartyDiscountCreate: {
+            /**
+             * Party Guid
+             * Format: uuid
+             */
+            party_guid: string;
+            /** Article Type Code */
+            article_type_code?: string | null;
+            /** Discount Percent */
+            discount_percent: number | string;
+        };
+        /** PartyDiscountOut */
+        PartyDiscountOut: {
+            /**
+             * Guid
+             * Format: uuid
+             */
+            guid: string;
+            /**
+             * Master Data Guid
+             * Format: uuid
+             */
+            master_data_guid: string;
+            /**
+             * Party Guid
+             * Format: uuid
+             */
+            party_guid: string;
+            /** Article Type Code */
+            article_type_code: string | null;
+            /** Discount Percent */
+            discount_percent: string;
+            /** Is Active */
+            is_active: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /** PartyDiscountUpdate */
+        PartyDiscountUpdate: {
+            /** Discount Percent */
+            discount_percent?: number | string | null;
+            /** Article Type Code */
+            article_type_code?: string | null;
+            /** Is Active */
+            is_active?: boolean | null;
         };
         /** PartyLocationCreate */
         PartyLocationCreate: {
@@ -1460,6 +1912,13 @@ export interface components {
              * @default bearer
              */
             token_type: string;
+        };
+        /** UnitOfMeasureOut */
+        UnitOfMeasureOut: {
+            /** Code */
+            code: string;
+            /** Description */
+            description: string;
         };
         /** UserOut */
         UserOut: {
@@ -2125,6 +2584,46 @@ export interface operations {
             };
         };
     };
+    list_unit_of_measures_unit_of_measures_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnitOfMeasureOut"][];
+                };
+            };
+        };
+    };
+    list_article_types_article_types_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArticleTypeOut"][];
+                };
+            };
+        };
+    };
     list_articles_articles_get: {
         parameters: {
             query?: {
@@ -2245,6 +2744,138 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ArticleAliasOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_suppliers_articles__article_guid__suppliers_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                article_guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArticleSupplierOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_supplier_articles__article_guid__suppliers_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                article_guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ArticleSupplierCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArticleSupplierOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    remove_supplier_articles__article_guid__suppliers__party_guid__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                article_guid: string;
+                party_guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_supplier_articles__article_guid__suppliers__party_guid__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                article_guid: string;
+                party_guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ArticleSupplierUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArticleSupplierOut"];
                 };
             };
             /** @description Validation Error */
@@ -2380,6 +3011,39 @@ export interface operations {
             };
         };
     };
+    search_orders_orders_search_get: {
+        parameters: {
+            query: {
+                q: string;
+                offset?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_OrderOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_order_orders__order_guid__get: {
         parameters: {
             query?: never;
@@ -2468,6 +3132,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OrderRowOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    preview_order_row_orders__order_guid__preview_row_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                order_guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OrderRowPreviewRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderRowPreviewOut"];
                 };
             };
             /** @description Validation Error */
@@ -2932,6 +3631,271 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DeliveryNoteOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_intent_letters_intent_letters_get: {
+        parameters: {
+            query?: {
+                party_guid?: string | null;
+                active_only?: boolean;
+                offset?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_IntentLetterOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_intent_letter_intent_letters_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IntentLetterCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IntentLetterOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_intent_letter_intent_letters__guid__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IntentLetterOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_intent_letter_intent_letters__guid__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IntentLetterUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IntentLetterOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_party_discounts_party_discounts_get: {
+        parameters: {
+            query?: {
+                party_guid?: string | null;
+                offset?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_PartyDiscountOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_party_discount_party_discounts_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PartyDiscountCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PartyDiscountOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_party_discount_party_discounts__guid__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PartyDiscountOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_party_discount_party_discounts__guid__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PartyDiscountUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PartyDiscountOut"];
                 };
             };
             /** @description Validation Error */

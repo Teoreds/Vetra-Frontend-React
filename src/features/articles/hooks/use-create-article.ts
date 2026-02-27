@@ -6,7 +6,13 @@ export function useCreateArticle() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (body: { code: string; description: string; is_active: boolean }) => {
+    mutationFn: async (body: {
+      code: string;
+      description: string;
+      unit_of_measure_code: string;
+      type_code?: string | null;
+      is_active: boolean;
+    }) => {
       const { data, error } = await articlesApi.create(body);
       if (error) throw error;
       return data;

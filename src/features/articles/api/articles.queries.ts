@@ -7,4 +7,7 @@ export const articleKeys = {
   details: () => [...articleKeys.all, "detail"] as const,
   detail: (id: string) => [...articleKeys.details(), id] as const,
   aliases: (id: string) => [...articleKeys.all, "aliases", id] as const,
+  unitOfMeasures: () => [...articleKeys.all, "unit-of-measures"] as const,
+  articleTypes: () => [...articleKeys.all, "article-types"] as const,
+  suppliers: (id: string) => [...articleKeys.all, "suppliers", id] as const,
 };

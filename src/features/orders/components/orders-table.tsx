@@ -18,7 +18,7 @@ function isSameDay(a: string, b: string): boolean {
 
 export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
   const navigate = useNavigate();
-  const { data: partiesData } = useParties({ limit: 1000 });
+  const { data: partiesData } = useParties({ limit: 200 });
 
   const partyMap = useMemo(() => {
     const map = new Map<string, string>();
@@ -29,6 +29,7 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
     }
     return map;
   }, [partiesData]);
+
 
   const columns: Column<OrderOut>[] = [
     {
