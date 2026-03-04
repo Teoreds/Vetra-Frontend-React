@@ -7,11 +7,13 @@ import { useParties } from "../hooks/use-parties";
 import { PartiesTable } from "../components/parties-table";
 import { PartiesFiltersBar } from "../components/parties-filters-bar";
 import type { PartyListParams } from "../api/parties.api";
+import { useNewPartyStore } from "../stores/use-new-party-store";
 
 const DEFAULT_LIMIT = 20;
 
 export function PartiesListPage() {
   const navigate = useNavigate();
+  const clearPartyDraft = useNewPartyStore((s) => s.clear);
   const [filters, setFilters] = useState<PartyListParams>({
     offset: 0,
     limit: DEFAULT_LIMIT,
@@ -33,7 +35,7 @@ export function PartiesListPage() {
           </div>
           <p className="mt-0.5 text-[13px] text-muted-foreground">Gestisci clienti, fornitori, trasporti ed altro.</p>
         </div>
-        <Button onClick={() => navigate("/parties/new")}>
+        <Button onClick={() => { clearPartyDraft(); navigate("/parties/new"); }}>
           <Plus className="mr-1 h-4 w-4" />
           Nuova Anagrafica
         </Button>

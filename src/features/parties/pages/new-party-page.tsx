@@ -12,6 +12,7 @@ import {
 import { partiesApi } from "../api/parties.api";
 import { partyKeys } from "../api/parties.queries";
 import { articlesApi } from "@/features/articles/api/articles.api";
+import { useNewPartyStore } from "../stores/use-new-party-store";
 
 const STEPS: StepConfig[] = [
   { label: "Dati Anagrafica", description: "Info generali" },
@@ -21,24 +22,22 @@ const STEPS: StepConfig[] = [
 export function NewPartyPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const store = useNewPartyStore();
 
-  const [currentStep, setCurrentStep] = useState(1);
-  const [step1Data, setStep1Data] = useState<Step1Data | null>(null);
-  const [step2Data, setStep2Data] = useState<Step2Data | null>(null);
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   function handleStep1Next(data: Step1Data) {
-    setStep1Data(data);
+    store.setStep1Data(data);
+    store.setCurrentStep(2);
     setError(null);
-    setCurrentStep(2);
   }
 
   async function handleStep2Submit(data: Step2Data) {
-    if (!step1Data) return;
-    setStep2Data(data);
+    if (!store.step1Data) return;
+    store.setStep2Data(data);
     setError(null);
-    await submitAll(step1Data, data);
+    await submitAll(store.step1Data, data);
   }
 
   async function submitAll(s1: Step1Data, s2: Step2Data) {
@@ -90,7 +89,7 @@ export function NewPartyPage() {
 
       // 4. Create discounts (CUSTOMER)
       if (s1.type_code === "CUSTOMER") {
-        await Promise.all(
+        const discountResults = await Promise.all(
           s2.discounts
             .filter((d) => d.discount_percent !== "")
             .map((d) =>
@@ -101,11 +100,15 @@ export function NewPartyPage() {
               }),
             ),
         );
+        if (discountResults.some((r) => r.error)) {
+          setError("Errore nel salvataggio degli sconti. L'anagrafica è stata creata, ma alcuni sconti non sono stati salvati.");
+          return;
+        }
       }
 
       // 5. Create supplier articles (SUPPLIER)
       if (s1.type_code === "SUPPLIER") {
-        await Promise.all(
+        const supplierResults = await Promise.all(
           s2.supplier_articles
             .filter((a) => a.article_guid !== "")
             .map((a) =>
@@ -117,10 +120,16 @@ export function NewPartyPage() {
               }),
             ),
         );
+        if (supplierResults.some((r) => r.error)) {
+          setError("Errore nel salvataggio degli articoli fornitore. L'anagrafica è stata creata, ma alcuni articoli non sono stati salvati.");
+          return;
+        }
       }
 
       // 6. Invalidate and navigate
       queryClient.invalidateQueries({ queryKey: partyKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: partyKeys.locations(partyGuid) });
+      store.clear();
       navigate(`/parties/${partyGuid}`);
     } catch {
       setError("Errore di rete. Riprova.");
@@ -137,7 +146,7 @@ export function NewPartyPage() {
           variant="ghost"
           size="icon"
           className="h-8 w-8"
-          onClick={() => navigate("/parties")}
+          onClick={() => { store.clear(); navigate("/parties"); }}
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
@@ -151,14 +160,14 @@ export function NewPartyPage() {
 
       {/* Stepper */}
       <div className="py-2">
-        <NewOrderStepper steps={STEPS} currentStep={currentStep} />
+        <NewOrderStepper steps={STEPS} currentStep={store.currentStep} />
       </div>
 
       {/* Step 1 — Identity */}
-      {currentStep === 1 && (
+      {store.currentStep === 1 && (
         <div className="mx-auto max-w-xl">
           <NewPartyStepDetails
-            defaultValues={step1Data ?? undefined}
+            defaultValues={store.step1Data ?? undefined}
             onNext={handleStep1Next}
             error={error}
           />
@@ -166,13 +175,13 @@ export function NewPartyPage() {
       )}
 
       {/* Step 2 — Contacts, addresses, type-specific extras */}
-      {currentStep === 2 && step1Data && (
+      {store.currentStep === 2 && store.step1Data && (
         <div className="mx-auto max-w-3xl">
           <NewPartyStepExtras
-            typeCode={step1Data.type_code}
-            defaultValues={step2Data ?? undefined}
+            typeCode={store.step1Data.type_code}
+            defaultValues={store.step2Data ?? undefined}
             onSubmit={handleStep2Submit}
-            onBack={() => setCurrentStep(1)}
+            onBack={(draft) => { store.setStep2Data(draft); store.setCurrentStep(1); }}
             isPending={isPending}
             error={error}
           />

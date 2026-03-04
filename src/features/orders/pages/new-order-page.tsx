@@ -24,21 +24,30 @@ export function NewOrderPage() {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [step1Data, setStep1Data] = useState<Step1Data | null>(null);
+  const [orderGuid, setOrderGuid] = useState<string | null>(null);
   const [availableRows, setAvailableRows] = useState<OrderRowDraft[]>([]);
   const [commitmentRows, setCommitmentRows] = useState<OrderRowDraft[]>([]);
-  const [orderGuid, setOrderGuid] = useState<string | null>(null);
   const [vatRate, setVatRate] = useState(0.22);
   const [step1Error, setStep1Error] = useState<string | null>(null);
   const [step1Pending, setStep1Pending] = useState(false);
 
   async function handleStep1Next(data: Step1Data) {
+    const previousPartyGuid = step1Data?.party_guid;
+    const partyChanged = !!previousPartyGuid && previousPartyGuid !== data.party_guid;
+
     setStep1Data(data);
     setStep1Error(null);
 
-    // If we already created a draft (user went back), skip re-creation
-    if (orderGuid) {
+    // Reuse existing draft only if it's the same party
+    if (orderGuid && !partyChanged) {
       setCurrentStep(2);
       return;
+    }
+
+    // Party changed — reset rows so step 2 starts fresh
+    if (partyChanged) {
+      setAvailableRows([]);
+      setCommitmentRows([]);
     }
 
     setStep1Pending(true);
@@ -71,7 +80,7 @@ export function NewOrderPage() {
   }
 
   function handleBack() {
-    setCurrentStep((s) => Math.max(1, s - 1));
+    setCurrentStep(Math.max(1, currentStep - 1));
   }
 
   return (

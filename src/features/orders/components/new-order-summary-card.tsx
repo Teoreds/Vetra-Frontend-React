@@ -6,6 +6,8 @@ interface NewOrderSummaryCardProps {
   availableRows: OrderRowDraft[];
   commitmentRows: OrderRowDraft[];
   vatRate: number;
+  currency?: string;
+  currencyRate?: number;
 }
 
 function computeTotals(rows: OrderRowDraft[]) {
@@ -25,11 +27,11 @@ function computeTotals(rows: OrderRowDraft[]) {
   return { totalGross, totalDiscount };
 }
 
-function fmt(n: number) {
-  return new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(n);
+function fmt(n: number, currency = "EUR") {
+  return new Intl.NumberFormat("it-IT", { style: "currency", currency }).format(n);
 }
 
-export function NewOrderSummaryCard({ availableRows, commitmentRows, vatRate }: NewOrderSummaryCardProps) {
+export function NewOrderSummaryCard({ availableRows, commitmentRows, vatRate, currency = "EUR", currencyRate = 1 }: NewOrderSummaryCardProps) {
   const allRows = [...availableRows, ...commitmentRows];
   const { totalGross, totalDiscount } = computeTotals(allRows);
   const totalNet = Number((totalGross - totalDiscount).toFixed(2));
@@ -52,13 +54,13 @@ export function NewOrderSummaryCard({ availableRows, commitmentRows, vatRate }: 
           <div className="flex items-center justify-between">
             <span className="text-[12px] text-muted-foreground">Disponibili</span>
             <span className="text-[12px] font-medium">
-              {fmt(availableTotals.totalGross - availableTotals.totalDiscount)}
+              {fmt(currencyRate * (availableTotals.totalGross - availableTotals.totalDiscount), currency)}
             </span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-[12px] text-muted-foreground">Impegno</span>
             <span className="text-[12px] font-medium">
-              {fmt(commitmentTotals.totalGross - commitmentTotals.totalDiscount)}
+              {fmt(currencyRate * (commitmentTotals.totalGross - commitmentTotals.totalDiscount), currency)}
             </span>
           </div>
         </div>
@@ -69,22 +71,22 @@ export function NewOrderSummaryCard({ availableRows, commitmentRows, vatRate }: 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[13px] text-muted-foreground">Imponibile Lordo</span>
-            <span className="text-[13px] font-medium">{fmt(totalGross)}</span>
+            <span className="text-[13px] font-medium">{fmt(currencyRate * totalGross, currency)}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-[13px] text-muted-foreground">Sconto Totale</span>
             <span className="text-[13px] font-medium text-destructive">
-              {totalDiscount > 0 ? `−${fmt(totalDiscount)}` : "—"}
+              {totalDiscount > 0 ? `−${fmt(currencyRate * totalDiscount, currency)}` : "—"}
             </span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-[13px] text-muted-foreground">Imponibile Netto</span>
-            <span className="text-[13px] font-medium">{fmt(totalNet)}</span>
+            <span className="text-[13px] font-medium">{fmt(currencyRate * totalNet, currency)}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-[13px] text-muted-foreground">IVA ({vatPctLabel})</span>
             <span className="text-[13px] font-medium">
-              {totalVat > 0 ? fmt(totalVat) : "—"}
+              {totalVat > 0 ? fmt(currencyRate * totalVat, currency) : "—"}
             </span>
           </div>
         </div>
@@ -93,7 +95,7 @@ export function NewOrderSummaryCard({ availableRows, commitmentRows, vatRate }: 
 
         <div className="flex items-center justify-between">
           <span className="text-[14px] font-semibold">Totale</span>
-          <span className="text-[16px] font-bold text-primary">{fmt(grandTotal)}</span>
+          <span className="text-[16px] font-bold text-primary">{fmt(currencyRate * grandTotal, currency)}</span>
         </div>
 
         {/* Row counts */}

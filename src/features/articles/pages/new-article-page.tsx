@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod/v4";
 import { ArrowLeft, Loader2, Plus, Trash2, Check } from "lucide-react";
@@ -17,6 +19,9 @@ import { useCreateArticle } from "../hooks/use-create-article";
 import { useUnitOfMeasures, useArticleTypes } from "../hooks/use-article-lookups";
 import { useParties } from "@/features/parties/hooks/use-parties";
 import { articlesApi } from "../api/articles.api";
+import { useNewArticleStore } from "../stores/use-new-article-store";
+import { CurrencySelector } from "@/shared/ui/currency-selector";
+import { useCurrencyRates, toEur, type Currency } from "@/shared/hooks/use-currency-rates";
 
 const supplierSchema = z.object({
   party_guid: z.string().min(1, "Seleziona un fornitore"),
@@ -31,6 +36,7 @@ const newArticleSchema = z.object({
   unit_of_measure_code: z.string().min(1, "Seleziona un'unità di misura"),
   type_code: z.string().optional(),
   is_active: z.boolean().default(true),
+  list_price: z.coerce.number().min(0).optional().nullable(),
   suppliers: z.array(supplierSchema).default([]),
 });
 
@@ -43,22 +49,47 @@ export function NewArticlePage() {
   const { data: articleTypes = [] } = useArticleTypes();
   const { data: partiesData } = useParties({ limit: 200 });
   const parties = partiesData?.items ?? [];
+  const store = useNewArticleStore();
+  const [currency, setCurrency] = useState<Currency>("EUR");
+  const { data: rates } = useCurrencyRates();
 
   const {
     register,
     handleSubmit,
     control,
+    watch,
+    setValue,
+    getValues,
     formState: { errors },
   } = useForm<NewArticleForm>({
-    defaultValues: {
+    resolver: zodResolver(newArticleSchema),
+    defaultValues: store.draft ?? {
       code: "",
       description: "",
       unit_of_measure_code: "",
       type_code: "",
       is_active: true,
+      list_price: null,
       suppliers: [],
     },
   });
+
+  // Sync form values to store on every change so they survive navigation
+  useEffect(() => {
+    const { unsubscribe } = watch((values) => {
+      useNewArticleStore.getState().setDraft(values);
+    });
+    return unsubscribe;
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  function handleCurrencyChange(newCurrency: Currency) {
+    if (rates) {
+      const current = getValues("list_price") ?? 0;
+      const inEur = toEur(current, rates, currency);
+      setValue("list_price", parseFloat((inEur * rates[newCurrency]).toFixed(2)));
+    }
+    setCurrency(newCurrency);
+  }
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -66,13 +97,15 @@ export function NewArticlePage() {
   });
 
   const onSubmit = async (values: NewArticleForm) => {
-    const parsed = newArticleSchema.safeParse(values);
-    if (!parsed.success) return;
-
-    const { suppliers, type_code, ...articleData } = parsed.data;
+    const { suppliers, type_code, list_price, ...articleData } = values;
+    const listPriceEur =
+      list_price != null && rates
+        ? parseFloat(toEur(list_price, rates, currency).toFixed(2))
+        : (list_price ?? null);
     const body = {
       ...articleData,
       type_code: type_code || null,
+      list_price: listPriceEur,
     };
 
     const article = await createArticle.mutateAsync(body);
@@ -88,6 +121,7 @@ export function NewArticlePage() {
       });
     }
 
+    store.clear();
     navigate(`/articles/${article.code}`);
   };
 
@@ -199,6 +233,29 @@ export function NewArticlePage() {
                       </SelectContent>
                     </Select>
                   )}
+                />
+              </div>
+            </div>
+
+            {/* Prezzo */}
+            <div className="space-y-1.5">
+              <label className="text-[13px] font-medium">
+                Prezzo
+                <span className="ml-1 font-normal text-muted-foreground">(opzionale)</span>
+              </label>
+              <div className="flex">
+                <Input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  {...register("list_price", { valueAsNumber: true })}
+                  placeholder="0.00"
+                  className="rounded-r-none"
+                />
+                <CurrencySelector
+                  value={currency}
+                  onChange={handleCurrencyChange}
+                  className="rounded-l-none border-l-0"
                 />
               </div>
             </div>
@@ -373,7 +430,7 @@ export function NewArticlePage() {
           <Button
             type="button"
             variant="outline"
-            onClick={() => navigate("/articles")}
+            onClick={() => { store.clear(); navigate("/articles"); }}
           >
             Annulla
           </Button>

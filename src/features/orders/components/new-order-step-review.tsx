@@ -1,15 +1,24 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ExternalLink, Loader2 } from "lucide-react";
+import { ArrowLeft, ExternalLink, Loader2, PenLine } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
 import { Separator } from "@/shared/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/shared/ui/select";
 import { ordersApi } from "../api/orders.api";
 import { orderKeys } from "../api/orders.queries";
 import { useParties } from "@/features/parties/hooks/use-parties";
 import { usePartyLocations } from "@/features/parties/hooks/use-party-locations";
+import { useWarehouseWorkers } from "@/features/warehouses/hooks/use-warehouse-workers";
 import { CalendarDays, User, MapPin } from "lucide-react";
 import type { Step1Data } from "./new-order-step-details";
 import type { OrderRowDraft } from "./new-order-step-items";
@@ -76,12 +85,17 @@ export function NewOrderStepReview({
   onBack,
 }: NewOrderStepReviewProps) {
   const navigate = useNavigate();
+  const [workerGuid, setWorkerGuid] = useState<string>("");
+
   const { data: partiesData } = useParties({ limit: 200 });
   const party = partiesData?.items.find((p) => p.guid === step1Data.party_guid);
   const { data: locations = [] } = usePartyLocations(step1Data.party_guid);
   const shippingLocation = step1Data.shipping_location_guid
     ? locations.find((l) => l.location_guid === step1Data.shipping_location_guid)
     : undefined;
+
+  const { data: workersData, isLoading: isLoadingWorkers } = useWarehouseWorkers();
+  const workers = workersData?.items ?? [];
 
   // Fetch official totals from backend
   const { data: orderData, isLoading: isLoadingOrder } = useQuery({
@@ -95,7 +109,6 @@ export function NewOrderStepReview({
 
   const order = orderData as Record<string, unknown> | undefined;
 
-  // Extract backend totals (fallback to 0)
   const totalGross = Number(order?.total_gross ?? 0);
   const totalDiscount = Number(order?.total_discount ?? 0);
   const totalNet = Number(order?.total_net ?? totalGross - totalDiscount);
@@ -235,20 +248,62 @@ export function NewOrderStepReview({
           </CardContent>
         </Card>
 
+        {/* Firma operatore */}
+        <Card className={!workerGuid ? "border-amber-200 bg-amber-50/40 dark:border-amber-900/40 dark:bg-amber-950/20" : "border-emerald-200 bg-emerald-50/40 dark:border-emerald-900/40 dark:bg-emerald-950/20"}>
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <PenLine className={`h-4 w-4 ${!workerGuid ? "text-amber-500" : "text-emerald-500"}`} />
+              <h3 className="text-[14px] font-semibold">Firma Operatore</h3>
+              {!workerGuid && (
+                <Badge variant="secondary" className="ml-auto border-amber-200 bg-amber-100 text-amber-700 dark:border-amber-900/40 dark:bg-amber-950 dark:text-amber-400">
+                  Richiesta
+                </Badge>
+              )}
+            </div>
+            <p className="text-[13px] text-muted-foreground">
+              Seleziona il tuo nome per confermare la presa in carico dell'ordine.
+            </p>
+          </CardHeader>
+          <CardContent className="pt-0">
+            {isLoadingWorkers ? (
+              <div className="flex items-center gap-2 py-2">
+                <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                <span className="text-[13px] text-muted-foreground">Caricamento operatori…</span>
+              </div>
+            ) : (
+              <Select value={workerGuid} onValueChange={setWorkerGuid}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleziona operatore…" />
+                </SelectTrigger>
+                <SelectContent>
+                  {workers.map((w) => (
+                    <SelectItem key={w.guid} value={w.guid}>
+                      {w.name} {w.surname}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Navigation */}
         <div className="flex justify-between pt-2">
           <Button type="button" variant="outline" onClick={onBack}>
             <ArrowLeft className="mr-1.5 h-4 w-4" />
             Indietro
           </Button>
-          <Button onClick={() => navigate(`/orders/${orderGuid}`)}>
+          <Button
+            disabled={!workerGuid}
+            onClick={() => navigate(`/orders/${orderGuid}`)}
+          >
             <ExternalLink className="mr-1.5 h-4 w-4" />
             Vai all'Ordine
           </Button>
         </div>
       </div>
 
-      {/* Sidebar — no longer needed but keep for layout consistency */}
+      {/* Sidebar */}
       <div className="w-80 shrink-0">
         <Card className="sticky top-4">
           <CardHeader>
@@ -265,10 +320,21 @@ export function NewOrderStepReview({
                 {availableRows.length + commitmentRows.length}
               </span>
             </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[13px] text-muted-foreground">Operatore</span>
+              <span className="text-[13px] font-semibold">
+                {workerGuid
+                  ? (() => {
+                      const w = workers.find((x) => x.guid === workerGuid);
+                      return w ? `${w.name} ${w.surname}` : "—";
+                    })()
+                  : "—"}
+              </span>
+            </div>
             <Separator />
             <p className="text-[12px] text-muted-foreground">
               L'ordine è stato salvato come bozza con tutte le righe.
-              Puoi procedere alla pagina ordine per confermare o modificare.
+              Seleziona il tuo nome per procedere.
             </p>
           </CardContent>
         </Card>

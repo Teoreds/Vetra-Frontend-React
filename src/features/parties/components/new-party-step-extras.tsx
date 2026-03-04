@@ -1,4 +1,5 @@
 import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
 import { ArrowLeft, Loader2, Plus, Trash2, Check } from "lucide-react";
 import { Button } from "@/shared/ui/button";
@@ -126,7 +127,7 @@ interface Props {
   typeCode: string;
   defaultValues?: Partial<Step2Data>;
   onSubmit: (data: Step2Data) => void;
-  onBack: () => void;
+  onBack: (draft: Step2Data) => void;
   isPending?: boolean;
   error?: string | null;
 }
@@ -209,15 +210,15 @@ export function NewPartyStepExtras({
     register,
     handleSubmit,
     control,
+    getValues,
     formState: { errors },
   } = useForm<FormValues>({
+    resolver: zodResolver(step2Schema),
     defaultValues: {
-      contacts: defaultValues?.contacts?.length ? defaultValues.contacts : [EMPTY_CONTACT],
+      contacts: defaultValues?.contacts ?? [],
       addresses: defaultValues?.addresses?.length ? defaultValues.addresses : [EMPTY_ADDRESS],
-      discounts: defaultValues?.discounts?.length ? defaultValues.discounts : [EMPTY_DISCOUNT],
-      supplier_articles: defaultValues?.supplier_articles?.length
-        ? defaultValues.supplier_articles
-        : [EMPTY_SUPPLIER_ARTICLE],
+      discounts: defaultValues?.discounts ?? [],
+      supplier_articles: defaultValues?.supplier_articles ?? [],
     },
   });
 
@@ -227,10 +228,6 @@ export function NewPartyStepExtras({
   const supplierFields = useFieldArray({ control, name: "supplier_articles" });
 
   const submit = (values: FormValues) => {
-    const parsed = step2Schema.safeParse(values);
-    if (!parsed.success) {
-      return;
-    }
     onSubmit({
       contacts: values.contacts.filter((c) => c.content !== ""),
       addresses: values.addresses,
@@ -392,10 +389,13 @@ export function NewPartyStepExtras({
                 <div className="col-span-2 space-y-1">
                   <label className="text-[12px] font-medium">Indirizzo *</label>
                   <Input
-                    {...register(`addresses.${index}.address_line`, { required: "Obbligatorio" })}
+                    {...register(`addresses.${index}.address_line`)}
                     placeholder="Via Roma 1"
                     error={!!errors.addresses?.[index]?.address_line}
                   />
+                  {errors.addresses?.[index]?.address_line && (
+                    <p className="text-[12px] text-destructive">{errors.addresses[index].address_line.message}</p>
+                  )}
                 </div>
                 <div className="space-y-1">
                   <label className="text-[12px] font-medium">Città</label>
@@ -426,7 +426,6 @@ export function NewPartyStepExtras({
                   <Controller
                     control={control}
                     name={`addresses.${index}.type_code`}
-                    rules={{ required: "Obbligatorio" }}
                     render={({ field: f }) => (
                       <Select value={f.value} onValueChange={f.onChange}>
                         <SelectTrigger>
@@ -442,6 +441,9 @@ export function NewPartyStepExtras({
                       </Select>
                     )}
                   />
+                  {errors.addresses?.[index]?.type_code && (
+                    <p className="text-[12px] text-destructive">{errors.addresses[index].type_code.message}</p>
+                  )}
                 </div>
                 <div className="flex items-end pb-1">
                   <Controller
@@ -523,7 +525,7 @@ export function NewPartyStepExtras({
                     step="0.01"
                     min="0"
                     max="100"
-                    {...register(`discounts.${index}.discount_percent`, { required: true })}
+                    {...register(`discounts.${index}.discount_percent`)}
                     placeholder="10"
                   />
                 </div>
@@ -661,7 +663,7 @@ export function NewPartyStepExtras({
       )}
 
       <div className="flex justify-between">
-        <Button type="button" variant="outline" onClick={onBack} disabled={isPending}>
+        <Button type="button" variant="outline" onClick={() => onBack(getValues())} disabled={isPending}>
           <ArrowLeft className="mr-1.5 h-4 w-4" />
           Indietro
         </Button>

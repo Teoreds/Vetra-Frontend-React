@@ -1,17 +1,21 @@
 import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
-import { ArrowRight, ArrowLeft, ArrowUp, ArrowDown, Trash2, Loader2 } from "lucide-react";
+import { ArrowRight, ArrowLeft, ArrowUp, ArrowDown, Trash2, Loader2, Plus } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
 import { Separator } from "@/shared/ui/separator";
 import { Badge } from "@/shared/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
+import { CurrencySelector } from "@/shared/ui/currency-selector";
 import { ArticleInlineSearch } from "./article-inline-search";
 import { NewOrderSummaryCard } from "./new-order-summary-card";
+import { CreateArticleDialog } from "./create-article-dialog";
 import { ordersApi } from "../api/orders.api";
 import type { ArticleOut } from "@/features/articles/types/article.types";
 import { cn } from "@/shared/lib/utils";
+import { useCurrencyRates, fromEur, type Currency } from "@/shared/hooks/use-currency-rates";
 
 const rowSchema = z.object({
   article_guid: z.string(),
@@ -55,6 +59,9 @@ export function NewOrderStepItems({
 }: NewOrderStepItemsProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [currency, setCurrency] = useState<Currency>("EUR");
+  const { data: rates } = useCurrencyRates();
 
   const {
     register,
@@ -64,6 +71,7 @@ export function NewOrderStepItems({
     setValue,
     formState: { errors },
   } = useForm<Step2FormValues>({
+    resolver: zodResolver(step2Schema),
     defaultValues: {
       available_rows: initialAvailableRows,
       commitment_rows: initialCommitmentRows,
@@ -77,12 +85,13 @@ export function NewOrderStepItems({
   const watchedCommitment = watch("commitment_rows");
 
   async function handleArticleSelect(article: ArticleOut) {
+    const listPrice = article.list_price != null ? parseFloat(article.list_price) : 0;
     commitment.append({
       article_guid: article.guid,
       article_code: article.code,
       article_description: article.description,
       quantity: 1,
-      unit_price: 0,
+      unit_price: listPrice,
       discount_percent: 0,
       vat_code: "",
     });
@@ -91,19 +100,18 @@ export function NewOrderStepItems({
     const { data } = await ordersApi.previewRow(orderGuid, {
       article_guid: article.guid,
       quantity: 1,
-      unit_price: 0,
+      unit_price: listPrice,
     });
 
     if (data) {
       const newIndex = commitment.fields.length; // index of just-appended row
-      if (typeof (data as Record<string, unknown>).resolved_discount_percent === "number") {
-        setValue(
-          `commitment_rows.${newIndex}.discount_percent`,
-          (data as Record<string, unknown>).resolved_discount_percent as number,
-        );
+      const resolvedDiscount = parseFloat((data as Record<string, unknown>).resolved_discount_percent as string);
+      if (!isNaN(resolvedDiscount)) {
+        setValue(`commitment_rows.${newIndex}.discount_percent`, resolvedDiscount);
       }
-      if (typeof (data as Record<string, unknown>).vat_rate === "number") {
-        onVatRateChange((data as Record<string, unknown>).vat_rate as number);
+      const vatRate = parseFloat((data as Record<string, unknown>).vat_rate as string);
+      if (!isNaN(vatRate)) {
+        onVatRateChange(vatRate);
       }
     }
   }
@@ -123,14 +131,11 @@ export function NewOrderStepItems({
   }
 
   const onSubmit = async (values: Step2FormValues) => {
-    const parsed = step2Schema.safeParse(values);
-    if (!parsed.success) return;
-
     setIsSaving(true);
     setSaveError(null);
 
     // Save rows sequentially
-    const allRows = [...parsed.data.available_rows, ...parsed.data.commitment_rows];
+    const allRows = [...values.available_rows, ...values.commitment_rows];
     for (const row of allRows) {
       const { error } = await ordersApi.createRow(orderGuid, {
         article_guid: row.article_guid,
@@ -148,8 +153,8 @@ export function NewOrderStepItems({
 
     setIsSaving(false);
     onNext({
-      availableRows: parsed.data.available_rows,
-      commitmentRows: parsed.data.commitment_rows,
+      availableRows: values.available_rows,
+      commitmentRows: values.commitment_rows,
     });
   };
 
@@ -174,8 +179,8 @@ export function NewOrderStepItems({
             <TableRow>
               <TableHead className={th}>Articolo</TableHead>
               <TableHead className={cn(th, "w-20")}>Qtà</TableHead>
-              <TableHead className={cn(th, "w-24")}>Prezzo</TableHead>
-              <TableHead className={cn(th, "w-20")}>Sconto %</TableHead>
+              <TableHead className={cn(th, "w-28 whitespace-nowrap")}>Prezzo ({currency})</TableHead>
+              <TableHead className={cn(th, "w-24 whitespace-nowrap")}>Sconto %</TableHead>
               <TableHead className={cn(th, "w-16")} />
             </TableRow>
           </TableHeader>
@@ -202,23 +207,18 @@ export function NewOrderStepItems({
                   />
                 </TableCell>
                 <TableCell className={td}>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    {...register(`${prefix}.${index}.unit_price`, { valueAsNumber: true })}
-                    className={inputCls}
-                  />
+                  <input type="hidden" {...register(`${prefix}.${index}.unit_price`, { valueAsNumber: true })} />
+                  <span className="block px-2 text-[12px]">
+                    {rates
+                      ? fromEur(watchedRows[index]?.unit_price ?? 0, rates, currency).toFixed(2)
+                      : (watchedRows[index]?.unit_price ?? 0).toFixed(2)}
+                  </span>
                 </TableCell>
                 <TableCell className={td}>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    max="100"
-                    {...register(`${prefix}.${index}.discount_percent`, { valueAsNumber: true })}
-                    className={inputCls}
-                  />
+                  <input type="hidden" {...register(`${prefix}.${index}.discount_percent`, { valueAsNumber: true })} />
+                  <span className="block px-2 text-[12px]">
+                    {(watchedRows[index]?.discount_percent ?? 0).toFixed(2)}%
+                  </span>
                 </TableCell>
                 <TableCell className={td}>
                   <div className="flex items-center">
@@ -257,9 +257,24 @@ export function NewOrderStepItems({
       <div className="flex gap-6">
         {/* Main content */}
         <div className="min-w-0 flex-1 space-y-4">
-          {/* Inline article search */}
+          {/* Inline article search + create button */}
           <div className="space-y-1.5">
-            <ArticleInlineSearch onSelect={handleArticleSelect} />
+            <div className="flex items-center gap-2">
+              <div className="min-w-0 flex-1">
+                <ArticleInlineSearch onSelect={handleArticleSelect} />
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="shrink-0"
+                onClick={() => setCreateDialogOpen(true)}
+              >
+                <Plus className="mr-1 h-3.5 w-3.5" />
+                Nuovo Articolo
+              </Button>
+              <CurrencySelector value={currency} onChange={setCurrency} />
+            </div>
             {errors.commitment_rows && (
               <p className="text-[12px] text-destructive">
                 {errors.commitment_rows.message ?? errors.commitment_rows.root?.message}
@@ -364,9 +379,16 @@ export function NewOrderStepItems({
             availableRows={watchedAvailable ?? []}
             commitmentRows={watchedCommitment ?? []}
             vatRate={vatRate}
+            currency={currency}
+            currencyRate={rates?.[currency] ?? 1}
           />
         </div>
       </div>
+      <CreateArticleDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+        onCreated={(article) => handleArticleSelect(article)}
+      />
     </form>
   );
 }

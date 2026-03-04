@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { useForm, useWatch, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
 import { ArrowRight, MapPin, Loader2 } from "lucide-react";
 import { Button } from "@/shared/ui/button";
@@ -35,19 +37,38 @@ export function NewOrderStepDetails({ defaultValues, onNext, isPending, error }:
   const { data: partiesData } = useParties({ limit: 200 });
   const parties = partiesData?.items ?? [];
 
-  const { handleSubmit, control, formState: { errors } } = useForm<Step1Data>({
+  const { handleSubmit, control, setValue, formState: { errors } } = useForm<Step1Data>({
+    resolver: zodResolver(step1Schema),
     defaultValues: { order_date: today, ...defaultValues },
   });
 
   const selectedPartyGuid = useWatch({ control, name: "party_guid" });
+  const shippingValue = useWatch({ control, name: "shipping_location_guid" });
+  const billingValue = useWatch({ control, name: "billing_location_guid" });
   const { data: locations = [], isLoading: isLoadingLocations } = usePartyLocations(
     selectedPartyGuid || undefined,
   );
 
+  // Preselect primary addresses when locations load for a new party selection
+  useEffect(() => {
+    if (isLoadingLocations || locations.length === 0) return;
+
+    const primaryShipping = locations.find((l) => l.type_code === "SHIPPING" && l.is_primary);
+    const primaryBilling = locations.find((l) => l.type_code === "BILLING" && l.is_primary);
+
+    if (!shippingValue && primaryShipping) {
+      setValue("shipping_location_guid", primaryShipping.location_guid);
+    }
+    if (!billingValue && primaryBilling) {
+      setValue("billing_location_guid", primaryBilling.location_guid);
+    }
+  }, [locations, isLoadingLocations]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const shippingLocations = locations.filter((l) => l.type_code === "SHIPPING");
+  const billingLocations = locations.filter((l) => l.type_code === "BILLING");
+
   const onSubmit = (values: Step1Data) => {
-    const parsed = step1Schema.safeParse(values);
-    if (!parsed.success) return;
-    onNext(parsed.data);
+    onNext(values);
   };
 
   return (
@@ -119,9 +140,9 @@ export function NewOrderStepDetails({ defaultValues, onNext, isPending, error }:
                   )}
                 </label>
 
-                {!isLoadingLocations && locations.length === 0 ? (
+                {!isLoadingLocations && shippingLocations.length === 0 ? (
                   <p className="rounded-lg border border-border/60 bg-muted/40 px-3 py-2.5 text-[13px] text-muted-foreground">
-                    Nessun indirizzo associato.
+                    Nessun indirizzo di spedizione.
                   </p>
                 ) : (
                   <Controller
@@ -137,7 +158,7 @@ export function NewOrderStepDetails({ defaultValues, onNext, isPending, error }:
                           <SelectValue placeholder="Nessuna preferenza…" />
                         </SelectTrigger>
                         <SelectContent>
-                          {locations.map((loc) => (
+                          {shippingLocations.map((loc) => (
                             <SelectItem key={loc.guid} value={loc.location_guid}>
                               {formatAddress(loc)}
                               {loc.is_primary ? " (Primario)" : ""}
@@ -160,9 +181,9 @@ export function NewOrderStepDetails({ defaultValues, onNext, isPending, error }:
                   )}
                 </label>
 
-                {!isLoadingLocations && locations.length === 0 ? (
+                {!isLoadingLocations && billingLocations.length === 0 ? (
                   <p className="rounded-lg border border-border/60 bg-muted/40 px-3 py-2.5 text-[13px] text-muted-foreground">
-                    Nessun indirizzo associato.
+                    Nessun indirizzo di fatturazione.
                   </p>
                 ) : (
                   <Controller
@@ -178,8 +199,8 @@ export function NewOrderStepDetails({ defaultValues, onNext, isPending, error }:
                           <SelectValue placeholder="Nessuna preferenza…" />
                         </SelectTrigger>
                         <SelectContent>
-                          {locations.map((loc) => (
-                            <SelectItem key={`bill-${loc.guid}`} value={loc.location_guid}>
+                          {billingLocations.map((loc) => (
+                            <SelectItem key={loc.guid} value={loc.location_guid}>
                               {formatAddress(loc)}
                               {loc.is_primary ? " (Primario)" : ""}
                             </SelectItem>

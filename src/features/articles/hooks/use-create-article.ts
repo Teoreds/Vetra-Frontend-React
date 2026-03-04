@@ -12,6 +12,7 @@ export function useCreateArticle() {
       unit_of_measure_code: string;
       type_code?: string | null;
       is_active: boolean;
+      list_price?: number | null;
     }) => {
       const { data, error } = await articlesApi.create(body);
       if (error) throw error;

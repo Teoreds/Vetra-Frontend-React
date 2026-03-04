@@ -38,6 +38,6 @@ export function usePartyLocations(partyGuid: string | undefined) {
       return resolved;
     },
     enabled: !!partyGuid,
-    staleTime: 30_000,
+    staleTime: 0,
   });
 }

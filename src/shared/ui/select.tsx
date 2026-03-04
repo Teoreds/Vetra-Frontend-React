@@ -22,7 +22,7 @@ export function SelectTrigger({
       )}
       {...props}
     >
-      {children}
+      <span className="min-w-0 flex-1 truncate">{children}</span>
       <RadixSelect.Icon asChild>
         <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
       </RadixSelect.Icon>

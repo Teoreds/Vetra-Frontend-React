@@ -704,6 +704,41 @@ export interface paths {
         patch: operations["update_party_discount_party_discounts__guid__patch"];
         trace?: never;
     };
+    "/warehouse-workers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List warehouse workers */
+        get: operations["list_warehouse_workers_warehouse_workers_get"];
+        put?: never;
+        /** Create warehouse worker */
+        post: operations["create_warehouse_worker_warehouse_workers_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/warehouse-workers/{guid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get warehouse worker */
+        get: operations["get_warehouse_worker_warehouse_workers__guid__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/mails": {
         parameters: {
             query?: never;
@@ -862,6 +897,8 @@ export interface components {
             is_active: boolean;
             /** Type Code */
             type_code?: string | null;
+            /** List Price */
+            list_price?: number | string | null;
         };
         /** ArticleOut */
         ArticleOut: {
@@ -885,6 +922,8 @@ export interface components {
             is_active: boolean;
             /** Type Code */
             type_code: string | null;
+            /** List Price */
+            list_price: string | null;
         };
         /** ArticleSupplierCreate */
         ArticleSupplierCreate: {
@@ -1391,6 +1430,8 @@ export interface components {
             billing_location_guid?: string | null;
             /** Shipping Location Guid */
             shipping_location_guid?: string | null;
+            /** Warehouse Worker Guid */
+            warehouse_worker_guid?: string | null;
         };
         /** OrderLogOut */
         OrderLogOut: {
@@ -1465,6 +1506,8 @@ export interface components {
             total_gross: string | null;
             /** Total Discount */
             total_discount: string | null;
+            /** Warehouse Worker Guid */
+            warehouse_worker_guid: string | null;
             /**
              * Created At
              * Format: date-time
@@ -1663,6 +1706,17 @@ export interface components {
         Page_PickNoteOut_: {
             /** Items */
             items: components["schemas"]["PickNoteOut"][];
+            /** Total */
+            total: number;
+            /** Offset */
+            offset: number;
+            /** Limit */
+            limit: number;
+        };
+        /** Page[WarehouseWorkerOut] */
+        Page_WarehouseWorkerOut_: {
+            /** Items */
+            items: components["schemas"]["WarehouseWorkerOut"][];
             /** Total */
             total: number;
             /** Offset */
@@ -1982,6 +2036,30 @@ export interface components {
             description: string;
             /** Location Guid */
             location_guid: string | null;
+        };
+        /** WarehouseWorkerCreate */
+        WarehouseWorkerCreate: {
+            /** Name */
+            name: string;
+            /** Surname */
+            surname: string;
+        };
+        /** WarehouseWorkerOut */
+        WarehouseWorkerOut: {
+            /**
+             * Guid
+             * Format: uuid
+             */
+            guid: string;
+            /**
+             * Master Data Guid
+             * Format: uuid
+             */
+            master_data_guid: string;
+            /** Name */
+            name: string;
+            /** Surname */
+            surname: string;
         };
     };
     responses: never;
@@ -3896,6 +3974,102 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PartyDiscountOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_warehouse_workers_warehouse_workers_get: {
+        parameters: {
+            query?: {
+                offset?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_WarehouseWorkerOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_warehouse_worker_warehouse_workers_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WarehouseWorkerCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WarehouseWorkerOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_warehouse_worker_warehouse_workers__guid__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WarehouseWorkerOut"];
                 };
             };
             /** @description Validation Error */
