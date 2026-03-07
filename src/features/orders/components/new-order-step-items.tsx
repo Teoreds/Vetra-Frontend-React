@@ -31,9 +31,7 @@ export type OrderRowDraft = z.infer<typeof rowSchema>;
 
 const step2Schema = z.object({
   available_rows: z.array(rowSchema),
-  commitment_rows: z
-    .array(rowSchema)
-    .min(1, "Aggiungere almeno un articolo all'impegno cliente"),
+  commitment_rows: z.array(rowSchema),
 });
 
 type Step2FormValues = z.infer<typeof step2Schema>;

@@ -1,5 +1,4 @@
 import { DataTable, type Column } from "@/shared/ui/data-table";
-import { formatCurrency } from "@/shared/lib/utils";
 import { useOrder } from "../hooks/use-order";
 import type { OrderRowOut } from "../types/order.types";
 
@@ -7,43 +6,51 @@ interface OrderRowsTableProps {
   orderGuid: string;
 }
 
+function fmt(n: number) {
+  return new Intl.NumberFormat("it-IT", {
+    style: "currency",
+    currency: "EUR",
+  }).format(n);
+}
+
 export function OrderRowsTable({ orderGuid }: OrderRowsTableProps) {
-  // Order rows come embedded in the order detail in a real impl.
-  // For the skeleton, we demonstrate the pattern using a placeholder.
   const { isLoading } = useOrder(orderGuid);
 
-  const rows: OrderRowOut[] = []; // Placeholder: rows would come from order detail or a dedicated endpoint
+  // Placeholder: le righe verrebbero dal dettaglio ordine o da un endpoint dedicato
+  const rows: OrderRowOut[] = [];
 
   const columns: Column<OrderRowOut>[] = [
     {
       key: "article_guid",
-      header: "Article",
+      header: "Articolo",
       render: (row) => (
-        <span className="font-mono text-sm">{row.article_guid.slice(0, 8)}...</span>
+        <span className="font-mono text-sm">
+          {row.article_guid.slice(0, 8)}...
+        </span>
       ),
     },
     {
       key: "quantity",
-      header: "Quantity",
+      header: "Quantità",
       render: (row) => <span>{row.quantity}</span>,
     },
     {
       key: "unit_price",
-      header: "Unit Price",
-      render: (row) => <span>{formatCurrency(row.unit_price)}</span>,
+      header: "Prezzo Unitario",
+      render: (row) => <span>{fmt(parseFloat(row.unit_price))}</span>,
     },
     {
       key: "total",
-      header: "Total",
+      header: "Totale",
       render: (row) => (
         <span className="font-medium">
-          {formatCurrency(parseFloat(row.quantity) * parseFloat(row.unit_price))}
+          {fmt(parseFloat(row.quantity) * parseFloat(row.unit_price))}
         </span>
       ),
     },
     {
       key: "availability",
-      header: "Availability",
+      header: "Disponibilità",
       render: (row) => (
         <span className="text-sm capitalize">
           {row.availability_status_code.toLowerCase().replace("_", " ")}
@@ -58,7 +65,7 @@ export function OrderRowsTable({ orderGuid }: OrderRowsTableProps) {
       data={rows}
       keyExtractor={(row) => row.guid}
       isLoading={isLoading}
-      emptyMessage="No rows added yet."
+      emptyMessage="Nessuna riga aggiunta."
     />
   );
 }

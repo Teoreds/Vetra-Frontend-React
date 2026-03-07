@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ExternalLink, Loader2, PenLine } from "lucide-react";
 import { Button } from "@/shared/ui/button";
@@ -16,6 +16,7 @@ import {
 } from "@/shared/ui/select";
 import { ordersApi } from "../api/orders.api";
 import { orderKeys } from "../api/orders.queries";
+import { getStatusLabel } from "../types/order-status";
 import { useParties } from "@/features/parties/hooks/use-parties";
 import { usePartyLocations } from "@/features/parties/hooks/use-party-locations";
 import { useWarehouseWorkers } from "@/features/warehouses/hooks/use-warehouse-workers";
@@ -85,7 +86,10 @@ export function NewOrderStepReview({
   onBack,
 }: NewOrderStepReviewProps) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [workerGuid, setWorkerGuid] = useState<string>("");
+  const [isConfirming, setIsConfirming] = useState(false);
+  const [confirmError, setConfirmError] = useState<string | null>(null);
 
   const { data: partiesData } = useParties({ limit: 200 });
   const party = partiesData?.items.find((p) => p.guid === step1Data.party_guid);
@@ -119,6 +123,27 @@ export function NewOrderStepReview({
   const isVatExempt = vatRate === 0;
   const vatPctLabel = `${(vatRate * 100).toFixed(0)}%`;
 
+  const orderStatus = (order?.status_code as string) ?? "DRAFT";
+
+  async function handleConfirmAndNavigate() {
+    setConfirmError(null);
+    setIsConfirming(true);
+    try {
+      const { error } = await ordersApi.confirm(orderGuid);
+      if (error) {
+        setConfirmError("Impossibile confermare l'ordine. Riprova.");
+        return;
+      }
+      queryClient.invalidateQueries({ queryKey: orderKeys.detail(orderGuid) });
+      queryClient.invalidateQueries({ queryKey: orderKeys.lists() });
+      navigate(`/orders/${orderGuid}`);
+    } catch {
+      setConfirmError("Errore di rete. Riprova.");
+    } finally {
+      setIsConfirming(false);
+    }
+  }
+
   return (
     <div className="flex gap-6">
       {/* Main content */}
@@ -128,7 +153,7 @@ export function NewOrderStepReview({
           <CardHeader>
             <h2 className="text-[15px] font-semibold">Riepilogo Ordine</h2>
             <p className="text-[13px] text-muted-foreground">
-              L'ordine è stato creato come bozza. Verifica i dati.
+              Verifica i dati e conferma l'ordine.
             </p>
           </CardHeader>
           <CardContent className="pt-0">
@@ -294,11 +319,15 @@ export function NewOrderStepReview({
             Indietro
           </Button>
           <Button
-            disabled={!workerGuid}
-            onClick={() => navigate(`/orders/${orderGuid}`)}
+            disabled={!workerGuid || isConfirming}
+            onClick={handleConfirmAndNavigate}
           >
-            <ExternalLink className="mr-1.5 h-4 w-4" />
-            Vai all'Ordine
+            {isConfirming ? (
+              <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+            ) : (
+              <ExternalLink className="mr-1.5 h-4 w-4" />
+            )}
+            Conferma Ordine
           </Button>
         </div>
       </div>
@@ -312,7 +341,7 @@ export function NewOrderStepReview({
           <CardContent className="space-y-3 pt-0">
             <div className="flex items-center justify-between">
               <span className="text-[13px] text-muted-foreground">Stato ordine</span>
-              <Badge variant="secondary">DRAFT</Badge>
+              <Badge variant="secondary">{getStatusLabel(orderStatus)}</Badge>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-[13px] text-muted-foreground">Righe salvate</span>
@@ -333,9 +362,11 @@ export function NewOrderStepReview({
             </div>
             <Separator />
             <p className="text-[12px] text-muted-foreground">
-              L'ordine è stato salvato come bozza con tutte le righe.
-              Seleziona il tuo nome per procedere.
+              Seleziona il tuo nome e conferma l'ordine per procedere.
             </p>
+            {confirmError && (
+              <p className="text-[12px] font-medium text-destructive">{confirmError}</p>
+            )}
           </CardContent>
         </Card>
       </div>

@@ -4,6 +4,26 @@ import { env } from "@/config/env";
 export function AuthLayout() {
   return (
     <div className="flex h-screen">
+      <style>{`
+        @keyframes spin-slow {
+          from { transform: rotate(0deg) }
+          to { transform: rotate(360deg) }
+        }
+        @keyframes crystal-glow {
+          0%, 100% { filter: brightness(1) drop-shadow(0 0 0px transparent) }
+          50% { filter: brightness(1.15) drop-shadow(0 0 30px rgba(255,255,255,0.15)) }
+        }
+        @keyframes shimmer-sweep {
+          0% { transform: translateX(-100%) rotate(25deg); opacity: 0 }
+          15% { opacity: 1 }
+          85% { opacity: 1 }
+          100% { transform: translateX(100%) rotate(25deg); opacity: 0 }
+        }
+        @keyframes text-shimmer {
+          0% { background-position: -200% center }
+          100% { background-position: 200% center }
+        }
+      `}</style>
       {/* ── Left — branded panel (hidden on mobile) ── */}
       <div
         className="relative hidden flex-col justify-between overflow-hidden p-12 lg:flex lg:w-1/2"
@@ -21,30 +41,67 @@ export function AuthLayout() {
           }}
         />
 
-        {/* Top: logo + app name */}
-        <div className="relative z-10 flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-white/10 ring-1 ring-white/20">
-            <img src="/logo.svg" alt={env.APP_NAME} className="h-8 w-8 object-contain" />
-          </div>
-          <span className="text-xl font-bold tracking-tight text-white">{env.APP_NAME}</span>
-        </div>
+        {/* Top: spacer */}
+        <div className="relative z-10" />
 
-        {/* Middle: headline + tagline */}
-        <div className="relative z-10 space-y-3">
-          <h2 className="text-[32px] font-bold leading-tight text-white">
-            Gestione ordini
-            <br />
-            <span className="text-white/60">semplice e veloce.</span>
-          </h2>
-          <p className="max-w-[260px] text-[14px] leading-relaxed text-white/45">
-            Tutta la logistica B2B in un'unica piattaforma.
-          </p>
-        </div>
+        {/* Middle: spacer */}
+        <div className="relative z-10" />
 
         {/* Bottom: copyright */}
         <p className="relative z-10 text-[11px] text-white/25">
-          © 2025 {env.APP_NAME}. Tutti i diritti riservati.
+          © 2026 {env.APP_NAME}. Sviluppato da teoreds.
         </p>
+
+        {/* Big logo — bottom-left, partially clipped, slow spin + glow */}
+        <div
+          className="pointer-events-none absolute"
+          style={{
+            bottom: "-430px",
+            left: "-320px",
+            width: "1100px",
+            height: "1100px",
+            animation: "spin-slow 60s linear infinite",
+          }}
+        >
+          {/* Crystal logo */}
+          <div
+            style={{
+              width: "100%",
+              height: "100%",
+              opacity: 0.25,
+              backgroundImage: "url(/logo_big.svg)",
+              backgroundSize: "100% 100%",
+              backgroundRepeat: "no-repeat",
+              animation: "crystal-glow 5s ease-in-out infinite",
+            }}
+          />
+          {/* Shimmer sweep — masked to SVG lines only */}
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              overflow: "hidden",
+              WebkitMaskImage: "url(/logo_big.svg)",
+              maskImage: "url(/logo_big.svg)",
+              WebkitMaskSize: "100% 100%",
+              maskSize: "100% 100%",
+              WebkitMaskRepeat: "no-repeat",
+              maskRepeat: "no-repeat",
+            }}
+          >
+            <div
+              style={{
+                position: "absolute",
+                top: "-50%",
+                left: 0,
+                width: "60%",
+                height: "200%",
+                background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.35) 40%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0.35) 60%, transparent 100%)",
+                animation: "shimmer-sweep 8s ease-in-out infinite",
+              }}
+            />
+          </div>
+        </div>
       </div>
 
       {/* ── Right — form panel ── */}

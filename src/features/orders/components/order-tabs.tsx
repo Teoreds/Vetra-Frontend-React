@@ -6,7 +6,6 @@ import { CommitmentsTab } from "./commitments-tab";
 import { PickNotesTab } from "./pick-notes-tab";
 import { DeliveryNotesTab } from "./delivery-notes-tab";
 import { AttachmentsTab } from "./attachments-tab";
-import { LogsTab } from "./logs-tab";
 import type { OrderOut } from "../types/order.types";
 
 interface OrderTabsProps {
@@ -14,18 +13,17 @@ interface OrderTabsProps {
 }
 
 const tabs = [
-  { value: "overview", label: "Overview" },
-  { value: "rows", label: "Rows" },
-  { value: "commitments", label: "Commitments" },
-  { value: "pick-notes", label: "Pick Notes" },
-  { value: "delivery-notes", label: "Delivery Notes" },
-  { value: "attachments", label: "Attachments" },
-  { value: "logs", label: "Logs" },
+  { value: "overview", label: "Panoramica" },
+  { value: "rows", label: "Articoli Ordine" },
+  { value: "commitments", label: "Impegni" },
+  { value: "pick-notes", label: "Note di Prelievo" },
+  { value: "delivery-notes", label: "Note di Consegna" },
+  { value: "attachments", label: "Documenti Correlati" },
 ] as const;
 
 export function OrderTabs({ order }: OrderTabsProps) {
   return (
-    <Tabs.Root defaultValue="overview" className="mt-6">
+    <Tabs.Root defaultValue="overview">
       <Tabs.List className="flex gap-0 border-b border-border/60">
         {tabs.map((tab) => (
           <Tabs.Trigger
@@ -60,9 +58,6 @@ export function OrderTabs({ order }: OrderTabsProps) {
         </Tabs.Content>
         <Tabs.Content value="attachments">
           <AttachmentsTab orderGuid={order.guid} />
-        </Tabs.Content>
-        <Tabs.Content value="logs">
-          <LogsTab orderGuid={order.guid} />
         </Tabs.Content>
       </div>
     </Tabs.Root>

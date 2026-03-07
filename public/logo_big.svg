@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 110 125"
+     fill="none"
+     stroke-linejoin="round"
+     stroke-linecap="round">
+
+  <defs>
+    <!-- Gradiente "soft white" leggermente freddo -->
+    <linearGradient id="softStroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"  stop-color="#F8FAFC" stop-opacity="0.90"/>
+      <stop offset="45%" stop-color="#E2E8F0" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#CBD5E1" stop-opacity="0.80"/>
+    </linearGradient>
+
+    <!-- Glow molto delicato (non invadente) -->
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="0.65" result="blur"/>
+      <feColorMatrix in="blur" type="matrix"
+        values="1 0 0 0 0
+                0 1 0 0 0
+                0 0 1 0 0
+                0 0 0 0.55 0" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Gruppo comune: gradiente + glow + spessore -->
+  <g stroke="url(#softStroke)" stroke-width="2.2" filter="url(#softGlow)">
+    <!-- Quadrato centrale -->
+    <path d="M 18.741319,25.576389
+             h 69.232638
+             l 0.110244,69.232637
+             l -69.232639,0.220488
+             Z" />
+
+    <!-- Poligono -->
+    <path d="M 18.732208,25.729453
+             53.426881,11.370523
+             87.830003,25.583677
+             102.4076,60.205463
+             88.121555,94.827248
+             53.426881,109.33195
+             18.805096,94.973025
+             4.3732783,60.351238
+             Z" />
+
+    <!-- Quadrato ruotato -->
+    <path d="M 18.741319,25.576389
+             h 69.232638
+             l 0.110244,69.232637
+             l -69.232639,0.220488
+             Z"
+          transform="rotate(45 53.41275975 60.2478295)" />
+
+    <!-- Quadrato inscritto 1 -->
+    <path d="M 18.7736806313,45.9642269831
+             L 67.7741406321,25.576389
+             L 88.0519112805,74.5312564116
+             L 39.1618707992,94.9648309339
+             Z" />
+
+    <!-- Quadrato inscritto 2 -->
+    <path d="M 39.0968979243,25.576389
+             L 88.0061738903,45.8084222582
+             L 67.7741418579,94.8737082710
+             L 18.8193746839,74.7514946268
+             Z" />
+  </g>
+
+</svg>

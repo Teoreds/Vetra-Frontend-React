@@ -6,45 +6,55 @@ interface DeliveryNotesTabProps {
   orderGuid: string;
 }
 
-export function DeliveryNotesTab({ orderGuid: _orderGuid }: DeliveryNotesTabProps) {
-  // Placeholder: In production, fetch delivery notes linked to this order
+export function DeliveryNotesTab({
+  orderGuid: _orderGuid,
+}: DeliveryNotesTabProps) {
+  // Placeholder: in produzione, le note di consegna vengono recuperate dal backend
   const deliveryNotes: DeliveryNoteOut[] = [];
 
   const columns: Column<DeliveryNoteOut>[] = [
     {
       key: "guid",
-      header: "Delivery Note",
+      header: "Nota di Consegna",
       render: (row) => (
-        <span className="font-medium text-primary">#{row.guid.slice(0, 8).toUpperCase()}</span>
+        <span className="font-medium text-primary">
+          #{row.guid.slice(0, 8).toUpperCase()}
+        </span>
       ),
     },
     {
       key: "delivery_date",
-      header: "Delivery Date",
-      render: (row) => <span className="text-sm">{formatDate(row.delivery_date)}</span>,
+      header: "Data Consegna",
+      render: (row) => (
+        <span className="text-sm">{formatDate(row.delivery_date)}</span>
+      ),
     },
     {
       key: "customer_party_guid",
-      header: "Customer",
+      header: "Cliente",
       render: (row) => (
-        <span className="font-mono text-sm">{row.customer_party_guid.slice(0, 8)}...</span>
+        <span className="font-mono text-sm">
+          {row.customer_party_guid.slice(0, 8)}...
+        </span>
       ),
     },
     {
       key: "created_at",
-      header: "Created",
-      render: (row) => <span className="text-sm">{formatDate(row.created_at)}</span>,
+      header: "Creato il",
+      render: (row) => (
+        <span className="text-sm">{formatDate(row.created_at)}</span>
+      ),
     },
   ];
 
   return (
     <div className="space-y-4">
-      <h3 className="text-[15px] font-semibold">Delivery Notes</h3>
+      <h3 className="text-[15px] font-semibold">Note di Consegna</h3>
       <DataTable
         columns={columns}
         data={deliveryNotes}
         keyExtractor={(row) => row.guid}
-        emptyMessage="No delivery notes created yet."
+        emptyMessage="Nessuna nota di consegna creata."
       />
     </div>
   );

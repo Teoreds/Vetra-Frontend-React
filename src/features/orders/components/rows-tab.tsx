@@ -16,11 +16,11 @@ export function RowsTab({ orderGuid, statusCode }: RowsTabProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-[15px] font-semibold">Order Rows</h3>
+        <h3 className="text-[15px] font-semibold">Articoli Ordine</h3>
         {canAddRows && (
           <Button size="sm" onClick={() => setIsAddModalOpen(true)}>
             <Plus className="mr-1 h-4 w-4" />
-            Add Row
+            Aggiungi Riga
           </Button>
         )}
       </div>

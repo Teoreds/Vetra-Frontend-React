@@ -43,26 +43,32 @@ export function NewOrderStepDetails({ defaultValues, onNext, isPending, error }:
   });
 
   const selectedPartyGuid = useWatch({ control, name: "party_guid" });
-  const shippingValue = useWatch({ control, name: "shipping_location_guid" });
-  const billingValue = useWatch({ control, name: "billing_location_guid" });
   const { data: locations = [], isLoading: isLoadingLocations } = usePartyLocations(
     selectedPartyGuid || undefined,
   );
 
-  // Preselect primary addresses when locations load for a new party selection
+  // Reset and preselect primary addresses when party changes
+  useEffect(() => {
+    if (!selectedPartyGuid) return;
+
+    // Clear previous selections so primaries can be applied
+    setValue("shipping_location_guid", undefined);
+    setValue("billing_location_guid", undefined);
+  }, [selectedPartyGuid, setValue]);
+
   useEffect(() => {
     if (isLoadingLocations || locations.length === 0) return;
 
     const primaryShipping = locations.find((l) => l.type_code === "SHIPPING" && l.is_primary);
     const primaryBilling = locations.find((l) => l.type_code === "BILLING" && l.is_primary);
 
-    if (!shippingValue && primaryShipping) {
+    if (primaryShipping) {
       setValue("shipping_location_guid", primaryShipping.location_guid);
     }
-    if (!billingValue && primaryBilling) {
+    if (primaryBilling) {
       setValue("billing_location_guid", primaryBilling.location_guid);
     }
-  }, [locations, isLoadingLocations]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [locations, isLoadingLocations, setValue]);
 
   const shippingLocations = locations.filter((l) => l.type_code === "SHIPPING");
   const billingLocations = locations.filter((l) => l.type_code === "BILLING");

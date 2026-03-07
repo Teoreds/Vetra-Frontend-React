@@ -24,7 +24,7 @@ export function StatusTransitionDropdown({
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <Button disabled={disabled}>
-          Move to
+          Avanza a
           <ChevronDown className="ml-1 h-4 w-4" />
         </Button>
       </DropdownMenu.Trigger>
