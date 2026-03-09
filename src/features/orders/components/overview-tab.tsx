@@ -1,13 +1,4 @@
-import {
-  Building2,
-  MapPin,
-  Plus,
-  Package,
-  DollarSign,
-  PercentCircle,
-  Receipt,
-  Calculator,
-} from "lucide-react";
+import { Building2, MapPin, Plus, Package, Calculator, DollarSign, PercentCircle, Receipt } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
 import { Separator } from "@/shared/ui/separator";
 import { Badge } from "@/shared/ui/badge";
@@ -122,11 +113,11 @@ export function OverviewTab({ order }: OverviewTabProps) {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="h-7 px-2 text-foreground/60">Articolo</TableHead>
-                    <TableHead className="h-7 w-16 px-2 text-right text-foreground/60">Qtà</TableHead>
-                    <TableHead className="h-7 w-24 px-2 text-right text-foreground/60">Prezzo</TableHead>
+                    <TableHead className="h-7 px-2 text-left text-foreground/60">Articolo</TableHead>
+                    <TableHead className="h-7 w-20 px-2 text-right text-foreground/60">Qtà</TableHead>
+                    <TableHead className="h-7 w-28 px-2 text-right text-foreground/60">Prezzo</TableHead>
                     <TableHead className="h-7 w-16 px-2 text-right text-foreground/60">Sc.%</TableHead>
-                    <TableHead className="h-7 w-24 px-2 text-right text-foreground/60">Totale</TableHead>
+                    <TableHead className="h-7 w-28 px-2 text-right text-foreground/60">Totale</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -139,7 +130,7 @@ export function OverviewTab({ order }: OverviewTabProps) {
 
                     return (
                       <TableRow key={row.guid}>
-                        <TableCell className="px-2 py-1.5">
+                        <TableCell className="px-2 py-2.5">
                           <div>
                             <p className="text-[12px] font-medium leading-tight">
                               {article?.description ?? row.article_guid.slice(0, 8)}
@@ -151,7 +142,7 @@ export function OverviewTab({ order }: OverviewTabProps) {
                             )}
                           </div>
                         </TableCell>
-                        <TableCell className="px-2 py-1.5 text-right text-[12px] tabular-nums">
+                        <TableCell className="px-2 py-2.5 text-right text-[12px] tabular-nums">
                           {qty}
                           {row.unit_of_measure_code && (
                             <span className="ml-1 text-[10px] text-muted-foreground">
@@ -159,13 +150,13 @@ export function OverviewTab({ order }: OverviewTabProps) {
                             </span>
                           )}
                         </TableCell>
-                        <TableCell className="px-2 py-1.5 text-right text-[12px] tabular-nums">
+                        <TableCell className="px-2 py-2.5 text-right text-[12px] tabular-nums">
                           {fmt(price)}
                         </TableCell>
-                        <TableCell className="px-2 py-1.5 text-right text-[12px] tabular-nums">
+                        <TableCell className="px-2 py-2.5 text-right text-[12px] tabular-nums">
                           {discount > 0 ? `${discount}%` : "\u2014"}
                         </TableCell>
-                        <TableCell className="px-2 py-1.5 text-right text-[12px] font-medium tabular-nums">
+                        <TableCell className="px-2 py-2.5 text-right text-[12px] font-medium tabular-nums">
                           {fmt(lineTotal)}
                         </TableCell>
                       </TableRow>
@@ -177,43 +168,43 @@ export function OverviewTab({ order }: OverviewTabProps) {
           </CardContent>
         </Card>
 
-        {/* Riepilogo finanziario — 4 card sotto la tabella */}
+        {/* Riepilogo finanziario */}
         <div className="grid grid-cols-4 gap-3">
-          <div className="flex items-center gap-2.5 rounded-lg border border-border/60 px-3 py-2.5">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-slate-100 dark:bg-slate-800">
-              <DollarSign className="h-4 w-4 text-slate-700 dark:text-slate-300" />
+          <div className="flex items-center gap-2.5 px-1 py-2">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-500/10">
+              <DollarSign className="h-3.5 w-3.5 text-slate-500" />
             </div>
-            <div className="min-w-0">
+            <div>
               <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                 Imponibile
               </p>
-              <p className="text-[14px] font-bold leading-tight">{fmt(totalGross)}</p>
+              <p className="text-[15px] font-bold leading-tight tabular-nums">{fmt(totalGross)}</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5 rounded-lg border border-border/60 px-3 py-2.5">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-red-100 dark:bg-red-950/50">
-              <PercentCircle className="h-4 w-4 text-red-700 dark:text-red-400" />
+          <div className="flex items-center gap-2.5 px-1 py-2">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-red-500/10">
+              <PercentCircle className="h-3.5 w-3.5 text-red-500" />
             </div>
-            <div className="min-w-0">
+            <div>
               <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                 Sconto
               </p>
-              <p className="text-[14px] font-bold leading-tight">
+              <p className="text-[15px] font-bold leading-tight tabular-nums">
                 {totalDiscount > 0 ? `\u2212${fmt(totalDiscount)}` : fmt(0)}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5 rounded-lg border border-border/60 px-3 py-2.5">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-amber-100 dark:bg-amber-950/50">
-              <Receipt className="h-4 w-4 text-amber-700 dark:text-amber-400" />
+          <div className="flex items-center gap-2.5 px-1 py-2">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-amber-500/10">
+              <Receipt className="h-3.5 w-3.5 text-amber-500" />
             </div>
-            <div className="min-w-0">
+            <div>
               <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                 IVA
               </p>
-              <p className="text-[14px] font-bold leading-tight">{fmt(totalVat)}</p>
+              <p className="text-[15px] font-bold leading-tight tabular-nums">{fmt(totalVat)}</p>
             </div>
           </div>
 
@@ -225,7 +216,7 @@ export function OverviewTab({ order }: OverviewTabProps) {
               <p className="text-[10px] font-semibold uppercase tracking-wider text-primary/70">
                 Totale
               </p>
-              <p className="text-[20px] font-extrabold leading-tight tracking-tight text-primary">
+              <p className="text-[20px] font-extrabold leading-tight tracking-tight tabular-nums text-primary">
                 {fmt(grandTotal)}
               </p>
             </div>

@@ -24,7 +24,7 @@ const tabs = [
 export function OrderTabs({ order }: OrderTabsProps) {
   return (
     <Tabs.Root defaultValue="overview">
-      <Tabs.List className="flex gap-0 border-b border-border/60">
+      <Tabs.List className="flex gap-0 border-b border-border">
         {tabs.map((tab) => (
           <Tabs.Trigger
             key={tab.value}
