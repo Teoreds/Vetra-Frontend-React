@@ -21,6 +21,7 @@ const rowSchema = z.object({
   article_guid: z.string(),
   article_code: z.string(),
   article_description: z.string(),
+  unit_of_measure_code: z.string().optional(),
   quantity: z.coerce.number().positive("Quantità > 0"),
   unit_price: z.coerce.number().min(0, "Prezzo ≥ 0"),
   discount_percent: z.coerce.number().min(0).max(100).default(0),
@@ -88,6 +89,7 @@ export function NewOrderStepItems({
       article_guid: article.guid,
       article_code: article.code,
       article_description: article.description,
+      unit_of_measure_code: article.unit_of_measure_code,
       quantity: 1,
       unit_price: listPrice,
       discount_percent: 0,
@@ -196,13 +198,20 @@ export function NewOrderStepItems({
                   </div>
                 </TableCell>
                 <TableCell className={td}>
-                  <input
-                    type="number"
-                    step="any"
-                    min="0"
-                    {...register(`${prefix}.${index}.quantity`, { valueAsNumber: true })}
-                    className={inputCls}
-                  />
+                  <div className="relative">
+                    <input
+                      type="number"
+                      step="any"
+                      min="0"
+                      {...register(`${prefix}.${index}.quantity`, { valueAsNumber: true })}
+                      className={cn(inputCls, "pr-8 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none")}
+                    />
+                    {watchedRows[index]?.unit_of_measure_code && (
+                      <span className="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground">
+                        {watchedRows[index].unit_of_measure_code}
+                      </span>
+                    )}
+                  </div>
                 </TableCell>
                 <TableCell className={td}>
                   <input type="hidden" {...register(`${prefix}.${index}.unit_price`, { valueAsNumber: true })} />

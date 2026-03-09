@@ -30,7 +30,7 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
                   className={cn(
                     "flex h-8 w-8 items-center justify-center rounded-full border-2 text-[12px] font-semibold transition-all duration-200",
                     isCompleted &&
-                      "border-primary bg-primary text-primary-foreground shadow-[0_0_0_3px_rgba(37,99,235,0.10)]",
+                      "border-primary/50 bg-primary/15 text-primary shadow-[0_0_0_3px_rgba(37,99,235,0.08)]",
                     isActive &&
                       "border-primary bg-primary text-primary-foreground shadow-[0_0_0_3px_rgba(37,99,235,0.15)]",
                     !isCompleted &&
@@ -49,7 +49,7 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
                     className={cn(
                       "text-[11px] font-semibold leading-tight whitespace-nowrap",
                       isActive && "text-primary",
-                      isCompleted && "text-foreground",
+                      isCompleted && "text-primary/70",
                       !isCompleted && !isActive && "text-muted-foreground",
                     )}
                   >
@@ -70,7 +70,7 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
                   style={{
                     background:
                       stepNumber < currentStep
-                        ? "linear-gradient(to right, transparent, rgba(37,99,235,0.35), transparent)"
+                        ? "linear-gradient(to right, transparent, rgba(37,99,235,0.25), transparent)"
                         : "linear-gradient(to right, transparent, rgba(226,232,240,0.8), transparent)",
                   }}
                 />

@@ -30,8 +30,8 @@ export function OrderTabs({ order }: OrderTabsProps) {
             key={tab.value}
             value={tab.value}
             className={cn(
-              "px-4 py-2.5 text-[13px] font-medium text-muted-foreground transition-colors",
-              "border-b-2 border-transparent -mb-px hover:text-foreground",
+              "px-4 py-2.5 text-[13px] font-medium text-muted-foreground/60 transition-colors",
+              "border-b-[2.5px] border-transparent -mb-px hover:text-foreground",
               "data-[state=active]:border-primary data-[state=active]:text-foreground data-[state=active]:font-semibold",
             )}
           >
