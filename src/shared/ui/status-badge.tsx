@@ -6,16 +6,16 @@ const statusBadgeVariants = cva(
   {
     variants: {
       variant: {
-        draft: "bg-slate-100 text-slate-600",
-        confirmed: "bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-200",
-        committed: "bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-200",
-        picking: "bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-200",
-        shipped: "bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-200",
-        completed: "bg-green-50 text-green-700 ring-1 ring-inset ring-green-200",
-        cancelled: "bg-red-50 text-red-700 ring-1 ring-inset ring-red-200",
-        pending: "bg-orange-50 text-orange-700 ring-1 ring-inset ring-orange-200",
-        delivered: "bg-teal-50 text-teal-700 ring-1 ring-inset ring-teal-200",
-        default: "bg-slate-100 text-slate-600",
+        draft: "bg-slate-500/8 text-slate-500",
+        confirmed: "bg-blue-500/8 text-blue-600",
+        committed: "bg-indigo-500/8 text-indigo-600",
+        picking: "bg-amber-500/10 text-amber-600",
+        shipped: "bg-emerald-500/8 text-emerald-600",
+        completed: "bg-green-500/8 text-green-600",
+        cancelled: "bg-red-500/8 text-red-600",
+        pending: "bg-orange-500/10 text-orange-600",
+        delivered: "bg-teal-500/8 text-teal-600",
+        default: "bg-slate-500/8 text-slate-500",
       },
     },
     defaultVariants: {
