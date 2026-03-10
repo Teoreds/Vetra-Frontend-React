@@ -34,7 +34,7 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
                       "bg-primary text-primary-foreground",
                     !isCompleted &&
                       !isActive &&
-                      "bg-muted text-muted-foreground",
+                      "bg-slate-200/70 text-slate-500",
                   )}
                 >
                   {isCompleted ? (
@@ -48,7 +48,7 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
                     "text-[11px] font-medium whitespace-nowrap",
                     isActive && "text-primary font-semibold",
                     isCompleted && "text-primary/70",
-                    !isCompleted && !isActive && "text-muted-foreground",
+                    !isCompleted && !isActive && "text-slate-400",
                   )}
                 >
                   {step.label}

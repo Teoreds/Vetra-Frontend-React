@@ -36,6 +36,18 @@ export const ordersApi = {
       body,
     }),
 
+  updateAddresses: (
+    orderGuid: string,
+    body: {
+      shipping_location_guid?: string | null;
+      billing_location_guid?: string | null;
+    },
+  ) =>
+    apiClient.PATCH("/orders/{order_guid}", {
+      params: { path: { order_guid: orderGuid } },
+      body: body as never,
+    }),
+
   confirm: (orderGuid: string) =>
     apiClient.POST("/orders/{order_guid}/confirm", {
       params: { path: { order_guid: orderGuid } },

@@ -3,7 +3,7 @@ import { ArrowLeft, Printer, Pencil, ClipboardList } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Stepper } from "@/shared/ui/stepper";
 import { StatusBadge, getStatusVariant } from "@/shared/ui/status-badge";
-import { getStatusLabel } from "../types/order-status";
+import { getStatusLabel, isOrderEditable } from "../types/order-status";
 import { useWarehouseWorkers } from "@/features/warehouses/hooks/use-warehouse-workers";
 import type { OrderOut } from "../types/order.types";
 
@@ -101,7 +101,11 @@ export function OrderHeader({ order }: OrderHeaderProps) {
               <ClipboardList className="h-4 w-4" />
             </Button>
           )}
-          <Button size="sm">
+          <Button
+            size="sm"
+            onClick={() => navigate(`/orders/${order.guid}/edit`)}
+            disabled={!isOrderEditable(order.status_code)}
+          >
             <Pencil className="mr-1.5 h-3.5 w-3.5" />
             Modifica
           </Button>

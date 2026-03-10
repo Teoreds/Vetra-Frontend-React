@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Pencil, Printer, Copy } from "lucide-react";
+import { Pencil, Printer, Copy, MoreVertical } from "lucide-react";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { DataTable, type Column } from "@/shared/ui/data-table";
 import { StatusBadge, getStatusVariant } from "@/shared/ui/status-badge";
 import { formatDate, formatDateTime } from "@/shared/lib/utils";
@@ -32,6 +33,13 @@ function getAvatarColor(name: string) {
   return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
 }
 
+function fmt(n: number) {
+  return new Intl.NumberFormat("it-IT", {
+    style: "currency",
+    currency: "EUR",
+  }).format(n);
+}
+
 function isSameDay(a: string, b: string): boolean {
   return a.slice(0, 10) === b.slice(0, 10);
 }
@@ -54,6 +62,7 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
     {
       key: "guid",
       header: "ID Ordine",
+      className: "w-32",
       render: (row) => (
         <span className="text-[13px] font-semibold text-primary">
           #{row.guid.slice(0, 8).toUpperCase()}
@@ -88,6 +97,7 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
     {
       key: "status_code",
       header: "Stato",
+      className: "w-32",
       render: (row) => (
         <StatusBadge
           variant={getStatusVariant(row.status_code)}
@@ -96,13 +106,29 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
       ),
     },
     {
+      key: "total",
+      header: "Totale",
+      className: "w-28 text-right",
+      render: (row) => {
+        const net = Number(row.total_net ?? 0);
+        const vat = Number(row.total_vat ?? 0);
+        const total = net + vat;
+        return (
+          <span className="text-[13px] font-medium tabular-nums">
+            {fmt(total)}
+          </span>
+        );
+      },
+    },
+    {
       key: "order_date",
       header: "Data",
+      className: "w-32 text-right",
       render: (row) => {
         const showCreated =
           row.created_at && !isSameDay(row.order_date, row.created_at);
         return (
-          <div>
+          <div className="text-right">
             <span className="text-[13px] text-muted-foreground">
               {formatDate(row.order_date)}
             </span>
@@ -120,34 +146,46 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
       header: "",
       className: "w-0",
       render: (row) => (
-        <div className="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover/row:opacity-100">
-          <button
-            type="button"
-            className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-            title="Modifica"
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate(`/orders/${row.guid}`);
-            }}
-          >
-            <Pencil className="h-3.5 w-3.5" />
-          </button>
-          <button
-            type="button"
-            className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-            title="Stampa"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Printer className="h-3.5 w-3.5" />
-          </button>
-          <button
-            type="button"
-            className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-            title="Duplica"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Copy className="h-3.5 w-3.5" />
-          </button>
+        <div className="flex justify-end opacity-0 transition-opacity group-hover/row:opacity-100">
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger asChild>
+              <button
+                type="button"
+                className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <MoreVertical className="h-4 w-4" />
+              </button>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Portal>
+              <DropdownMenu.Content
+                align="end"
+                sideOffset={4}
+                className="z-50 min-w-[160px] rounded-lg border border-border/60 bg-popover p-1 shadow-lg animate-in fade-in-0 zoom-in-95"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <DropdownMenu.Item
+                  className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
+                  onSelect={() => navigate(`/orders/${row.guid}/edit`)}
+                >
+                  <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
+                  Modifica
+                </DropdownMenu.Item>
+                <DropdownMenu.Item
+                  className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
+                >
+                  <Printer className="h-3.5 w-3.5 text-muted-foreground" />
+                  Stampa
+                </DropdownMenu.Item>
+                <DropdownMenu.Item
+                  className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
+                >
+                  <Copy className="h-3.5 w-3.5 text-muted-foreground" />
+                  Duplica
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Portal>
+          </DropdownMenu.Root>
         </div>
       ),
     },

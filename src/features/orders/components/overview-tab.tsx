@@ -1,4 +1,4 @@
-import { Building2, MapPin, Plus, Package, Calculator, DollarSign, PercentCircle, Receipt } from "lucide-react";
+import { Building2, MapPin, Plus, Package } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
 import { Separator } from "@/shared/ui/separator";
 import { Badge } from "@/shared/ui/badge";
@@ -169,59 +169,34 @@ export function OverviewTab({ order }: OverviewTabProps) {
         </Card>
 
         {/* Riepilogo finanziario */}
-        <div className="grid grid-cols-4 gap-3">
-          <div className="flex items-center gap-2.5 px-1 py-2">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-500/10">
-              <DollarSign className="h-3.5 w-3.5 text-slate-500" />
+        <Card>
+          <CardContent className="pt-4 pb-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-6">
+                <div>
+                  <p className="text-[11px] font-medium text-muted-foreground">Imponibile</p>
+                  <p className="text-[14px] font-semibold tabular-nums">{fmt(totalGross)}</p>
+                </div>
+                <div className="h-8 w-px bg-border/60" />
+                <div>
+                  <p className="text-[11px] font-medium text-muted-foreground">Sconto</p>
+                  <p className="text-[14px] font-semibold tabular-nums text-destructive">
+                    {totalDiscount > 0 ? `\u2212${fmt(totalDiscount)}` : "\u2014"}
+                  </p>
+                </div>
+                <div className="h-8 w-px bg-border/60" />
+                <div>
+                  <p className="text-[11px] font-medium text-muted-foreground">IVA</p>
+                  <p className="text-[14px] font-semibold tabular-nums">{fmt(totalVat)}</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-[11px] font-medium text-muted-foreground">Totale</p>
+                <p className="text-[18px] font-bold tabular-nums text-primary">{fmt(grandTotal)}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                Imponibile
-              </p>
-              <p className="text-[15px] font-bold leading-tight tabular-nums">{fmt(totalGross)}</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2.5 px-1 py-2">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-red-500/10">
-              <PercentCircle className="h-3.5 w-3.5 text-red-500" />
-            </div>
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                Sconto
-              </p>
-              <p className="text-[15px] font-bold leading-tight tabular-nums">
-                {totalDiscount > 0 ? `\u2212${fmt(totalDiscount)}` : fmt(0)}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2.5 px-1 py-2">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-amber-500/10">
-              <Receipt className="h-3.5 w-3.5 text-amber-500" />
-            </div>
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                IVA
-              </p>
-              <p className="text-[15px] font-bold leading-tight tabular-nums">{fmt(totalVat)}</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2.5 rounded-lg border-2 border-primary/30 bg-primary/[0.04] px-3 py-2.5">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary/15">
-              <Calculator className="h-[18px] w-[18px] text-primary" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-primary/70">
-                Totale
-              </p>
-              <p className="text-[20px] font-extrabold leading-tight tracking-tight tabular-nums text-primary">
-                {fmt(grandTotal)}
-              </p>
-            </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* ── Sidebar destra: cliente + indirizzi + logistica + note ── */}

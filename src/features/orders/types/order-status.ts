@@ -48,3 +48,14 @@ export const STATUS_LABELS: Record<OrderStatus, string> = {
 export function getStatusLabel(status: string): string {
   return STATUS_LABELS[status.toUpperCase() as OrderStatus] ?? status;
 }
+
+export const EDITABLE_STATUSES: readonly OrderStatus[] = [
+  "DRAFT",
+  "CONFIRMED",
+  "COMMITTED",
+  "PICKING",
+] as const;
+
+export function isOrderEditable(status: string): boolean {
+  return (EDITABLE_STATUSES as readonly string[]).includes(status.toUpperCase());
+}

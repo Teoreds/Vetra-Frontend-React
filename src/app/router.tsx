@@ -8,6 +8,7 @@ import { DashboardPage } from "@/features/dashboard/pages/dashboard-page";
 import { OrderListPage } from "@/features/orders/pages/order-list-page";
 import { OrderDetailPage } from "@/features/orders/pages/order-detail-page";
 import { NewOrderPage } from "@/features/orders/pages/new-order-page";
+import { OrderWizardPage } from "@/features/orders/pages/order-wizard-page";
 import { PartiesListPage } from "@/features/parties/pages/parties-list-page";
 import { PartyDetailPage } from "@/features/parties/pages/party-detail-page";
 import { NewPartyPage } from "@/features/parties/pages/new-party-page";
@@ -38,6 +39,7 @@ export const router = createBrowserRouter([
           { path: "/orders", element: <OrderListPage /> },
           { path: "/orders/new", element: <NewOrderPage /> },
           { path: "/orders/:id", element: <OrderDetailPage /> },
+          { path: "/orders/:id/edit", element: <OrderWizardPage /> },
           { path: "/parties", element: <PartiesListPage /> },
           { path: "/parties/new", element: <NewPartyPage /> },
           { path: "/parties/:id", element: <PartyDetailPage /> },

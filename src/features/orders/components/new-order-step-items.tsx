@@ -26,6 +26,7 @@ const rowSchema = z.object({
   unit_price: z.coerce.number().min(0, "Prezzo ≥ 0"),
   discount_percent: z.coerce.number().min(0).max(100).default(0),
   vat_code: z.string().optional(),
+  _serverGuid: z.string().optional(),
 });
 
 export type OrderRowDraft = z.infer<typeof rowSchema>;
@@ -45,6 +46,8 @@ interface NewOrderStepItemsProps {
   initialCommitmentRows: OrderRowDraft[];
   onNext: (data: { availableRows: OrderRowDraft[]; commitmentRows: OrderRowDraft[] }) => void;
   onBack: () => void;
+  mode?: "create" | "edit";
+  originalRowGuids?: Set<string>;
 }
 
 export function NewOrderStepItems({
@@ -55,6 +58,8 @@ export function NewOrderStepItems({
   initialCommitmentRows,
   onNext,
   onBack,
+  mode = "create",
+  originalRowGuids,
 }: NewOrderStepItemsProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -134,20 +139,70 @@ export function NewOrderStepItems({
     setIsSaving(true);
     setSaveError(null);
 
-    // Save rows sequentially
     const allRows = [...values.available_rows, ...values.commitment_rows];
-    for (const row of allRows) {
-      const { error } = await ordersApi.createRow(orderGuid, {
-        article_guid: row.article_guid,
-        quantity: row.quantity,
-        unit_price: row.unit_price,
-        discount_percent: row.discount_percent,
-        availability_status_code: "UNKNOWN",
-      });
-      if (error) {
-        setSaveError("Errore nel salvataggio delle righe. Riprova.");
-        setIsSaving(false);
-        return;
+
+    if (mode === "edit") {
+      // Collect current _serverGuids still present
+      const currentServerGuids = new Set(
+        allRows.map((r) => r._serverGuid).filter(Boolean) as string[],
+      );
+
+      // Soft-delete removed rows (set quantity to 0)
+      if (originalRowGuids) {
+        for (const guid of originalRowGuids) {
+          if (!currentServerGuids.has(guid)) {
+            const { error } = await ordersApi.updateRow(guid, { quantity: 0 });
+            if (error) {
+              setSaveError("Errore nel salvataggio delle righe. Riprova.");
+              setIsSaving(false);
+              return;
+            }
+          }
+        }
+      }
+
+      // Update existing rows or create new ones
+      for (const row of allRows) {
+        if (row._serverGuid) {
+          const { error } = await ordersApi.updateRow(row._serverGuid, {
+            quantity: row.quantity,
+            unit_price: row.unit_price,
+          });
+          if (error) {
+            setSaveError("Errore nel salvataggio delle righe. Riprova.");
+            setIsSaving(false);
+            return;
+          }
+        } else {
+          const { error } = await ordersApi.createRow(orderGuid, {
+            article_guid: row.article_guid,
+            quantity: row.quantity,
+            unit_price: row.unit_price,
+            discount_percent: row.discount_percent,
+            availability_status_code: "UNKNOWN",
+          });
+          if (error) {
+            setSaveError("Errore nel salvataggio delle righe. Riprova.");
+            setIsSaving(false);
+            return;
+          }
+        }
+      }
+    } else {
+      // Create mode — POST each row
+      for (const row of allRows) {
+        const { error } = await ordersApi.createRow(orderGuid, {
+          article_guid: row.article_guid,
+          quantity: row.quantity,
+          unit_price: row.unit_price,
+          discount_percent: row.discount_percent,
+          availability_status_code: "UNKNOWN",
+        });
+        if (error) {
+          setSaveError("Errore nel salvataggio delle righe. Riprova.");
+          setIsSaving(false);
+          return;
+        }
       }
     }
 
@@ -369,6 +424,11 @@ export function NewOrderStepItems({
                 <>
                   <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
                   Salvataggio righe…
+                </>
+              ) : mode === "edit" ? (
+                <>
+                  Salva Modifiche
+                  <ArrowRight className="ml-1.5 h-4 w-4" />
                 </>
               ) : (
                 <>
