@@ -38,11 +38,10 @@ export function PaginationControls({
   return (
     <div className="flex items-center justify-between border-t border-border px-4 py-3">
       <p className="text-sm text-muted-foreground">
-        Showing{" "}
         <span className="font-medium text-foreground">
           {from}-{to}
         </span>{" "}
-        of <span className="font-medium text-foreground">{total}</span> results
+        di <span className="font-medium text-foreground">{total}</span> risultati
       </p>
 
       <div className="flex items-center gap-1">

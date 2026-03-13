@@ -7,7 +7,7 @@ import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
 import { DatePicker } from "@/shared/ui/date-picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
-import { useParties } from "@/features/parties/hooks/use-parties";
+import { PartySearchSelect } from "@/features/parties/components/party-search-select";
 import { usePartyLocations, type PartyLocationWithAddress } from "@/features/parties/hooks/use-party-locations";
 
 const step1Schema = z.object({
@@ -24,6 +24,7 @@ interface NewOrderStepDetailsProps {
   onNext: (data: Step1Data) => void;
   isPending?: boolean;
   error?: string | null;
+  readOnly?: boolean;
 }
 
 function formatAddress(loc: PartyLocationWithAddress): string {
@@ -32,10 +33,8 @@ function formatAddress(loc: PartyLocationWithAddress): string {
   return loc.type_code;
 }
 
-export function NewOrderStepDetails({ defaultValues, onNext, isPending, error }: NewOrderStepDetailsProps) {
+export function NewOrderStepDetails({ defaultValues, onNext, isPending, error, readOnly }: NewOrderStepDetailsProps) {
   const today = new Date().toISOString().slice(0, 10);
-  const { data: partiesData } = useParties({ limit: 200 });
-  const parties = partiesData?.items ?? [];
 
   const { handleSubmit, control, setValue, formState: { errors } } = useForm<Step1Data>({
     resolver: zodResolver(step1Schema),
@@ -47,17 +46,17 @@ export function NewOrderStepDetails({ defaultValues, onNext, isPending, error }:
     selectedPartyGuid || undefined,
   );
 
-  // Reset and preselect primary addresses when party changes
+  // Reset and preselect primary addresses when party changes (create mode only)
   useEffect(() => {
-    if (!selectedPartyGuid) return;
+    if (readOnly || !selectedPartyGuid) return;
 
     // Clear previous selections so primaries can be applied
     setValue("shipping_location_guid", undefined);
     setValue("billing_location_guid", undefined);
-  }, [selectedPartyGuid, setValue]);
+  }, [selectedPartyGuid, setValue, readOnly]);
 
   useEffect(() => {
-    if (isLoadingLocations || locations.length === 0) return;
+    if (readOnly || isLoadingLocations || locations.length === 0) return;
 
     const primaryShipping = locations.find((l) => l.type_code === "SHIPPING" && l.is_primary);
     const primaryBilling = locations.find((l) => l.type_code === "BILLING" && l.is_primary);
@@ -68,7 +67,7 @@ export function NewOrderStepDetails({ defaultValues, onNext, isPending, error }:
     if (primaryBilling) {
       setValue("billing_location_guid", primaryBilling.location_guid);
     }
-  }, [locations, isLoadingLocations, setValue]);
+  }, [locations, isLoadingLocations, setValue, readOnly]);
 
   const shippingLocations = locations.filter((l) => l.type_code === "SHIPPING");
   const billingLocations = locations.filter((l) => l.type_code === "BILLING");
@@ -95,18 +94,11 @@ export function NewOrderStepDetails({ defaultValues, onNext, isPending, error }:
                 control={control}
                 name="party_guid"
                 render={({ field }) => (
-                  <Select value={field.value ?? ""} onValueChange={field.onChange}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Seleziona un cliente…" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {parties.map((p) => (
-                        <SelectItem key={p.guid} value={p.guid}>
-                          {p.description}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <PartySearchSelect
+                    value={field.value ?? ""}
+                    onChange={field.onChange}
+                    disabled={readOnly}
+                  />
                 )}
               />
               {errors.party_guid && (
@@ -124,6 +116,7 @@ export function NewOrderStepDetails({ defaultValues, onNext, isPending, error }:
                     value={field.value}
                     onChange={field.onChange}
                     placeholder="Seleziona una data…"
+                    disabled={readOnly}
                   />
                 )}
               />

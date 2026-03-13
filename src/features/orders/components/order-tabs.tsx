@@ -24,14 +24,14 @@ const tabs = [
 export function OrderTabs({ order }: OrderTabsProps) {
   return (
     <Tabs.Root defaultValue="overview">
-      <Tabs.List className="flex gap-0 border-b border-border/60">
+      <Tabs.List className="flex gap-0 border-b border-border">
         {tabs.map((tab) => (
           <Tabs.Trigger
             key={tab.value}
             value={tab.value}
             className={cn(
-              "px-4 py-2.5 text-[13px] font-medium text-muted-foreground transition-colors",
-              "border-b-2 border-transparent -mb-px hover:text-foreground",
+              "px-4 py-2.5 text-[13px] font-medium text-muted-foreground/60 transition-colors",
+              "border-b-[2.5px] border-transparent -mb-px hover:text-foreground",
               "data-[state=active]:border-primary data-[state=active]:text-foreground data-[state=active]:font-semibold",
             )}
           >

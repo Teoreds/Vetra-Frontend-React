@@ -16,7 +16,6 @@ import {
 } from "@/shared/ui/select";
 import { ordersApi } from "../api/orders.api";
 import { orderKeys } from "../api/orders.queries";
-import { getStatusLabel } from "../types/order-status";
 import { useParties } from "@/features/parties/hooks/use-parties";
 import { usePartyLocations } from "@/features/parties/hooks/use-party-locations";
 import { useWarehouseWorkers } from "@/features/warehouses/hooks/use-warehouse-workers";
@@ -123,7 +122,6 @@ export function NewOrderStepReview({
   const isVatExempt = vatRate === 0;
   const vatPctLabel = `${(vatRate * 100).toFixed(0)}%`;
 
-  const orderStatus = (order?.status_code as string) ?? "DRAFT";
 
   async function handleConfirmAndNavigate() {
     setConfirmError(null);
@@ -157,43 +155,33 @@ export function NewOrderStepReview({
             </p>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="grid grid-cols-3 gap-4">
-              <div className="flex items-start gap-3 rounded-lg border border-border/60 bg-muted/30 p-3">
-                <User className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                    Cliente
-                  </p>
-                  <p className="text-[13px] font-medium">{party?.description ?? "—"}</p>
+            <div className="space-y-2">
+              <div className="grid grid-cols-2 gap-2">
+                <div className="flex items-center gap-2 rounded-lg border border-border/60 bg-muted/30 px-3 py-2 text-[13px]">
+                  <User className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                  <span className="text-muted-foreground">Cliente</span>
+                  <span className="font-medium truncate">{party?.description ?? "—"}</span>
                 </div>
-              </div>
-              <div className="flex items-start gap-3 rounded-lg border border-border/60 bg-muted/30 p-3">
-                <CalendarDays className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                    Data Ordine
-                  </p>
-                  <p className="text-[13px] font-medium">
+                <div className="flex items-center gap-2 rounded-lg border border-border/60 bg-muted/30 px-3 py-2 text-[13px]">
+                  <CalendarDays className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                  <span className="text-muted-foreground">Data</span>
+                  <span className="font-medium">
                     {new Date(step1Data.order_date).toLocaleDateString("it-IT", {
                       day: "2-digit",
                       month: "long",
                       year: "numeric",
                     })}
-                  </p>
+                  </span>
                 </div>
               </div>
-              <div className="flex items-start gap-3 rounded-lg border border-border/60 bg-muted/30 p-3">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                    Spedizione
-                  </p>
-                  <p className="text-[13px] font-medium">
-                    {shippingLocation
-                      ? `${shippingLocation.type_code.charAt(0).toUpperCase() + shippingLocation.type_code.slice(1).toLowerCase()}${shippingLocation.is_primary ? " — Primario" : ""}`
-                      : "Non specificata"}
-                  </p>
-                </div>
+              <div className="flex items-center gap-2 rounded-lg border border-border/60 bg-muted/30 px-3 py-2 text-[13px]">
+                <MapPin className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                <span className="text-muted-foreground">Spedizione</span>
+                <span className="font-medium">
+                  {shippingLocation
+                    ? [shippingLocation.address_line, shippingLocation.post_code, shippingLocation.city, shippingLocation.province].filter(Boolean).join(", ")
+                    : "Non specificata"}
+                </span>
               </div>
             </div>
           </CardContent>
@@ -225,93 +213,6 @@ export function NewOrderStepReview({
           </CardContent>
         </Card>
 
-        {/* VAT Breakdown from backend */}
-        <Card>
-          <CardHeader>
-            <h3 className="text-[14px] font-semibold">Riepilogo IVA</h3>
-          </CardHeader>
-          <CardContent className="pt-0">
-            {isLoadingOrder ? (
-              <div className="flex items-center justify-center py-6">
-                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-                <span className="ml-2 text-[13px] text-muted-foreground">Caricamento totali…</span>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[13px] text-muted-foreground">Imponibile Lordo</span>
-                    <span className="text-[13px] font-medium">{fmt(totalGross)}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[13px] text-muted-foreground">Sconto Totale</span>
-                    <span className="text-[13px] font-medium text-destructive">
-                      {totalDiscount > 0 ? `−${fmt(totalDiscount)}` : "—"}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[13px] text-muted-foreground">Imponibile Netto</span>
-                    <span className="text-[13px] font-medium">{fmt(totalNet)}</span>
-                  </div>
-                  <Separator />
-                  <div className="flex items-center justify-between">
-                    <span className="text-[13px] text-muted-foreground">
-                      {isVatExempt ? "IVA esente (lettera d'intento)" : `IVA (${vatPctLabel})`}
-                    </span>
-                    <span className="text-[13px] font-medium">
-                      {isVatExempt ? "€ 0,00" : fmt(totalVat)}
-                    </span>
-                  </div>
-                  <Separator />
-                  <div className="flex items-center justify-between">
-                    <span className="text-[14px] font-semibold">Totale</span>
-                    <span className="text-[16px] font-bold text-primary">{fmt(grandTotal)}</span>
-                  </div>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Firma operatore */}
-        <Card className={!workerGuid ? "border-amber-200 bg-amber-50/40 dark:border-amber-900/40 dark:bg-amber-950/20" : "border-emerald-200 bg-emerald-50/40 dark:border-emerald-900/40 dark:bg-emerald-950/20"}>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <PenLine className={`h-4 w-4 ${!workerGuid ? "text-amber-500" : "text-emerald-500"}`} />
-              <h3 className="text-[14px] font-semibold">Firma Operatore</h3>
-              {!workerGuid && (
-                <Badge variant="secondary" className="ml-auto border-amber-200 bg-amber-100 text-amber-700 dark:border-amber-900/40 dark:bg-amber-950 dark:text-amber-400">
-                  Richiesta
-                </Badge>
-              )}
-            </div>
-            <p className="text-[13px] text-muted-foreground">
-              Seleziona il tuo nome per confermare la presa in carico dell'ordine.
-            </p>
-          </CardHeader>
-          <CardContent className="pt-0">
-            {isLoadingWorkers ? (
-              <div className="flex items-center gap-2 py-2">
-                <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                <span className="text-[13px] text-muted-foreground">Caricamento operatori…</span>
-              </div>
-            ) : (
-              <Select value={workerGuid} onValueChange={setWorkerGuid}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Seleziona operatore…" />
-                </SelectTrigger>
-                <SelectContent>
-                  {workers.map((w) => (
-                    <SelectItem key={w.guid} value={w.guid}>
-                      {w.name} {w.surname}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          </CardContent>
-        </Card>
-
         {/* Navigation */}
         <div className="flex justify-between pt-2">
           <Button type="button" variant="outline" onClick={onBack}>
@@ -334,41 +235,95 @@ export function NewOrderStepReview({
 
       {/* Sidebar */}
       <div className="w-80 shrink-0">
-        <Card className="sticky top-4">
+        <div className="sticky top-4 space-y-4">
+        {/* VAT Breakdown */}
+        <Card>
           <CardHeader>
-            <h3 className="text-[14px] font-semibold">Stato</h3>
+            <h3 className="text-[14px] font-semibold">Riepilogo IVA</h3>
           </CardHeader>
           <CardContent className="space-y-3 pt-0">
-            <div className="flex items-center justify-between">
-              <span className="text-[13px] text-muted-foreground">Stato ordine</span>
-              <Badge variant="secondary">{getStatusLabel(orderStatus)}</Badge>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-[13px] text-muted-foreground">Righe salvate</span>
-              <span className="text-[13px] font-semibold">
-                {availableRows.length + commitmentRows.length}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-[13px] text-muted-foreground">Operatore</span>
-              <span className="text-[13px] font-semibold">
-                {workerGuid
-                  ? (() => {
-                      const w = workers.find((x) => x.guid === workerGuid);
-                      return w ? `${w.name} ${w.surname}` : "—";
-                    })()
-                  : "—"}
-              </span>
-            </div>
-            <Separator />
-            <p className="text-[12px] text-muted-foreground">
-              Seleziona il tuo nome e conferma l'ordine per procedere.
-            </p>
-            {confirmError && (
-              <p className="text-[12px] font-medium text-destructive">{confirmError}</p>
+            {isLoadingOrder ? (
+              <div className="flex items-center justify-center py-6">
+                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                <span className="ml-2 text-[13px] text-muted-foreground">Caricamento totali…</span>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[13px] text-muted-foreground">Imponibile Lordo</span>
+                  <span className="text-[13px] font-medium">{fmt(totalGross)}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[13px] text-muted-foreground">Sconto Totale</span>
+                  <span className="text-[13px] font-medium text-destructive">
+                    {totalDiscount > 0 ? `−${fmt(totalDiscount)}` : "—"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[13px] text-muted-foreground">Imponibile Netto</span>
+                  <span className="text-[13px] font-medium">{fmt(totalNet)}</span>
+                </div>
+                <Separator />
+                <div className="flex items-center justify-between">
+                  <span className="text-[13px] text-muted-foreground">
+                    {isVatExempt ? "IVA esente (lettera d'intento)" : `IVA (${vatPctLabel})`}
+                  </span>
+                  <span className="text-[13px] font-medium">
+                    {isVatExempt ? "€ 0,00" : fmt(totalVat)}
+                  </span>
+                </div>
+                <Separator />
+                <div className="flex items-center justify-between">
+                  <span className="text-[14px] font-semibold">Totale</span>
+                  <span className="text-[16px] font-bold text-primary">{fmt(grandTotal)}</span>
+                </div>
+              </div>
             )}
           </CardContent>
         </Card>
+
+        {/* Firma operatore */}
+        <Card className={!workerGuid ? "border-amber-200 bg-amber-50/40 dark:border-amber-900/40 dark:bg-amber-950/20" : "border-emerald-200 bg-emerald-50/40 dark:border-emerald-900/40 dark:bg-emerald-950/20"}>
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <PenLine className={`h-4 w-4 ${!workerGuid ? "text-amber-500" : "text-emerald-500"}`} />
+              <h3 className="text-[14px] font-semibold">Firma Operatore</h3>
+              {!workerGuid && (
+                <Badge variant="secondary" className="ml-auto border-amber-200 bg-amber-100 text-amber-700 dark:border-amber-900/40 dark:bg-amber-950 dark:text-amber-400">
+                  Richiesta
+                </Badge>
+              )}
+            </div>
+            <p className="text-[13px] text-muted-foreground">
+              Seleziona il tuo nome per confermare la presa in carico.
+            </p>
+          </CardHeader>
+          <CardContent className="pt-0">
+            {isLoadingWorkers ? (
+              <div className="flex items-center gap-2 py-2">
+                <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                <span className="text-[13px] text-muted-foreground">Caricamento operatori…</span>
+              </div>
+            ) : (
+              <Select value={workerGuid} onValueChange={setWorkerGuid}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleziona operatore…" />
+                </SelectTrigger>
+                <SelectContent>
+                  {workers.map((w) => (
+                    <SelectItem key={w.guid} value={w.guid}>
+                      {w.name} {w.surname}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+            {confirmError && (
+              <p className="mt-2 text-[12px] font-medium text-destructive">{confirmError}</p>
+            )}
+          </CardContent>
+        </Card>
+        </div>
       </div>
     </div>
   );

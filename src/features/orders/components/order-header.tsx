@@ -3,7 +3,7 @@ import { ArrowLeft, Printer, Pencil, ClipboardList } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Stepper } from "@/shared/ui/stepper";
 import { StatusBadge, getStatusVariant } from "@/shared/ui/status-badge";
-import { getStatusLabel } from "../types/order-status";
+import { getStatusLabel, isOrderEditable } from "../types/order-status";
 import { useWarehouseWorkers } from "@/features/warehouses/hooks/use-warehouse-workers";
 import type { OrderOut } from "../types/order.types";
 
@@ -11,12 +11,10 @@ interface OrderHeaderProps {
   order: OrderOut;
 }
 
-/* ── Mappatura stati backend → step visivi ── */
-
 const PIPELINE_STEPS = [
   { label: "Bozza", statuses: ["DRAFT"] },
   { label: "Confermato", statuses: ["CONFIRMED"] },
-  { label: "Parzialmente Evaso", statuses: ["COMMITTED", "PICKING"] },
+  { label: "Parz. Evaso", statuses: ["COMMITTED", "PICKING"] },
   { label: "Evaso", statuses: ["SHIPPED"] },
   { label: "Completato", statuses: ["COMPLETED"] },
 ] as const;
@@ -26,10 +24,8 @@ function getStepFromStatus(status: string): number {
   const index = PIPELINE_STEPS.findIndex((s) =>
     (s.statuses as readonly string[]).includes(upper),
   );
-  return index + 1; // 1-based per il Stepper
+  return index + 1;
 }
-
-/* ── Intestazione completa ── */
 
 export function OrderHeader({ order }: OrderHeaderProps) {
   const navigate = useNavigate();
@@ -43,48 +39,50 @@ export function OrderHeader({ order }: OrderHeaderProps) {
     order.status_code === "COMMITTED" || order.status_code === "PICKING";
 
   return (
-    <div className="rounded-xl border border-border/60 bg-card/50 px-5 py-4 space-y-4">
-      {/* Riga intestazione: dettagli a sinistra, azioni a destra */}
-      <div className="flex items-start justify-between">
-        {/* Dettagli */}
-        <div className="flex items-start gap-3">
+    <div className="space-y-3">
+      {/* Riga unica: titolo + timeline + azioni */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
           <Button
             variant="ghost"
             size="icon"
-            className="mt-1 h-8 w-8"
+            className="h-8 w-8"
             onClick={() => navigate("/orders")}
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-extrabold tracking-tight">
-                Ordine #{order.guid.slice(0, 8).toUpperCase()}
-              </h1>
-              <StatusBadge
-                variant={getStatusVariant(order.status_code)}
-                label={getStatusLabel(order.status_code)}
-                className="text-[12px] px-3 py-1"
-              />
-            </div>
-            <p className="mt-1 text-[12px] text-muted-foreground">
-              {new Date(order.created_at).toLocaleDateString("it-IT", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-              })}
-              {assignee && (
-                <span>
-                  {" \u00B7 "}
-                  {assignee.name} {assignee.surname}
-                </span>
-              )}
-            </p>
-          </div>
+          <h1 className="text-xl font-bold tracking-tight leading-none">
+            Ordine #{order.guid.slice(0, 8).toUpperCase()}
+          </h1>
+          <StatusBadge
+            variant={getStatusVariant(order.status_code)}
+            label={getStatusLabel(order.status_code)}
+            className="self-center"
+          />
+          <span className="text-[12px] text-muted-foreground">
+            {new Date(order.created_at).toLocaleDateString("it-IT", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            })}
+            {assignee && (
+              <span>
+                {" \u00B7 "}
+                {assignee.name} {assignee.surname}
+              </span>
+            )}
+          </span>
+
+          <div className="ml-4 h-5 w-px bg-border/60" />
+
+          <Stepper
+            steps={PIPELINE_STEPS.map((s) => ({ label: s.label }))}
+            currentStep={getStepFromStatus(order.status_code)}
+            className="ml-1 mx-0 w-auto"
+          />
         </div>
 
-        {/* Azioni */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <Button
             variant="ghost"
             size="icon"
@@ -103,19 +101,19 @@ export function OrderHeader({ order }: OrderHeaderProps) {
               <ClipboardList className="h-4 w-4" />
             </Button>
           )}
-          <Button size="sm">
+          <Button
+            size="sm"
+            onClick={() => navigate(`/orders/${order.guid}/edit`)}
+            disabled={!isOrderEditable(order.status_code)}
+          >
             <Pencil className="mr-1.5 h-3.5 w-3.5" />
             Modifica
           </Button>
         </div>
       </div>
 
-      {/* Tracciamento avanzamento */}
-      <div className="h-px bg-border/40" />
-      <Stepper
-        steps={PIPELINE_STEPS.map((s) => ({ label: s.label }))}
-        currentStep={getStepFromStatus(order.status_code)}
-      />
+      {/* Separatore sottile */}
+      <div className="h-px bg-border/60" />
     </div>
   );
 }

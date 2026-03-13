@@ -11,6 +11,7 @@ interface DatePickerProps {
   onChange?: (value: string) => void;
   placeholder?: string;
   className?: string;
+  disabled?: boolean;
 }
 
 function parseISO(iso: string): Date | undefined {
@@ -31,6 +32,7 @@ export function DatePicker({
   onChange,
   placeholder = "Seleziona una data",
   className,
+  disabled,
 }: DatePickerProps) {
   const [open, setOpen] = useState(false);
   const selected = parseISO(value ?? "");
@@ -48,10 +50,12 @@ export function DatePicker({
       <Popover.Trigger asChild>
         <button
           type="button"
+          disabled={disabled}
           className={cn(
             "flex h-9 w-full items-center justify-between rounded-lg border border-border/60 bg-background px-3 text-[13px] outline-none transition-all",
             "hover:border-border focus:border-primary/40 focus:ring-2 focus:ring-ring/20",
             !displayValue && "text-muted-foreground/70",
+            disabled && "cursor-not-allowed opacity-50",
             className,
           )}
         >
