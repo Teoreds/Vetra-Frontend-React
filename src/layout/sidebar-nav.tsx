@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 import { env } from "@/config/env";
+import { LogoIcon } from "@/shared/ui/logo-icon";
 
 const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -47,11 +48,12 @@ export function SidebarNav() {
     >
       {/* Logo — icon always centered at 64px, text flows after */}
       <div className="flex items-center h-[60px] px-[14px]">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl overflow-hidden shadow-sm ml-[5px]">
+        <div className="relative h-8 w-8 shrink-0 rounded-xl overflow-hidden shadow-sm ml-[5px] bg-primary">
           <img
-            src="/logo.svg"
+            src="/logo_big.svg"
             alt="Logo"
-            className="h-full w-full object-cover"
+            className="absolute"
+            style={{ width: 120, height: 110, top: -72, right: -25, transform: "scale(1.8)", transformOrigin: "top right" }}
           />
         </div>
         <div

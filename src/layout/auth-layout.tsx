@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { env } from "@/config/env";
+import { LogoIcon } from "@/shared/ui/logo-icon";
 
 export function AuthLayout() {
   return (
@@ -41,8 +42,13 @@ export function AuthLayout() {
           }}
         />
 
-        {/* Top: spacer */}
-        <div className="relative z-10" />
+        {/* Top: branding */}
+        <div className="relative z-10 flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl">
+            <LogoIcon className="h-full w-full text-white" />
+          </div>
+          <span className="text-[22px] font-bold tracking-tight text-white">{env.APP_NAME}</span>
+        </div>
 
         {/* Middle: spacer */}
         <div className="relative z-10" />

@@ -1,0 +1,17 @@
+export function LogoIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 120 120"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M60 8 L95 25 L112 60 L95 95 L60 112 L25 95 L8 60 L25 25 Z" />
+      <path d="M60 28 L92 60 L60 92 L28 60 Z" />
+    </svg>
+  );
+}
