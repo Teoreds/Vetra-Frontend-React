@@ -2,7 +2,23 @@ import * as RadixSelect from "@radix-ui/react-select";
 import { ChevronDown, ChevronUp, Check } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 
-export const Select = RadixSelect.Root;
+/**
+ * Wrapper around Radix Select that guards against a bug where
+ * SelectBubbleInput fires onValueChange("") during TanStack Query
+ * background refetches (new option references cause a transient mismatch).
+ */
+export function Select({
+  onValueChange,
+  ...props
+}: React.ComponentPropsWithoutRef<typeof RadixSelect.Root>) {
+  return (
+    <RadixSelect.Root
+      onValueChange={(v) => { if (v && onValueChange) onValueChange(v); }}
+      {...props}
+    />
+  );
+}
+
 export const SelectGroup = RadixSelect.Group;
 export const SelectValue = RadixSelect.Value;
 
@@ -15,7 +31,7 @@ export function SelectTrigger({
     <RadixSelect.Trigger
       className={cn(
         "flex h-9 w-full items-center justify-between rounded-lg border border-border/60 bg-background px-3 text-[13px] outline-none transition-all",
-        "hover:border-border focus:border-primary/40 focus:ring-2 focus:ring-ring/20",
+        "hover:border-border focus-visible:outline-none focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20",
         "disabled:cursor-not-allowed disabled:opacity-50",
         "data-[placeholder]:text-muted-foreground/70",
         className,

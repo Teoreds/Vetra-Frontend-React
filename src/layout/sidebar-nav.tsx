@@ -29,6 +29,7 @@ const bottomItems = [
 const linkClass = (isActive: boolean) =>
   cn(
     "flex items-center h-9 rounded-lg text-[13px] font-medium transition-colors duration-100 whitespace-nowrap",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30",
     isActive
       ? "bg-primary/[0.08] text-primary font-semibold"
       : "text-muted-foreground hover:bg-muted hover:text-foreground",

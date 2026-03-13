@@ -35,7 +35,7 @@ export function TypeMultiSelect({ value, onChange }: TypeMultiSelectProps) {
           type="button"
           className={cn(
             "flex h-9 items-center gap-2 rounded-lg border border-border/60 bg-background px-3 text-[13px] outline-none transition-all whitespace-nowrap",
-            "hover:border-border focus:border-primary/40 focus:ring-2 focus:ring-ring/20",
+            "hover:border-border focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20 data-[state=open]:border-primary/40 data-[state=open]:ring-2 data-[state=open]:ring-ring/20",
             value.length === 0 && "text-muted-foreground/70",
           )}
         >

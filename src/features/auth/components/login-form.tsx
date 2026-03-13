@@ -41,7 +41,7 @@ export function LoginForm() {
           id="username"
           type="text"
           {...register("username")}
-          className="flex h-9 w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all placeholder:text-muted-foreground/50 focus:border-primary/40 focus:ring-2 focus:ring-ring/20"
+          className="flex h-9 w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all placeholder:text-muted-foreground/50 focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20"
           placeholder="Inserisci il tuo username"
         />
         {validationErrors.username && (
@@ -57,7 +57,7 @@ export function LoginForm() {
           id="password"
           type="password"
           {...register("password")}
-          className="flex h-9 w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all placeholder:text-muted-foreground/50 focus:border-primary/40 focus:ring-2 focus:ring-ring/20"
+          className="flex h-9 w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all placeholder:text-muted-foreground/50 focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20"
           placeholder="Inserisci la tua password"
         />
         {validationErrors.password && (

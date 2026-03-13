@@ -1475,10 +1475,6 @@ export interface components {
              * Format: uuid
              */
             created_by_user_guid: string;
-            /** Warehouse Worker Guid */
-            warehouse_worker_guid: string | null;
-            /** Rows */
-            rows?: components["schemas"]["OrderRowOut"][];
         };
         /** OrderRowCreate */
         OrderRowCreate: {

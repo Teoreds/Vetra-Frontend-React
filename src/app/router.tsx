@@ -17,6 +17,7 @@ import { ArticleDetailPage } from "@/features/articles/pages/article-detail-page
 import { NewArticlePage } from "@/features/articles/pages/new-article-page";
 import { WarehousesListPage } from "@/features/warehouses/pages/warehouses-list-page";
 import { WarehouseDetailPage } from "@/features/warehouses/pages/warehouse-detail-page";
+import { NewPickNotePage } from "@/features/pick-notes/pages/new-pick-note-page";
 
 export const router = createBrowserRouter([
   {
@@ -48,6 +49,7 @@ export const router = createBrowserRouter([
           { path: "/articles/:id", element: <ArticleDetailPage /> },
           { path: "/warehouses", element: <WarehousesListPage /> },
           { path: "/warehouses/:id", element: <WarehouseDetailPage /> },
+          { path: "/pick-notes/new", element: <NewPickNotePage /> },
         ],
       },
     ],

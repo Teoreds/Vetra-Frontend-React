@@ -214,7 +214,7 @@ export function NewOrderStepItems({
   };
 
   const inputCls =
-    "h-7 w-full rounded-md border border-border/60 bg-background px-2 text-[12px] outline-none transition-all focus:border-primary/40 focus:ring-2 focus:ring-ring/20";
+    "h-7 w-full rounded-md border border-border/60 bg-background px-2 text-[12px] outline-none transition-all focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20";
   const th = "px-2 h-7";
   const td = "px-2 py-1";
 

@@ -2,8 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Printer, Pencil, ClipboardList } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Stepper } from "@/shared/ui/stepper";
-import { StatusBadge, getStatusVariant } from "@/shared/ui/status-badge";
-import { getStatusLabel, isOrderEditable } from "../types/order-status";
+import { isOrderEditable } from "../types/order-status";
 import { useWarehouseWorkers } from "@/features/warehouses/hooks/use-warehouse-workers";
 import type { OrderOut } from "../types/order.types";
 
@@ -40,7 +39,7 @@ export function OrderHeader({ order }: OrderHeaderProps) {
 
   return (
     <div className="space-y-3">
-      {/* Riga unica: titolo + timeline + azioni */}
+      {/* Riga: titolo + stepper + azioni */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Button
@@ -51,36 +50,30 @@ export function OrderHeader({ order }: OrderHeaderProps) {
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-xl font-bold tracking-tight leading-none">
-            Ordine #{order.guid.slice(0, 8).toUpperCase()}
-          </h1>
-          <StatusBadge
-            variant={getStatusVariant(order.status_code)}
-            label={getStatusLabel(order.status_code)}
-            className="self-center"
-          />
-          <span className="text-[12px] text-muted-foreground">
-            {new Date(order.created_at).toLocaleDateString("it-IT", {
-              day: "2-digit",
-              month: "short",
-              year: "numeric",
-            })}
-            {assignee && (
-              <span>
-                {" \u00B7 "}
-                {assignee.name} {assignee.surname}
-              </span>
-            )}
-          </span>
-
-          <div className="ml-4 h-5 w-px bg-border/60" />
-
-          <Stepper
-            steps={PIPELINE_STEPS.map((s) => ({ label: s.label }))}
-            currentStep={getStepFromStatus(order.status_code)}
-            className="ml-1 mx-0 w-auto"
-          />
+          <div>
+            <h1 className="text-xl font-bold tracking-tight leading-none">
+              Ordine #{order.guid.slice(0, 8).toUpperCase()}
+            </h1>
+            <span className="text-[12px] text-muted-foreground">
+              {new Date(order.created_at).toLocaleDateString("it-IT", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })}
+              {assignee && (
+                <span>
+                  {" \u00B7 "}
+                  {assignee.name} {assignee.surname}
+                </span>
+              )}
+            </span>
+          </div>
         </div>
+
+        <Stepper
+          steps={PIPELINE_STEPS.map((s) => ({ label: s.label }))}
+          currentStep={getStepFromStatus(order.status_code)}
+        />
 
         <div className="flex items-center gap-1.5">
           <Button

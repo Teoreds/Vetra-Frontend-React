@@ -43,7 +43,7 @@ export function Breadcrumb() {
             ) : (
               <Link
                 to={path}
-                className="text-muted-foreground transition-colors hover:text-foreground"
+                className="rounded text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
               >
                 {labelFor(segment)}
               </Link>

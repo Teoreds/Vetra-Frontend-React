@@ -96,10 +96,21 @@ body {
   color: var(--color-foreground);
 }
 
-/* Focus ring utility */
+/* Suppress browser default focus outline globally.
+   Each interactive component provides its own focus-visible ring
+   via Tailwind (focus-visible:ring-2). */
 :focus-visible {
-  outline: 2px solid var(--color-ring);
-  outline-offset: 2px;
+  outline: none;
+}
+
+/* Override browser autofill yellow background with a light brand tint */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 30px color-mix(in srgb, var(--color-primary) 6%, white) inset !important;
+  -webkit-text-fill-color: var(--color-foreground) !important;
+  caret-color: var(--color-foreground);
+  transition: background-color 5000s ease-in-out 0s;
 }
 
 /* Scrollbar refinement */

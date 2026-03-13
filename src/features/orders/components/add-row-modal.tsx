@@ -61,7 +61,7 @@ export function AddRowModal({ open, onOpenChange, orderGuid }: AddRowModalProps)
           <label className="text-[13px] font-medium">ID Articolo</label>
           <input
             {...register("article_guid")}
-            className="flex h-9 w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all placeholder:text-muted-foreground/50 focus:border-primary/40 focus:ring-2 focus:ring-ring/20"
+            className="flex h-9 w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all placeholder:text-muted-foreground/50 focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20"
             placeholder="UUID dell'articolo"
           />
           {errors.article_guid && (
@@ -76,7 +76,7 @@ export function AddRowModal({ open, onOpenChange, orderGuid }: AddRowModalProps)
               type="number"
               step="any"
               {...register("quantity", { valueAsNumber: true })}
-              className="flex h-9 w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all focus:border-primary/40 focus:ring-2 focus:ring-ring/20"
+              className="flex h-9 w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20"
             />
             {errors.quantity && (
               <p className="text-[12px] text-destructive">{errors.quantity.message}</p>
@@ -88,7 +88,7 @@ export function AddRowModal({ open, onOpenChange, orderGuid }: AddRowModalProps)
               type="number"
               step="0.01"
               {...register("unit_price", { valueAsNumber: true })}
-              className="flex h-9 w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all focus:border-primary/40 focus:ring-2 focus:ring-ring/20"
+              className="flex h-9 w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20"
             />
             {errors.unit_price && (
               <p className="text-[12px] text-destructive">{errors.unit_price.message}</p>
@@ -100,7 +100,7 @@ export function AddRowModal({ open, onOpenChange, orderGuid }: AddRowModalProps)
           <label className="text-[13px] font-medium">Partita IVA</label>
           <input
             {...register("vat_code")}
-            className="flex h-9 w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all placeholder:text-muted-foreground/50 focus:border-primary/40 focus:ring-2 focus:ring-ring/20"
+            className="flex h-9 w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all placeholder:text-muted-foreground/50 focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20"
             placeholder="e.g., 22"
           />
         </div>

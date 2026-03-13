@@ -53,7 +53,7 @@ export function DatePicker({
           disabled={disabled}
           className={cn(
             "flex h-9 w-full items-center justify-between rounded-lg border border-border/60 bg-background px-3 text-[13px] outline-none transition-all",
-            "hover:border-border focus:border-primary/40 focus:ring-2 focus:ring-ring/20",
+            "hover:border-border focus-visible:outline-none focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20 data-[state=open]:border-primary/40 data-[state=open]:ring-2 data-[state=open]:ring-ring/20",
             !displayValue && "text-muted-foreground/70",
             disabled && "cursor-not-allowed opacity-50",
             className,

@@ -1,34 +1,43 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Search, Loader2, X } from "lucide-react";
-import { useParties } from "../hooks/use-parties";
+import { useOrders } from "@/features/orders/hooks/use-orders";
+import { useParties } from "@/features/parties/hooks/use-parties";
+import { StatusBadge, getStatusVariant } from "@/shared/ui/status-badge";
+import { getStatusLabel } from "@/features/orders/types/order-status";
+import { formatDate } from "@/shared/lib/utils";
 import { cn } from "@/shared/lib/utils";
 
-interface PartySearchSelectProps {
+interface OrderSearchSelectProps {
   value?: string;
-  onChange: (partyGuid: string) => void;
+  onChange: (orderGuid: string) => void;
   disabled?: boolean;
 }
 
-export function PartySearchSelect({ value, onChange, disabled }: PartySearchSelectProps) {
+export function OrderSearchSelect({ value, onChange, disabled }: OrderSearchSelectProps) {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Fetch parties matching the search term
-  const { data, isLoading } = useParties(
+  const { data, isLoading } = useOrders(
     search.trim().length >= 1 ? { search: search.trim(), limit: 20 } : { limit: 20 },
   );
-  const parties = data?.items ?? [];
+  const orders = data?.items ?? [];
 
-  // Resolve selected party name for display
-  const { data: selectedData } = useParties(value ? { limit: 200 } : undefined);
-  const selectedParty = value
-    ? (selectedData?.items ?? []).find((p) => p.guid === value)
-    : null;
+  const { data: partiesData } = useParties({ limit: 200 });
+  const partyMap = new Map<string, string>();
+  if (partiesData?.items) {
+    for (const p of partiesData.items) {
+      partyMap.set(p.guid, p.description ?? p.guid.slice(0, 8));
+    }
+  }
 
-  // Close on outside click
+  // Resolve selected order for display
+  const selectedOrder = value ? orders.find((o) => o.guid === value) : null;
+  const { data: allOrders } = useOrders(value && !selectedOrder ? { limit: 200 } : undefined);
+  const resolvedOrder = selectedOrder ?? (value ? (allOrders?.items ?? []).find((o) => o.guid === value) : null);
+
   useEffect(() => {
     function onMouseDown(e: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -41,11 +50,11 @@ export function PartySearchSelect({ value, onChange, disabled }: PartySearchSele
 
   useEffect(() => {
     setFocusedIndex(0);
-  }, [parties.length]);
+  }, [orders.length]);
 
   const confirmSelection = useCallback(
-    (partyGuid: string) => {
-      onChange(partyGuid);
+    (orderGuid: string) => {
+      onChange(orderGuid);
       setSearch("");
       setOpen(false);
     },
@@ -63,7 +72,7 @@ export function PartySearchSelect({ value, onChange, disabled }: PartySearchSele
     switch (e.key) {
       case "ArrowDown":
         e.preventDefault();
-        setFocusedIndex((i) => Math.min(i + 1, parties.length - 1));
+        setFocusedIndex((i) => Math.min(i + 1, orders.length - 1));
         break;
       case "ArrowUp":
         e.preventDefault();
@@ -71,7 +80,7 @@ export function PartySearchSelect({ value, onChange, disabled }: PartySearchSele
         break;
       case "Enter":
         e.preventDefault();
-        if (parties[focusedIndex]) confirmSelection(parties[focusedIndex].guid);
+        if (orders[focusedIndex]) confirmSelection(orders[focusedIndex].guid);
         break;
       case "Escape":
         setOpen(false);
@@ -80,16 +89,18 @@ export function PartySearchSelect({ value, onChange, disabled }: PartySearchSele
     }
   }
 
-  // When disabled, show a simple read-only display
   if (disabled) {
     return (
       <div className="flex h-9 w-full items-center rounded-lg border border-border/60 bg-muted/40 px-3 text-[13px] text-muted-foreground cursor-not-allowed opacity-50">
-        {selectedParty?.description ?? (value ? `#${value.slice(0, 8)}` : "Nessun cliente")}
+        {resolvedOrder
+          ? `#${resolvedOrder.guid.slice(0, 8).toUpperCase()} · ${formatDate(resolvedOrder.order_date)}`
+          : value
+            ? `#${value.slice(0, 8).toUpperCase()}`
+            : "Nessun ordine"}
       </div>
     );
   }
 
-  // If a party is selected and the input is not focused/open, show the selected value
   const showSelected = !!value && !open;
 
   return (
@@ -107,7 +118,21 @@ export function PartySearchSelect({ value, onChange, disabled }: PartySearchSele
             "hover:border-border focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20",
           )}
         >
-          <span className="truncate">{selectedParty?.description ?? `#${value.slice(0, 8)}`}</span>
+          <span className="truncate">
+            {resolvedOrder ? (
+              <span className="flex items-center gap-2">
+                <span className="font-semibold text-primary">
+                  #{resolvedOrder.guid.slice(0, 8).toUpperCase()}
+                </span>
+                <span className="text-muted-foreground">·</span>
+                <span>{partyMap.get(resolvedOrder.party_guid) ?? ""}</span>
+                <span className="text-muted-foreground">·</span>
+                <span className="text-muted-foreground">{formatDate(resolvedOrder.order_date)}</span>
+              </span>
+            ) : (
+              `#${value!.slice(0, 8).toUpperCase()}`
+            )}
+          </span>
           <X
             className="h-3.5 w-3.5 shrink-0 text-muted-foreground hover:text-foreground"
             onMouseDown={(e) => {
@@ -142,7 +167,7 @@ export function PartySearchSelect({ value, onChange, disabled }: PartySearchSele
             }}
             onFocus={() => setOpen(true)}
             onKeyDown={handleKeyDown}
-            placeholder="Cerca cliente…"
+            placeholder="Cerca ordine…"
             className="article-search-input flex-1 bg-transparent text-[13px] outline-none placeholder:text-muted-foreground/60"
           />
         </div>
@@ -150,20 +175,20 @@ export function PartySearchSelect({ value, onChange, disabled }: PartySearchSele
 
       {open && (
         <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-56 overflow-y-auto rounded-xl border border-border bg-popover shadow-[0_8px_30px_rgba(0,0,0,0.08)]">
-          {parties.length === 0 && !isLoading && (
+          {orders.length === 0 && !isLoading && (
             <p className="px-3 py-4 text-center text-[13px] text-muted-foreground">
               {search.trim().length >= 1
-                ? "Nessun cliente trovato."
-                : "Digita per cercare clienti."}
+                ? "Nessun ordine trovato."
+                : "Digita per cercare ordini."}
             </p>
           )}
-          {parties.map((party, index) => (
+          {orders.map((order, index) => (
             <button
-              key={party.guid}
+              key={order.guid}
               type="button"
               onMouseDown={(e) => {
                 e.preventDefault();
-                confirmSelection(party.guid);
+                confirmSelection(order.guid);
               }}
               onMouseEnter={() => setFocusedIndex(index)}
               className={cn(
@@ -172,12 +197,23 @@ export function PartySearchSelect({ value, onChange, disabled }: PartySearchSele
               )}
             >
               <div className="min-w-0 flex-1">
-                <p className="truncate text-[13px] font-medium">{party.description}</p>
-                {party.vat_number && (
-                  <p className="text-[11px] text-muted-foreground">P.IVA {party.vat_number}</p>
-                )}
+                <div className="flex items-center gap-2">
+                  <span className="text-[13px] font-semibold text-primary">
+                    #{order.guid.slice(0, 8).toUpperCase()}
+                  </span>
+                  <span className="text-[12px] text-muted-foreground">
+                    {formatDate(order.order_date)}
+                  </span>
+                  <StatusBadge
+                    variant={getStatusVariant(order.status_code)}
+                    label={getStatusLabel(order.status_code)}
+                  />
+                </div>
+                <p className="text-[11px] text-muted-foreground truncate">
+                  {partyMap.get(order.party_guid) ?? order.party_guid.slice(0, 8)}
+                </p>
               </div>
-              {party.guid === value && (
+              {order.guid === value && (
                 <span className="text-[11px] text-primary font-medium">Selezionato</span>
               )}
             </button>

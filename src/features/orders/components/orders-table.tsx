@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Pencil, Printer, Copy, MoreVertical } from "lucide-react";
+import { Pencil, Printer, Copy, MoreVertical, ClipboardList } from "lucide-react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { DataTable, type Column } from "@/shared/ui/data-table";
 import { StatusBadge, getStatusVariant } from "@/shared/ui/status-badge";
@@ -170,6 +170,13 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
                 >
                   <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
                   Modifica
+                </DropdownMenu.Item>
+                <DropdownMenu.Item
+                  className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
+                  onSelect={() => navigate(`/pick-notes/new?order=${row.guid}`)}
+                >
+                  <ClipboardList className="h-3.5 w-3.5 text-muted-foreground" />
+                  Nota di Prelievo
                 </DropdownMenu.Item>
                 <DropdownMenu.Item
                   className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-accent"

@@ -33,7 +33,7 @@ export function HeaderUserMenu() {
 
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
-            <button className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-muted/60">
+            <button className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:ring-offset-1">
               <div className="text-right">
                 <p className="text-[13px] font-medium leading-tight">{user?.display_name ?? "Caricamento..."}</p>
                 <p className="text-[11px] text-muted-foreground capitalize">{user?.role_code ?? ""}</p>
