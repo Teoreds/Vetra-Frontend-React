@@ -1,10 +1,12 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import { Loader2, MapPin, PackageCheck } from "lucide-react";
+import { Loader2, MapPin, PackageCheck, PenLine, StickyNote } from "lucide-react";
+import { Badge } from "@/shared/ui/badge";
+import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
-import { Checkbox } from "@/shared/ui/checkbox";
+import { CheckboxDisplay } from "@/shared/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -28,7 +30,9 @@ import {
   type PartyLocationWithAddress,
 } from "@/features/parties/hooks/use-party-locations";
 import { useWarehouses } from "@/features/warehouses/hooks/use-warehouses";
-import { ordersApi } from "@/features/orders/api/orders.api";
+import { useWarehouseWorkers } from "@/features/warehouses/hooks/use-warehouse-workers";
+import { pickNotesApi } from "../api/pick-notes.api";
+import { pickNoteKeys } from "../api/pick-notes.queries";
 import { orderKeys } from "@/features/orders/api/orders.queries";
 import type { OrderOut, OrderRowOut } from "@/features/orders/types/order.types";
 
@@ -66,12 +70,7 @@ function buildRows(
   return (order.rows ?? []).map((row) => {
     const article = articleMap.get(row.article_guid);
     const orderQty = parseFloat(row.quantity) || 0;
-    const pickedQty =
-      parseFloat(
-        (row as OrderRowOut & { picked_quantity?: string }).picked_quantity ??
-          "0",
-      ) || 0;
-    const remaining = Math.max(0, orderQty - pickedQty);
+    const remaining = parseFloat(row.remaining_quantity ?? "") || 0;
 
     return {
       key: row.guid,
@@ -81,7 +80,7 @@ function buildRows(
       article_description: article?.description ?? "",
       unit_of_measure_code: row.unit_of_measure_code ?? "",
       order_quantity: orderQty,
-      picked_quantity: pickedQty,
+      picked_quantity: orderQty - remaining,
       remaining_quantity: remaining,
       quantity_to_pick: remaining,
       source_order_row_guid: row.guid,
@@ -116,6 +115,8 @@ export function PickNoteForm({ defaultOrderGuid }: PickNoteFormProps) {
   const [rows, setRows] = useState<PickNoteRowDraft[]>([]);
   const [shippingGuid, setShippingGuid] = useState("");
   const [billingGuid, setBillingGuid] = useState("");
+  const [pickerGuid, setPickerGuid] = useState("");
+  const [note, setNote] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -128,6 +129,8 @@ export function PickNoteForm({ defaultOrderGuid }: PickNoteFormProps) {
   const { data: warehousesData } = useWarehouses();
   const { data: locations = [], isLoading: isLoadingLocations } =
     usePartyLocations(order?.party_guid || undefined);
+  const { data: workersData } = useWarehouseWorkers();
+  const workers = workersData?.items ?? [];
 
   const articleMap = useMemo(() => {
     const map = new Map<string, { code: string; description: string }>();
@@ -142,7 +145,7 @@ export function PickNoteForm({ defaultOrderGuid }: PickNoteFormProps) {
     return map;
   }, [articlesData]);
 
-  const warehouseGuid = warehousesData?.items?.[0]?.guid ?? "";
+  const warehouseGuid = warehousesData?.[0]?.guid ?? "";
 
   // ── Populate rows + addresses when order data arrives ──────────
 
@@ -228,17 +231,47 @@ export function PickNoteForm({ defaultOrderGuid }: PickNoteFormProps) {
       return;
     }
 
+    if (!pickerGuid) {
+      setSubmitError("Seleziona l'operatore che effettua il prelievo.");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      const { data: pickNote, error } =
-        await ordersApi.createPickNoteFromOrder(orderGuid, warehouseGuid);
+      // 1. Create pick note
+      const { data: pickNote, error } = await pickNotesApi.create({
+        warehouse_guid: warehouseGuid,
+        order_guid: orderGuid || null,
+        shipping_location_guid: shippingGuid || null,
+        billing_location_guid: billingGuid || null,
+        picker_guid: pickerGuid,
+        note: note.trim() || null,
+      });
       if (error || !pickNote)
         throw new Error("Errore nella creazione della nota di prelievo.");
 
-      await queryClient.invalidateQueries({
-        queryKey: orderKeys.detail(orderGuid),
-      });
-      navigate(`/orders/${orderGuid}`);
+      // 2. Add rows sequentially (backend validates remaining)
+      for (const row of selectedRows) {
+        const { error: rowError } = await pickNotesApi.createRow(
+          pickNote.guid,
+          {
+            article_guid: row.article_guid,
+            quantity: row.quantity_to_pick,
+            order_row_guid: row.source_order_row_guid,
+          },
+        );
+        if (rowError) {
+          throw new Error(
+            `Errore aggiungendo riga ${row.article_code}: ${String(rowError)}`,
+          );
+        }
+      }
+
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: orderKeys.detail(orderGuid) }),
+        queryClient.invalidateQueries({ queryKey: pickNoteKeys.lists() }),
+      ]);
+      navigate(`/pick-notes/${pickNote.guid}`, { replace: true });
     } catch (err) {
       setSubmitError(
         err instanceof Error ? err.message : "Errore durante la creazione.",
@@ -349,13 +382,14 @@ export function PickNoteForm({ defaultOrderGuid }: PickNoteFormProps) {
           <CardHeader>
             <div className="flex items-center justify-between">
               <h2 className="text-[15px] font-semibold">Righe da Prelevare</h2>
-              <label className="flex items-center gap-2 text-[13px] text-muted-foreground cursor-pointer">
-                <Checkbox
-                  checked={allSelected}
-                  onCheckedChange={toggleSelectAll}
-                />
+              <button
+                type="button"
+                className="flex items-center gap-2 text-[13px] text-muted-foreground cursor-pointer hover:text-foreground transition-colors"
+                onClick={toggleSelectAll}
+              >
+                <CheckboxDisplay checked={allSelected} />
                 Seleziona tutto
-              </label>
+              </button>
             </div>
           </CardHeader>
           <CardContent>
@@ -379,12 +413,21 @@ export function PickNoteForm({ defaultOrderGuid }: PickNoteFormProps) {
                     return (
                       <TableRow
                         key={row.key}
-                        className={isFullyPicked ? "opacity-40" : ""}
+                        className={cn(
+                          isFullyPicked
+                            ? "opacity-40"
+                            : "cursor-pointer transition-colors hover:bg-primary/[0.03]",
+                          row.selected &&
+                            !isFullyPicked &&
+                            "bg-primary/[0.04]",
+                        )}
+                        onClick={() => {
+                          if (!isFullyPicked) toggleRow(index);
+                        }}
                       >
                         <TableCell>
-                          <Checkbox
+                          <CheckboxDisplay
                             checked={row.selected}
-                            onCheckedChange={() => toggleRow(index)}
                             disabled={isFullyPicked}
                           />
                         </TableCell>
@@ -416,6 +459,7 @@ export function PickNoteForm({ defaultOrderGuid }: PickNoteFormProps) {
                             max={row.remaining_quantity}
                             step="any"
                             value={row.quantity_to_pick}
+                            onClick={(e) => e.stopPropagation()}
                             onChange={(e) =>
                               setRowQuantity(
                                 index,
@@ -436,6 +480,51 @@ export function PickNoteForm({ defaultOrderGuid }: PickNoteFormProps) {
         </Card>
       )}
 
+      {/* Firma Operatore */}
+      <Card className={!pickerGuid ? "border-amber-200 bg-amber-50/40 dark:border-amber-900/40 dark:bg-amber-950/20" : "border-emerald-200 bg-emerald-50/40 dark:border-emerald-900/40 dark:bg-emerald-950/20"}>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <PenLine className={`h-4 w-4 ${!pickerGuid ? "text-amber-500" : "text-emerald-500"}`} />
+            <h3 className="text-[14px] font-semibold">Firma Operatore</h3>
+            {!pickerGuid && (
+              <Badge variant="secondary" className="ml-auto border-amber-200 bg-amber-100 text-amber-700 dark:border-amber-900/40 dark:bg-amber-950 dark:text-amber-400">
+                Richiesta
+              </Badge>
+            )}
+          </div>
+          <p className="text-[13px] text-muted-foreground">
+            Seleziona l'operatore che effettuerà il prelievo.
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-4 pt-0">
+          <Select value={pickerGuid} onValueChange={setPickerGuid}>
+            <SelectTrigger>
+              <SelectValue placeholder="Seleziona operatore…" />
+            </SelectTrigger>
+            <SelectContent>
+              {workers.map((w) => (
+                <SelectItem key={w.guid} value={w.guid}>
+                  {w.name} {w.surname}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <div className="space-y-1.5">
+            <label className="flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground">
+              <StickyNote className="h-3.5 w-3.5" />
+              Note
+            </label>
+            <textarea
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="Note aggiuntive…"
+              rows={2}
+              className="flex w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all placeholder:text-muted-foreground/60 hover:border-border focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20 resize-none"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
       {submitError && (
         <div className="rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3">
           <p className="text-[13px] text-destructive">{submitError}</p>
@@ -444,7 +533,7 @@ export function PickNoteForm({ defaultOrderGuid }: PickNoteFormProps) {
 
       {rows.length > 0 && (
         <div className="flex justify-end">
-          <Button type="submit" disabled={isSubmitting || !someSelected}>
+          <Button type="submit" disabled={isSubmitting || !someSelected || !pickerGuid}>
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />

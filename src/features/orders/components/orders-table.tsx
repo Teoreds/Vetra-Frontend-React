@@ -4,9 +4,10 @@ import { Pencil, Printer, Copy, MoreVertical, ClipboardList } from "lucide-react
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { DataTable, type Column } from "@/shared/ui/data-table";
 import { StatusBadge, getStatusVariant } from "@/shared/ui/status-badge";
-import { formatDate, formatDateTime } from "@/shared/lib/utils";
+import { formatDate } from "@/shared/lib/utils";
 import { getStatusLabel } from "../types/order-status";
 import { useParties } from "@/features/parties/hooks/use-parties";
+import { useLocationsMap } from "@/features/parties/hooks/use-locations-map";
 import type { OrderOut } from "../types/order.types";
 
 interface OrdersTableProps {
@@ -40,13 +41,15 @@ function fmt(n: number) {
   }).format(n);
 }
 
-function isSameDay(a: string, b: string): boolean {
-  return a.slice(0, 10) === b.slice(0, 10);
-}
-
 export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
   const navigate = useNavigate();
   const { data: partiesData } = useParties({ limit: 200 });
+
+  const shippingGuids = useMemo(
+    () => orders.map((o) => o.shipping_location_guid).filter(Boolean) as string[],
+    [orders],
+  );
+  const { data: locationsMap } = useLocationsMap(shippingGuids);
 
   const partyMap = useMemo(() => {
     const map = new Map<string, string>();
@@ -106,6 +109,25 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
       ),
     },
     {
+      key: "shipping",
+      header: "Spedizione",
+      render: (row) => {
+        if (!row.shipping_location_guid) {
+          return <span className="text-[13px] text-muted-foreground/50">—</span>;
+        }
+        const loc = locationsMap?.get(row.shipping_location_guid);
+        if (!loc) return null;
+        const parts = [loc.address_line, loc.city].filter(Boolean);
+        return (
+          <div className="max-w-[200px]">
+            <span className="text-[13px] text-muted-foreground truncate block">
+              {parts.join(", ") || "—"}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
       key: "total",
       header: "Totale",
       className: "w-28 text-right",
@@ -124,22 +146,11 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
       key: "order_date",
       header: "Data",
       className: "w-32 text-right",
-      render: (row) => {
-        const showCreated =
-          row.created_at && !isSameDay(row.order_date, row.created_at);
-        return (
-          <div className="text-right">
-            <span className="text-[13px] text-muted-foreground">
-              {formatDate(row.order_date)}
-            </span>
-            {showCreated && (
-              <span className="block text-[11px] text-muted-foreground/60">
-                Creato: {formatDateTime(row.created_at)}
-              </span>
-            )}
-          </div>
-        );
-      },
+      render: (row) => (
+        <span className="text-[13px] text-muted-foreground">
+          {formatDate(row.order_date)}
+        </span>
+      ),
     },
     {
       key: "actions",

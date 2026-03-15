@@ -1,19 +1,27 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, forwardRef, useImperativeHandle } from "react";
 import { Search, Loader2 } from "lucide-react";
 import { useArticles } from "@/features/articles/hooks/use-articles";
 import type { ArticleOut } from "@/features/articles/types/article.types";
 import { cn } from "@/shared/lib/utils";
 
+export interface ArticleInlineSearchHandle {
+  focus: () => void;
+}
+
 interface ArticleInlineSearchProps {
   onSelect: (article: ArticleOut) => void;
 }
 
-export function ArticleInlineSearch({ onSelect }: ArticleInlineSearchProps) {
+export const ArticleInlineSearch = forwardRef<ArticleInlineSearchHandle, ArticleInlineSearchProps>(function ArticleInlineSearch({ onSelect }, ref) {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    focus: () => inputRef.current?.focus(),
+  }));
 
   const { data, isLoading } = useArticles(
     search.trim().length >= 1 ? { search: search.trim(), limit: 20 } : { limit: 20 },
@@ -31,10 +39,17 @@ export function ArticleInlineSearch({ onSelect }: ArticleInlineSearchProps) {
     return () => document.removeEventListener("mousedown", onMouseDown);
   }, []);
 
+  const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
   // Reset focused index when results change
   useEffect(() => {
     setFocusedIndex(0);
   }, [articles.length]);
+
+  // Scroll focused item into view
+  useEffect(() => {
+    itemRefs.current[focusedIndex]?.scrollIntoView({ block: "nearest" });
+  }, [focusedIndex]);
 
   const confirmSelection = useCallback(
     (article: ArticleOut) => {
@@ -123,6 +138,7 @@ export function ArticleInlineSearch({ onSelect }: ArticleInlineSearchProps) {
           {articles.map((article, index) => (
             <button
               key={article.guid}
+              ref={(el) => { itemRefs.current[index] = el; }}
               type="button"
               onMouseDown={(e) => {
                 // Use mousedown so it fires before the outside-click handler
@@ -149,4 +165,4 @@ export function ArticleInlineSearch({ onSelect }: ArticleInlineSearchProps) {
       )}
     </div>
   );
-}
+});

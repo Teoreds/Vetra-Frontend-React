@@ -4,7 +4,8 @@ import { ChevronRight } from "lucide-react";
 const SEGMENT_LABELS: Record<string, string> = {
   dashboard: "Dashboard",
   orders: "Ordini",
-  new: "Nuovo Ordine",
+  "pick-notes": "Note di Prelievo",
+  new: "Nuovo",
   parties: "Anagrafica",
   articles: "Articoli",
   warehouses: "Magazzino",

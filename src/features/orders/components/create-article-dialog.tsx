@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
-import { Check, Loader2 } from "lucide-react";
-import * as Checkbox from "@radix-ui/react-checkbox";
+import { Loader2 } from "lucide-react";
+import { Checkbox } from "@/shared/ui/checkbox";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { ModalDialog } from "@/shared/ui/modal-dialog";
@@ -218,15 +218,10 @@ export function CreateArticleDialog({ open, onOpenChange, onCreated }: Props) {
             control={control}
             name="is_active"
             render={({ field }) => (
-              <Checkbox.Root
+              <Checkbox
                 checked={field.value}
                 onCheckedChange={(checked) => field.onChange(!!checked)}
-                className="flex h-5 w-5 items-center justify-center rounded-md border border-border/60 bg-background transition-colors data-[state=checked]:border-primary data-[state=checked]:bg-primary"
-              >
-                <Checkbox.Indicator>
-                  <Check className="h-3.5 w-3.5 text-primary-foreground" />
-                </Checkbox.Indicator>
-              </Checkbox.Root>
+              />
             )}
           />
           <label className="text-[13px] font-medium">Attivo</label>

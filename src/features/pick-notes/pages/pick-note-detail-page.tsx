@@ -1,12 +1,11 @@
 import { useParams } from "react-router-dom";
-import { useOrder } from "../hooks/use-order";
-import { OrderHeader } from "../components/order-header";
-import { OrderTabs } from "../components/order-tabs";
-import { DeliveryTrackingCard } from "../components/delivery-tracking-card";
+import { usePickNote } from "../hooks/use-pick-note";
+import { PickNoteHeader } from "../components/pick-note-header";
+import { PickNoteContent } from "../components/pick-note-content";
 
-export function OrderDetailPage() {
+export function PickNoteDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { data: order, isLoading, error } = useOrder(id!);
+  const { data: pickNote, isLoading, error } = usePickNote(id!);
 
   if (isLoading) {
     return (
@@ -16,24 +15,22 @@ export function OrderDetailPage() {
     );
   }
 
-  if (error || !order) {
+  if (error || !pickNote) {
     return (
       <div className="flex items-center justify-center py-20">
-        <p className="text-muted-foreground">Ordine non trovato.</p>
+        <p className="text-muted-foreground">Nota di prelievo non trovata.</p>
       </div>
     );
   }
 
   return (
     <div>
-      {/* Sezione superiore: intestazione e flusso di stato */}
       <div className="sticky -top-6 z-30 -mx-8 -mt-6 bg-page/80 backdrop-blur-sm px-8 pt-6 pb-3">
-        <OrderHeader order={order} />
+        <PickNoteHeader pickNote={pickNote} />
       </div>
 
       <div className="mx-auto max-w-4xl space-y-6 pt-3">
-        <OrderTabs order={order} />
-        <DeliveryTrackingCard />
+        <PickNoteContent pickNote={pickNote} />
       </div>
     </div>
   );

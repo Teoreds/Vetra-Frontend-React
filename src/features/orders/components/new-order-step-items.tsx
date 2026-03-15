@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
@@ -9,13 +9,14 @@ import { Separator } from "@/shared/ui/separator";
 import { Badge } from "@/shared/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
 import { CurrencySelector } from "@/shared/ui/currency-selector";
-import { ArticleInlineSearch } from "./article-inline-search";
+import { ArticleInlineSearch, type ArticleInlineSearchHandle } from "./article-inline-search";
 import { NewOrderSummaryCard } from "./new-order-summary-card";
 import { CreateArticleDialog } from "./create-article-dialog";
 import { ordersApi } from "../api/orders.api";
 import type { ArticleOut } from "@/features/articles/types/article.types";
 import { cn } from "@/shared/lib/utils";
 import { useCurrencyRates, fromEur, type Currency } from "@/shared/hooks/use-currency-rates";
+import { useUnitOfMeasures } from "@/features/articles/hooks/use-article-lookups";
 
 const rowSchema = z.object({
   article_guid: z.string(),
@@ -61,11 +62,13 @@ export function NewOrderStepItems({
   mode = "create",
   originalRowGuids,
 }: NewOrderStepItemsProps) {
+  const searchRef = useRef<ArticleInlineSearchHandle>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [currency, setCurrency] = useState<Currency>("EUR");
   const { data: rates } = useCurrencyRates();
+  const { data: uomList } = useUnitOfMeasures();
 
   const {
     register,
@@ -180,6 +183,7 @@ export function NewOrderStepItems({
             unit_price: row.unit_price,
             discount_percent: row.discount_percent,
             availability_status_code: "UNKNOWN",
+            unit_of_measure_code: row.unit_of_measure_code || null,
           });
           if (error) {
             setSaveError("Errore nel salvataggio delle righe. Riprova.");
@@ -197,6 +201,7 @@ export function NewOrderStepItems({
           unit_price: row.unit_price,
           discount_percent: row.discount_percent,
           availability_status_code: "UNKNOWN",
+          unit_of_measure_code: row.unit_of_measure_code || null,
         });
         if (error) {
           setSaveError("Errore nel salvataggio delle righe. Riprova.");
@@ -212,6 +217,13 @@ export function NewOrderStepItems({
       commitmentRows: values.commitment_rows,
     });
   };
+
+  function handleTableInputKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Escape") {
+      e.preventDefault();
+      searchRef.current?.focus();
+    }
+  }
 
   const inputCls =
     "h-7 w-full rounded-md border border-border/60 bg-background px-2 text-[12px] outline-none transition-all focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20";
@@ -234,6 +246,7 @@ export function NewOrderStepItems({
             <TableRow>
               <TableHead className={th}>Articolo</TableHead>
               <TableHead className={cn(th, "w-20")}>Qtà</TableHead>
+              <TableHead className={cn(th, "w-16")}>UdM</TableHead>
               <TableHead className={cn(th, "w-28 whitespace-nowrap")}>Prezzo ({currency})</TableHead>
               <TableHead className={cn(th, "w-24 whitespace-nowrap")}>Sconto %</TableHead>
               <TableHead className={cn(th, "w-16")} />
@@ -253,34 +266,63 @@ export function NewOrderStepItems({
                   </div>
                 </TableCell>
                 <TableCell className={td}>
-                  <div className="relative">
+                  <input
+                    type="number"
+                    step="any"
+                    min="0"
+                    {...register(`${prefix}.${index}.quantity`, { valueAsNumber: true })}
+                    onKeyDown={handleTableInputKeyDown}
+                    className={cn(inputCls, "[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none")}
+                  />
+                </TableCell>
+                <TableCell className={td}>
+                  <div className="group/uom relative">
+                    <span className="flex h-7 items-center px-2 text-[11px] text-muted-foreground group-focus-within/uom:invisible">
+                      {watchedRows[index]?.unit_of_measure_code || "—"}
+                    </span>
+                    <select
+                      {...register(`${prefix}.${index}.unit_of_measure_code`)}
+                      onKeyDown={(e) => { if (e.key === "Escape") { e.preventDefault(); searchRef.current?.focus(); } }}
+                      className="absolute inset-0 h-full w-full cursor-pointer rounded-md border border-border/60 bg-background px-2 text-[11px] opacity-0 outline-none transition-all focus:opacity-100 focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20 appearance-none"
+                    >
+                      {(uomList ?? []).map((u) => (
+                        <option key={u.code} value={u.code}>{u.code}</option>
+                      ))}
+                    </select>
+                  </div>
+                </TableCell>
+                <TableCell className={td}>
+                  <div className="group/price relative">
+                    <span className="flex h-7 items-center px-2 text-[12px] group-focus-within/price:invisible">
+                      {rates
+                        ? fromEur(watchedRows[index]?.unit_price ?? 0, rates, currency).toFixed(2)
+                        : (watchedRows[index]?.unit_price ?? 0).toFixed(2)}
+                    </span>
                     <input
                       type="number"
                       step="any"
                       min="0"
-                      {...register(`${prefix}.${index}.quantity`, { valueAsNumber: true })}
-                      className={cn(inputCls, "pr-8 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none")}
+                      {...register(`${prefix}.${index}.unit_price`, { valueAsNumber: true })}
+                      onKeyDown={handleTableInputKeyDown}
+                      className="absolute inset-0 h-full w-full rounded-md border border-border/60 bg-background px-2 text-[12px] opacity-0 outline-none transition-all focus:opacity-100 focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                     />
-                    {watchedRows[index]?.unit_of_measure_code && (
-                      <span className="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground">
-                        {watchedRows[index].unit_of_measure_code}
-                      </span>
-                    )}
                   </div>
                 </TableCell>
                 <TableCell className={td}>
-                  <input type="hidden" {...register(`${prefix}.${index}.unit_price`, { valueAsNumber: true })} />
-                  <span className="block px-2 text-[12px]">
-                    {rates
-                      ? fromEur(watchedRows[index]?.unit_price ?? 0, rates, currency).toFixed(2)
-                      : (watchedRows[index]?.unit_price ?? 0).toFixed(2)}
-                  </span>
-                </TableCell>
-                <TableCell className={td}>
-                  <input type="hidden" {...register(`${prefix}.${index}.discount_percent`, { valueAsNumber: true })} />
-                  <span className="block px-2 text-[12px]">
-                    {(watchedRows[index]?.discount_percent ?? 0).toFixed(2)}%
-                  </span>
+                  <div className="group/disc relative">
+                    <span className="flex h-7 items-center px-2 text-[12px] group-focus-within/disc:invisible">
+                      {(watchedRows[index]?.discount_percent ?? 0).toFixed(2)}%
+                    </span>
+                    <input
+                      type="number"
+                      step="any"
+                      min="0"
+                      max="100"
+                      {...register(`${prefix}.${index}.discount_percent`, { valueAsNumber: true })}
+                      onKeyDown={handleTableInputKeyDown}
+                      className="absolute inset-0 h-full w-full rounded-md border border-border/60 bg-background px-2 text-[12px] opacity-0 outline-none transition-all focus:opacity-100 focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                    />
+                  </div>
                 </TableCell>
                 <TableCell className={td}>
                   <div className="flex items-center">
@@ -323,7 +365,7 @@ export function NewOrderStepItems({
           <div className="space-y-1.5">
             <div className="flex items-center gap-2">
               <div className="min-w-0 flex-1">
-                <ArticleInlineSearch onSelect={handleArticleSelect} />
+                <ArticleInlineSearch ref={searchRef} onSelect={handleArticleSelect} />
               </div>
               <Button
                 type="button"

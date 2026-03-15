@@ -1,21 +1,19 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Printer, Pencil, ClipboardList } from "lucide-react";
+import { ArrowLeft, Printer } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Stepper } from "@/shared/ui/stepper";
-import { isOrderEditable } from "../types/order-status";
 import { useWarehouseWorkers } from "@/features/warehouses/hooks/use-warehouse-workers";
-import type { OrderOut } from "../types/order.types";
+import type { PickNoteDetailOut } from "../types/pick-note.types";
 
-interface OrderHeaderProps {
-  order: OrderOut;
+interface PickNoteHeaderProps {
+  pickNote: PickNoteDetailOut;
 }
 
 const PIPELINE_STEPS = [
-  { label: "Bozza", statuses: ["DRAFT"] },
-  { label: "Confermato", statuses: ["CONFIRMED"] },
-  { label: "Parz. Evaso", statuses: ["COMMITTED", "PICKING"] },
-  { label: "Evaso", statuses: ["SHIPPED"] },
-  { label: "Completato", statuses: ["COMPLETED"] },
+  { label: "Creata", statuses: ["CREATED"] },
+  { label: "In Prelievo", statuses: ["PICKING"] },
+  { label: "Controllata", statuses: ["CHECKED"] },
+  { label: "Completata", statuses: ["COMPLETED"] },
 ] as const;
 
 function getStepFromStatus(status: string): number {
@@ -23,47 +21,43 @@ function getStepFromStatus(status: string): number {
   const index = PIPELINE_STEPS.findIndex((s) =>
     (s.statuses as readonly string[]).includes(upper),
   );
-  return index + 1;
+  return index >= 0 ? index + 1 : 0;
 }
 
-export function OrderHeader({ order }: OrderHeaderProps) {
+export function PickNoteHeader({ pickNote }: PickNoteHeaderProps) {
   const navigate = useNavigate();
   const { data: workersData } = useWarehouseWorkers();
   const workers = workersData?.items ?? [];
-  const assignee = order.warehouse_worker_guid
-    ? workers.find((w) => w.guid === order.warehouse_worker_guid)
+  const picker = pickNote.picker_guid
+    ? workers.find((w) => w.guid === pickNote.picker_guid)
     : null;
-
-  const canCreatePickNote =
-    order.status_code === "COMMITTED" || order.status_code === "PICKING";
 
   return (
     <div className="space-y-3">
-      {/* Riga: titolo + stepper + azioni */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Button
             variant="ghost"
             size="icon"
             className="h-8 w-8"
-            onClick={() => navigate("/orders")}
+            onClick={() => navigate("/pick-notes")}
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
             <h1 className="text-xl font-bold tracking-tight leading-none">
-              Ordine #{order.guid.slice(0, 8).toUpperCase()}
+              Nota #{pickNote.guid.slice(0, 8).toUpperCase()}
             </h1>
             <span className="text-[12px] text-muted-foreground">
-              {new Date(order.created_at).toLocaleDateString("it-IT", {
+              {new Date(pickNote.created_at).toLocaleDateString("it-IT", {
                 day: "2-digit",
                 month: "short",
                 year: "numeric",
               })}
-              {assignee && (
+              {picker && (
                 <span>
-                  {" \u00B7 "}
-                  {assignee.name} {assignee.surname}
+                  {" · "}
+                  {picker.name} {picker.surname}
                 </span>
               )}
             </span>
@@ -79,24 +73,6 @@ export function OrderHeader({ order }: OrderHeaderProps) {
           >
             <Printer className="h-4 w-4" />
           </Button>
-          {canCreatePickNote && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 text-muted-foreground"
-              title="Crea Nota di Prelievo"
-            >
-              <ClipboardList className="h-4 w-4" />
-            </Button>
-          )}
-          <Button
-            size="sm"
-            onClick={() => navigate(`/orders/${order.guid}/edit`)}
-            disabled={!isOrderEditable(order.status_code)}
-          >
-            <Pencil className="mr-1.5 h-3.5 w-3.5" />
-            Modifica
-          </Button>
         </div>
       </div>
 
@@ -104,11 +80,10 @@ export function OrderHeader({ order }: OrderHeaderProps) {
       <div className="mx-auto max-w-4xl">
         <Stepper
           steps={PIPELINE_STEPS.map((s) => ({ label: s.label }))}
-          currentStep={getStepFromStatus(order.status_code)}
+          currentStep={getStepFromStatus(pickNote.status_code)}
         />
       </div>
 
-      {/* Separatore sottile */}
       <div className="h-px bg-border/60" />
     </div>
   );

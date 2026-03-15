@@ -1,9 +1,10 @@
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
-import { ArrowLeft, Loader2, Plus, Trash2, Check } from "lucide-react";
+import { ArrowLeft, Loader2, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
+import { CheckboxDisplay } from "@/shared/ui/checkbox";
 import { Input } from "@/shared/ui/input";
 import {
   Select,
@@ -12,7 +13,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/ui/select";
-import * as Checkbox from "@radix-ui/react-checkbox";
 import { useArticleTypes } from "@/features/articles/hooks/use-article-lookups";
 import { useArticles } from "@/features/articles/hooks/use-articles";
 
@@ -174,18 +174,13 @@ function InlineCheckbox({
   label: string;
 }) {
   return (
-    <label className="flex items-center gap-2 cursor-pointer">
-      <Checkbox.Root
-        checked={checked}
-        onCheckedChange={(v) => onCheckedChange(!!v)}
-        className="flex h-4 w-4 items-center justify-center rounded border border-border bg-background transition-colors data-[state=checked]:border-primary data-[state=checked]:bg-primary"
-      >
-        <Checkbox.Indicator>
-          <Check className="h-3 w-3 text-primary-foreground" />
-        </Checkbox.Indicator>
-      </Checkbox.Root>
+    <div
+      className="flex items-center gap-2 cursor-pointer"
+      onClick={() => onCheckedChange(!checked)}
+    >
+      <CheckboxDisplay checked={checked} />
       <span className="text-[12px] font-medium">{label}</span>
-    </label>
+    </div>
   );
 }
 

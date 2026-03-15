@@ -86,6 +86,7 @@ export const ordersApi = {
       discount_percent?: number | string | null;
       vat_code?: string | null;
       availability_status_code: string;
+      unit_of_measure_code?: string | null;
     },
   ) =>
     apiClient.POST("/orders/{order_guid}/rows", {

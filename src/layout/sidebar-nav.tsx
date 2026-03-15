@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
   ShoppingCart,
+  ClipboardList,
   Users,
   Package,
   Warehouse,
@@ -16,6 +17,7 @@ import { LogoIcon } from "@/shared/ui/logo-icon";
 const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/orders", label: "Ordini", icon: ShoppingCart },
+  { to: "/pick-notes", label: "Note Prelievo", icon: ClipboardList },
   { to: "/parties", label: "Anagrafica", icon: Users },
   { to: "/articles", label: "Articoli", icon: Package },
   { to: "/warehouses", label: "Magazzino", icon: Warehouse },

@@ -381,7 +381,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get order */
+        /** Get order with rows */
         get: operations["get_order_orders__order_guid__get"];
         put?: never;
         post?: never;
@@ -553,14 +553,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get pick note */
+        /** Get pick note with rows */
         get: operations["get_pick_note_pick_notes__pick_note_guid__get"];
         put?: never;
         post?: never;
         delete?: never;
         options?: never;
         head?: never;
-        patch?: never;
+        /** Update pick note */
+        patch: operations["update_pick_note_pick_notes__pick_note_guid__patch"];
         trace?: never;
     };
     "/pick-notes/{pick_note_guid}/rows": {
@@ -626,6 +627,24 @@ export interface paths {
         get: operations["get_delivery_note_delivery_notes__delivery_note_guid__get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/orders/{order_guid}/documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List order documents */
+        get: operations["list_order_documents_orders__order_guid__documents_get"];
+        put?: never;
+        /** Link document to order */
+        post: operations["link_order_document_orders__order_guid__documents_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -702,6 +721,41 @@ export interface paths {
         head?: never;
         /** Update party discount */
         patch: operations["update_party_discount_party_discounts__guid__patch"];
+        trace?: never;
+    };
+    "/warehouse-workers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List warehouse workers */
+        get: operations["list_warehouse_workers_warehouse_workers_get"];
+        put?: never;
+        /** Create warehouse worker */
+        post: operations["create_warehouse_worker_warehouse_workers_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/warehouse-workers/{guid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get warehouse worker */
+        get: operations["get_warehouse_worker_warehouse_workers__guid__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/mails": {
@@ -823,6 +877,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List documents archive */
+        get: operations["list_documents_documents_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -862,6 +933,8 @@ export interface components {
             is_active: boolean;
             /** Type Code */
             type_code?: string | null;
+            /** List Price */
+            list_price?: number | string | null;
         };
         /** ArticleOut */
         ArticleOut: {
@@ -885,6 +958,8 @@ export interface components {
             is_active: boolean;
             /** Type Code */
             type_code: string | null;
+            /** List Price */
+            list_price: string | null;
         };
         /** ArticleSupplierCreate */
         ArticleSupplierCreate: {
@@ -963,16 +1038,19 @@ export interface components {
             content_type: string;
             /** Storage Path */
             storage_path: string;
+            /** Document Type Code */
+            document_type_code?: string | null;
+            /** Description */
+            description?: string | null;
+            /** Expiry Date */
+            expiry_date?: string | null;
             /**
              * Created At
              * Format: date-time
              */
             created_at: string;
-            /**
-             * Created By User Guid
-             * Format: uuid
-             */
-            created_by_user_guid: string;
+            /** Created By User Guid */
+            created_by_user_guid: string | null;
         };
         /** Body_login_auth_login_post */
         Body_login_auth_login_post: {
@@ -1007,6 +1085,12 @@ export interface components {
              * Format: uuid
              */
             entity_guid: string;
+            /** Document Type Code */
+            document_type_code?: string | null;
+            /** Description */
+            description?: string | null;
+            /** Expiry Date */
+            expiry_date?: string | null;
             /**
              * File
              * Format: binary
@@ -1157,11 +1241,8 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
-            /**
-             * Created By User Guid
-             * Format: uuid
-             */
-            created_by_user_guid: string;
+            /** Created By User Guid */
+            created_by_user_guid: string | null;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -1331,11 +1412,8 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
-            /**
-             * Created By User Guid
-             * Format: uuid
-             */
-            created_by_user_guid: string;
+            /** Created By User Guid */
+            created_by_user_guid: string | null;
         };
         /** MailOut */
         MailOut: {
@@ -1391,6 +1469,99 @@ export interface components {
             billing_location_guid?: string | null;
             /** Shipping Location Guid */
             shipping_location_guid?: string | null;
+            /** Warehouse Worker Guid */
+            warehouse_worker_guid?: string | null;
+        };
+        /** OrderDetailOut */
+        OrderDetailOut: {
+            /**
+             * Guid
+             * Format: uuid
+             */
+            guid: string;
+            /**
+             * Master Data Guid
+             * Format: uuid
+             */
+            master_data_guid: string;
+            /**
+             * Party Guid
+             * Format: uuid
+             */
+            party_guid: string;
+            /** Status Code */
+            status_code: string;
+            /**
+             * Order Date
+             * Format: date
+             */
+            order_date: string;
+            /** Payment Method Guid */
+            payment_method_guid: string | null;
+            /** Billing Location Guid */
+            billing_location_guid: string | null;
+            /** Shipping Location Guid */
+            shipping_location_guid: string | null;
+            /** Intent Letter Guid */
+            intent_letter_guid: string | null;
+            /** Total Net */
+            total_net: string | null;
+            /** Vat Rate */
+            vat_rate: string | null;
+            /** Total Vat */
+            total_vat: string | null;
+            /** Total Gross */
+            total_gross: string | null;
+            /** Total Discount */
+            total_discount: string | null;
+            /** Warehouse Worker Guid */
+            warehouse_worker_guid: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Created By User Guid */
+            created_by_user_guid: string | null;
+            /**
+             * Rows
+             * @default []
+             */
+            rows: components["schemas"]["OrderRowOut"][];
+        };
+        /** OrderDocumentCreate */
+        OrderDocumentCreate: {
+            /**
+             * Attachment Guid
+             * Format: uuid
+             */
+            attachment_guid: string;
+        };
+        /** OrderDocumentOut */
+        OrderDocumentOut: {
+            /**
+             * Guid
+             * Format: uuid
+             */
+            guid: string;
+            /**
+             * Order Guid
+             * Format: uuid
+             */
+            order_guid: string;
+            /**
+             * Attachment Guid
+             * Format: uuid
+             */
+            attachment_guid: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Created By User Guid */
+            created_by_user_guid: string | null;
+            attachment?: components["schemas"]["AttachmentOut"] | null;
         };
         /** OrderLogOut */
         OrderLogOut: {
@@ -1404,11 +1575,8 @@ export interface components {
              * Format: uuid
              */
             order_guid: string;
-            /**
-             * User Guid
-             * Format: uuid
-             */
-            user_guid: string;
+            /** User Guid */
+            user_guid: string | null;
             /** Action Code */
             action_code: string;
             /** Old Status Code */
@@ -1465,16 +1633,15 @@ export interface components {
             total_gross: string | null;
             /** Total Discount */
             total_discount: string | null;
+            /** Warehouse Worker Guid */
+            warehouse_worker_guid: string | null;
             /**
              * Created At
              * Format: date-time
              */
             created_at: string;
-            /**
-             * Created By User Guid
-             * Format: uuid
-             */
-            created_by_user_guid: string;
+            /** Created By User Guid */
+            created_by_user_guid: string | null;
         };
         /** OrderRowCreate */
         OrderRowCreate: {
@@ -1528,6 +1695,8 @@ export interface components {
             availability_status_code: string;
             /** Unit Of Measure Code */
             unit_of_measure_code: string;
+            /** Remaining Quantity */
+            remaining_quantity?: string | null;
         };
         /** OrderRowPreviewOut */
         OrderRowPreviewOut: {
@@ -1663,6 +1832,17 @@ export interface components {
         Page_PickNoteOut_: {
             /** Items */
             items: components["schemas"]["PickNoteOut"][];
+            /** Total */
+            total: number;
+            /** Offset */
+            offset: number;
+            /** Limit */
+            limit: number;
+        };
+        /** Page[WarehouseWorkerOut] */
+        Page_WarehouseWorkerOut_: {
+            /** Items */
+            items: components["schemas"]["WarehouseWorkerOut"][];
             /** Total */
             total: number;
             /** Offset */
@@ -1810,6 +1990,62 @@ export interface components {
             warehouse_guid: string;
             /** Order Guid */
             order_guid?: string | null;
+            /** Billing Location Guid */
+            billing_location_guid?: string | null;
+            /** Shipping Location Guid */
+            shipping_location_guid?: string | null;
+            /** Picker Guid */
+            picker_guid?: string | null;
+            /** Note */
+            note?: string | null;
+        };
+        /** PickNoteDetailOut */
+        PickNoteDetailOut: {
+            /**
+             * Guid
+             * Format: uuid
+             */
+            guid: string;
+            /**
+             * Master Data Guid
+             * Format: uuid
+             */
+            master_data_guid: string;
+            /**
+             * Warehouse Guid
+             * Format: uuid
+             */
+            warehouse_guid: string;
+            /** Status Code */
+            status_code: string;
+            /** Order Guid */
+            order_guid?: string | null;
+            /** Billing Location Guid */
+            billing_location_guid?: string | null;
+            /** Shipping Location Guid */
+            shipping_location_guid?: string | null;
+            /** Weight */
+            weight?: string | null;
+            /** Packages */
+            packages?: number | null;
+            /** Picker Guid */
+            picker_guid?: string | null;
+            /** Checker Guid */
+            checker_guid?: string | null;
+            /** Note */
+            note?: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Created By User Guid */
+            created_by_user_guid: string | null;
+            /**
+             * Rows
+             * @default []
+             */
+            rows: components["schemas"]["PickNoteRowOut"][];
         };
         /** PickNoteOut */
         PickNoteOut: {
@@ -1828,16 +2064,31 @@ export interface components {
              * Format: uuid
              */
             warehouse_guid: string;
+            /** Status Code */
+            status_code: string;
+            /** Order Guid */
+            order_guid?: string | null;
+            /** Billing Location Guid */
+            billing_location_guid?: string | null;
+            /** Shipping Location Guid */
+            shipping_location_guid?: string | null;
+            /** Weight */
+            weight?: string | null;
+            /** Packages */
+            packages?: number | null;
+            /** Picker Guid */
+            picker_guid?: string | null;
+            /** Checker Guid */
+            checker_guid?: string | null;
+            /** Note */
+            note?: string | null;
             /**
              * Created At
              * Format: date-time
              */
             created_at: string;
-            /**
-             * Created By User Guid
-             * Format: uuid
-             */
-            created_by_user_guid: string;
+            /** Created By User Guid */
+            created_by_user_guid: string | null;
         };
         /** PickNoteRowCreate */
         PickNoteRowCreate: {
@@ -1848,10 +2099,8 @@ export interface components {
             article_guid: string;
             /** Quantity */
             quantity: number | string;
-            /** Source Type Code */
-            source_type_code: string;
-            /** Source Guid */
-            source_guid?: string | null;
+            /** Order Row Guid */
+            order_row_guid?: string | null;
         };
         /** PickNoteRowOut */
         PickNoteRowOut: {
@@ -1876,6 +2125,23 @@ export interface components {
             source_type_code: string;
             /** Source Guid */
             source_guid: string | null;
+            /** Order Row Guid */
+            order_row_guid?: string | null;
+        };
+        /** PickNoteUpdate */
+        PickNoteUpdate: {
+            /** Status Code */
+            status_code?: string | null;
+            /** Weight */
+            weight?: number | string | null;
+            /** Packages */
+            packages?: number | null;
+            /** Picker Guid */
+            picker_guid?: string | null;
+            /** Checker Guid */
+            checker_guid?: string | null;
+            /** Note */
+            note?: string | null;
         };
         /** RankedMail */
         RankedMail: {
@@ -1982,6 +2248,30 @@ export interface components {
             description: string;
             /** Location Guid */
             location_guid: string | null;
+        };
+        /** WarehouseWorkerCreate */
+        WarehouseWorkerCreate: {
+            /** Name */
+            name: string;
+            /** Surname */
+            surname: string;
+        };
+        /** WarehouseWorkerOut */
+        WarehouseWorkerOut: {
+            /**
+             * Guid
+             * Format: uuid
+             */
+            guid: string;
+            /**
+             * Master Data Guid
+             * Format: uuid
+             */
+            master_data_guid: string;
+            /** Name */
+            name: string;
+            /** Surname */
+            surname: string;
         };
     };
     responses: never;
@@ -3061,7 +3351,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["OrderOut"];
+                    "application/json": components["schemas"]["OrderDetailOut"];
                 };
             };
             /** @description Validation Error */
@@ -3382,6 +3672,7 @@ export interface operations {
         parameters: {
             query?: {
                 warehouse_guid?: string | null;
+                status_code?: string | null;
                 date_from?: string | null;
                 date_to?: string | null;
                 offset?: number;
@@ -3456,6 +3747,41 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PickNoteDetailOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_pick_note_pick_notes__pick_note_guid__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                pick_note_guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PickNoteUpdate"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {
@@ -3631,6 +3957,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DeliveryNoteOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_order_documents_orders__order_guid__documents_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                order_guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderDocumentOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    link_order_document_orders__order_guid__documents_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                order_guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OrderDocumentCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderDocumentOut"];
                 };
             };
             /** @description Validation Error */
@@ -3909,6 +4301,102 @@ export interface operations {
             };
         };
     };
+    list_warehouse_workers_warehouse_workers_get: {
+        parameters: {
+            query?: {
+                offset?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_WarehouseWorkerOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_warehouse_worker_warehouse_workers_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WarehouseWorkerCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WarehouseWorkerOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_warehouse_worker_warehouse_workers__guid__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WarehouseWorkerOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     ingest_mail_mails_post: {
         parameters: {
             query?: never;
@@ -4107,12 +4595,48 @@ export interface operations {
     };
     list_entity_attachments_entities__entity_type_code___entity_guid__attachments_get: {
         parameters: {
-            query?: never;
+            query?: {
+                document_type_code?: string | null;
+            };
             header?: never;
             path: {
                 entity_type_code: string;
                 entity_guid: string;
             };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttachmentOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_documents_documents_get: {
+        parameters: {
+            query?: {
+                document_type_code?: string | null;
+                entity_type_code?: string | null;
+                expiry_from?: string | null;
+                expiry_to?: string | null;
+            };
+            header?: never;
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;

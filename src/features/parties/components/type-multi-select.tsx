@@ -1,7 +1,7 @@
 import { useState } from "react";
 import * as Popover from "@radix-ui/react-popover";
-import * as Checkbox from "@radix-ui/react-checkbox";
-import { Check, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+import { CheckboxDisplay } from "@/shared/ui/checkbox";
 import { cn } from "@/shared/lib/utils";
 
 const PARTY_TYPES = ["CUSTOMER", "SUPPLIER", "CARRIER"] as const;
@@ -55,21 +55,16 @@ export function TypeMultiSelect({ value, onChange }: TypeMultiSelectProps) {
           className="z-50 min-w-[180px] rounded-xl border border-border bg-popover p-1.5 shadow-[0_8px_30px_rgba(0,0,0,0.10)] outline-none animate-in fade-in-0 zoom-in-95"
         >
           {PARTY_TYPES.map((type) => (
-            <label
+            <div
               key={type}
+              role="option"
+              aria-selected={value.includes(type)}
               className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] transition-colors hover:bg-muted/60"
+              onClick={() => toggle(type)}
             >
-              <Checkbox.Root
-                checked={value.includes(type)}
-                onCheckedChange={() => toggle(type)}
-                className="flex h-4 w-4 shrink-0 items-center justify-center rounded border border-border bg-background transition-colors data-[state=checked]:border-primary data-[state=checked]:bg-primary"
-              >
-                <Checkbox.Indicator>
-                  <Check className="h-3 w-3 text-primary-foreground" />
-                </Checkbox.Indicator>
-              </Checkbox.Root>
+              <CheckboxDisplay checked={value.includes(type)} />
               {TYPE_LABELS[type]}
-            </label>
+            </div>
           ))}
         </Popover.Content>
       </Popover.Portal>

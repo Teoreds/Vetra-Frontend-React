@@ -42,10 +42,12 @@ export function StatusBadge({ variant, label, className }: StatusBadgeProps) {
 }
 
 const STATUS_VARIANT_MAP: Record<string, StatusBadgeVariant> = {
+  CREATED: "pending",
   DRAFT: "draft",
   CONFIRMED: "confirmed",
   COMMITTED: "committed",
   PICKING: "picking",
+  CHECKED: "shipped",
   SHIPPED: "shipped",
   COMPLETED: "completed",
   CANCELLED: "cancelled",

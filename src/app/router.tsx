@@ -18,6 +18,8 @@ import { NewArticlePage } from "@/features/articles/pages/new-article-page";
 import { WarehousesListPage } from "@/features/warehouses/pages/warehouses-list-page";
 import { WarehouseDetailPage } from "@/features/warehouses/pages/warehouse-detail-page";
 import { NewPickNotePage } from "@/features/pick-notes/pages/new-pick-note-page";
+import { PickNoteListPage } from "@/features/pick-notes/pages/pick-note-list-page";
+import { PickNoteDetailPage } from "@/features/pick-notes/pages/pick-note-detail-page";
 
 export const router = createBrowserRouter([
   {
@@ -49,7 +51,9 @@ export const router = createBrowserRouter([
           { path: "/articles/:id", element: <ArticleDetailPage /> },
           { path: "/warehouses", element: <WarehousesListPage /> },
           { path: "/warehouses/:id", element: <WarehouseDetailPage /> },
+          { path: "/pick-notes", element: <PickNoteListPage /> },
           { path: "/pick-notes/new", element: <NewPickNotePage /> },
+          { path: "/pick-notes/:id", element: <PickNoteDetailPage /> },
         ],
       },
     ],
