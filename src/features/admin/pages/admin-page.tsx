@@ -4,21 +4,45 @@ import { cn } from "@/shared/lib/utils";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
 import { LOOKUP_CONFIGS } from "../api/admin.api";
 import { LookupTable } from "../components/lookup-table";
+import { PaymentTermsTable } from "../components/payment-terms-table";
+
+const PAYMENT_TERMS_KEY = "payment-terms-crud";
+
+interface SidebarItem {
+  key: string;
+  label: string;
+}
+
+interface SidebarGroup {
+  group: string;
+  items: SidebarItem[];
+}
 
 export function AdminPage() {
   const [activeKey, setActiveKey] = useState(LOOKUP_CONFIGS[0].key);
 
-  const groups = useMemo(() => {
-    const map = new Map<string, typeof LOOKUP_CONFIGS>();
+  const groups = useMemo<SidebarGroup[]>(() => {
+    const map = new Map<string, SidebarItem[]>();
     for (const cfg of LOOKUP_CONFIGS) {
       const arr = map.get(cfg.group) ?? [];
-      arr.push(cfg);
+      arr.push({ key: cfg.key, label: cfg.label });
       map.set(cfg.group, arr);
     }
-    return Array.from(map.entries());
+    // Add payment terms to Pagamenti group
+    const pagamenti = map.get("Pagamenti") ?? [];
+    pagamenti.push({ key: PAYMENT_TERMS_KEY, label: "Condizioni di Pagamento" });
+    map.set("Pagamenti", pagamenti);
+
+    return Array.from(map.entries()).map(([group, items]) => ({ group, items }));
   }, []);
 
-  const activeCfg = LOOKUP_CONFIGS.find((c) => c.key === activeKey)!;
+  const activeLookup = LOOKUP_CONFIGS.find((c) => c.key === activeKey);
+  const isPaymentTerms = activeKey === PAYMENT_TERMS_KEY;
+
+  const title = isPaymentTerms ? "Condizioni di Pagamento" : activeLookup?.label ?? "";
+  const subtitle = isPaymentTerms
+    ? "Codice, descrizione e rate per le condizioni di pagamento."
+    : `Codice e descrizione per la tabella ${activeLookup?.path ?? ""}`;
 
   return (
     <div className="space-y-5">
@@ -40,25 +64,25 @@ export function AdminPage() {
         {/* Sidebar navigation */}
         <Card className="w-56 shrink-0 self-start">
           <CardContent className="p-3 space-y-3">
-            {groups.map(([group, items]) => (
+            {groups.map(({ group, items }) => (
               <div key={group}>
                 <p className="mb-1 px-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">
                   {group}
                 </p>
                 <div className="space-y-0.5">
-                  {items.map((cfg) => (
+                  {items.map((item) => (
                     <button
-                      key={cfg.key}
+                      key={item.key}
                       type="button"
-                      onClick={() => setActiveKey(cfg.key)}
+                      onClick={() => setActiveKey(item.key)}
                       className={cn(
                         "flex w-full items-center rounded-lg px-2.5 py-1.5 text-left text-[13px] font-medium transition-colors",
-                        activeKey === cfg.key
+                        activeKey === item.key
                           ? "bg-primary/[0.08] text-primary"
                           : "text-muted-foreground hover:bg-muted hover:text-foreground",
                       )}
                     >
-                      {cfg.label}
+                      {item.label}
                     </button>
                   ))}
                 </div>
@@ -70,14 +94,15 @@ export function AdminPage() {
         {/* Content */}
         <Card className="min-w-0 flex-1">
           <CardHeader>
-            <h2 className="text-[15px] font-semibold">{activeCfg.label}</h2>
-            <p className="text-[12px] text-muted-foreground">
-              Codice e descrizione per la tabella{" "}
-              <span className="font-mono text-[11px]">{activeCfg.path}</span>
-            </p>
+            <h2 className="text-[15px] font-semibold">{title}</h2>
+            <p className="text-[12px] text-muted-foreground">{subtitle}</p>
           </CardHeader>
           <CardContent>
-            <LookupTable key={activeKey} lookupKey={activeKey} path={activeCfg.path} />
+            {isPaymentTerms ? (
+              <PaymentTermsTable />
+            ) : activeLookup ? (
+              <LookupTable key={activeKey} lookupKey={activeKey} path={activeLookup.path} />
+            ) : null}
           </CardContent>
         </Card>
       </div>
