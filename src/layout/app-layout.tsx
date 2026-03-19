@@ -1,8 +1,10 @@
 import { Outlet } from "react-router-dom";
 import { SidebarNav } from "./sidebar-nav";
 import { HeaderUserMenu } from "./header-user-menu";
+import { useApplyTenantTheme } from "@/shared/hooks/use-apply-tenant-theme";
 
 export function AppLayout() {
+  useApplyTenantTheme();
   return (
     <div className="flex h-screen overflow-hidden bg-page">
       <SidebarNav />

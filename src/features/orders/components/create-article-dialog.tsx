@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/ui/select";
+import { SearchableSelect } from "@/shared/ui/searchable-select";
 import { CurrencySelector } from "@/shared/ui/currency-selector";
 import { useCurrencyRates, toEur, type Currency } from "@/shared/hooks/use-currency-rates";
 import { useCreateArticle } from "@/features/articles/hooks/use-create-article";
@@ -92,7 +93,7 @@ export function CreateArticleDialog({ open, onOpenChange, onCreated }: Props) {
       unit_of_measure_code: values.unit_of_measure_code,
       type_code: values.type_code || null,
       is_active: values.is_active,
-      list_price: listPriceEur,
+      list_price: listPriceEur != null ? String(listPriceEur) : null,
     });
     if (!article) return;
     reset();
@@ -110,9 +111,9 @@ export function CreateArticleDialog({ open, onOpenChange, onCreated }: Props) {
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* Codice + Descrizione */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <label className="text-[13px] font-medium">Codice *</label>
+            <label className="text-[13px] font-medium">Codice</label>
             <Input
               {...register("code")}
               placeholder="es. ART001"
@@ -123,7 +124,7 @@ export function CreateArticleDialog({ open, onOpenChange, onCreated }: Props) {
             )}
           </div>
           <div className="space-y-1.5">
-            <label className="text-[13px] font-medium">Descrizione *</label>
+            <label className="text-[13px] font-medium">Descrizione</label>
             <Input
               {...register("description")}
               placeholder="Descrizione articolo"
@@ -135,22 +136,22 @@ export function CreateArticleDialog({ open, onOpenChange, onCreated }: Props) {
           </div>
         </div>
 
-        {/* UdM + Tipo */}
-        <div className="grid grid-cols-2 gap-3">
+        {/* UdM + Tipo + Prezzo */}
+        <div className="grid grid-cols-3 gap-4">
           <div className="space-y-1.5">
-            <label className="text-[13px] font-medium">Unità di Misura *</label>
+            <label className="text-[13px] font-medium">UdM</label>
             <Controller
               control={control}
               name="unit_of_measure_code"
               render={({ field }) => (
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Seleziona UdM…" />
+                    <SelectValue placeholder="UdM…" />
                   </SelectTrigger>
                   <SelectContent>
                     {unitOfMeasures.map((uom) => (
                       <SelectItem key={uom.code} value={uom.code}>
-                        {uom.code} — {uom.description}
+                        {uom.code}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -163,71 +164,87 @@ export function CreateArticleDialog({ open, onOpenChange, onCreated }: Props) {
               </p>
             )}
           </div>
+
           <div className="space-y-1.5">
             <label className="text-[13px] font-medium">
               Tipo
-              <span className="ml-1 font-normal text-muted-foreground">(opzionale)</span>
+              <span className="ml-1 font-normal text-muted-foreground">(opz.)</span>
             </label>
             <Controller
               control={control}
               name="type_code"
               render={({ field }) => (
-                <Select value={field.value ?? ""} onValueChange={field.onChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleziona tipo…" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {articleTypes.map((t) => (
-                      <SelectItem key={t.code} value={t.code}>
-                        {t.description}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <SearchableSelect
+                  items={articleTypes.map((t) => ({ value: t.code, label: t.description }))}
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  placeholder="Cerca tipo…"
+                />
               )}
             />
           </div>
-        </div>
 
-        {/* Prezzo */}
-        <div className="space-y-1.5">
-          <label className="text-[13px] font-medium">
-            Prezzo
-            <span className="ml-1 font-normal text-muted-foreground">(opzionale)</span>
-          </label>
-          <div className="flex">
-            <Input
-              type="number"
-              step="0.01"
-              min="0"
-              {...register("list_price", { valueAsNumber: true })}
-              placeholder="0.00"
-              className="rounded-r-none"
-            />
-            <CurrencySelector
-              value={currency}
-              onChange={handleCurrencyChange}
-              className="rounded-l-none border-l-0"
-            />
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-medium">
+              Prezzo
+              <span className="ml-1 font-normal text-muted-foreground">(opz.)</span>
+            </label>
+            <div className="flex">
+              <Input
+                type="number"
+                step="0.01"
+                min="0"
+                {...register("list_price", { valueAsNumber: true })}
+                placeholder="0.00"
+                className="rounded-r-none"
+              />
+              <CurrencySelector
+                value={currency}
+                onChange={handleCurrencyChange}
+                className="rounded-l-none border-l-0"
+              />
+            </div>
           </div>
         </div>
 
-        {/* Attivo */}
-        <div className="flex items-center gap-2.5">
-          <Controller
-            control={control}
-            name="is_active"
-            render={({ field }) => (
-              <Checkbox
-                checked={field.value}
-                onCheckedChange={(checked) => field.onChange(!!checked)}
-              />
-            )}
-          />
-          <label className="text-[13px] font-medium">Attivo</label>
+        {/* Attivo + Error + Footer */}
+        <div className="flex items-center justify-between border-t border-border/60 pt-4">
+          <div className="flex items-center gap-2.5">
+            <Controller
+              control={control}
+              name="is_active"
+              render={({ field }) => (
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={(checked) => field.onChange(!!checked)}
+                />
+              )}
+            />
+            <label className="text-[13px] font-medium text-muted-foreground">Attivo</label>
+          </div>
+
+          <div className="flex gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => handleOpenChange(false)}
+              disabled={createArticle.isPending}
+            >
+              Annulla
+            </Button>
+            <Button type="submit" disabled={createArticle.isPending}>
+              {createArticle.isPending ? (
+                <>
+                  <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+                  Creazione…
+                </>
+              ) : (
+                "Crea e Aggiungi"
+              )}
+            </Button>
+          </div>
         </div>
 
-        {/* Error banner */}
         {createArticle.isError && (
           <div className="rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3">
             <p className="text-[13px] text-destructive">
@@ -235,28 +252,6 @@ export function CreateArticleDialog({ open, onOpenChange, onCreated }: Props) {
             </p>
           </div>
         )}
-
-        {/* Footer */}
-        <div className="flex justify-end gap-3 border-t border-border/60 pt-4">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => handleOpenChange(false)}
-            disabled={createArticle.isPending}
-          >
-            Annulla
-          </Button>
-          <Button type="submit" disabled={createArticle.isPending}>
-            {createArticle.isPending ? (
-              <>
-                <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
-                Creazione…
-              </>
-            ) : (
-              "Crea e Aggiungi"
-            )}
-          </Button>
-        </div>
       </form>
     </ModalDialog>
   );

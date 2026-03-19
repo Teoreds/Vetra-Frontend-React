@@ -7,7 +7,7 @@ import {
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
 import { formatDateTime } from "@/shared/lib/utils";
 import { useOrderLog } from "../hooks/use-order-log";
-import { getStatusLabel } from "../types/order-status";
+import { useOrderStatuses, useLogActionTypes } from "@/shared/hooks/use-lookups";
 
 interface OrderActivitySidebarProps {
   orderGuid: string;
@@ -29,29 +29,21 @@ function getIcon(actionCode: string): React.ReactNode {
   );
 }
 
-const ACTION_LABELS: Record<string, string> = {
-  CREATE: "Creazione Ordine",
-  CREATED: "Creazione Ordine",
-  CONFIRM: "Ordine confermato",
-  CONFIRMED: "Ordine confermato",
-  STATUS_CHANGE: "Cambio stato",
-  ROW_ADDED: "Riga aggiunta",
-  ROW_UPDATED: "Riga aggiornata",
-  ROW_REMOVED: "Riga rimossa",
-  ATTACHMENT_ADDED: "Allegato aggiunto",
-};
-
 function buildLogTitle(
   actionCode: string,
   oldStatus: string | null,
   newStatus: string | null,
+  statusLabels: Map<string, string>,
+  actionLabels: Map<string, string>,
 ): string {
   if (oldStatus && newStatus) {
-    return `${getStatusLabel(oldStatus)} \u2192 ${getStatusLabel(newStatus)}`;
+    const from = statusLabels.get(oldStatus.toUpperCase()) ?? oldStatus;
+    const to = statusLabels.get(newStatus.toUpperCase()) ?? newStatus;
+    return `${from} \u2192 ${to}`;
   }
   const key = actionCode.toUpperCase();
   return (
-    ACTION_LABELS[key] ??
+    actionLabels.get(key) ??
     actionCode
       .replace(/_/g, " ")
       .toLowerCase()
@@ -61,6 +53,8 @@ function buildLogTitle(
 
 export function OrderActivitySidebar({ orderGuid }: OrderActivitySidebarProps) {
   const { data: logs = [], isLoading } = useOrderLog(orderGuid);
+  const { map: statusLabels } = useOrderStatuses();
+  const { map: actionLabels } = useLogActionTypes();
 
   return (
     <Card className="sticky top-4">
@@ -99,6 +93,8 @@ export function OrderActivitySidebar({ orderGuid }: OrderActivitySidebarProps) {
                       log.action_code,
                       log.old_status_code,
                       log.new_status_code,
+                      statusLabels,
+                      actionLabels,
                     )}
                   </p>
                   {log.note && (

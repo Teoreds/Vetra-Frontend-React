@@ -39,9 +39,8 @@ export function PartySearchSelect({ value, onChange, disabled }: PartySearchSele
     return () => document.removeEventListener("mousedown", onMouseDown);
   }, []);
 
-  useEffect(() => {
-    setFocusedIndex(0);
-  }, [parties.length]);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { setFocusedIndex(0); }, [parties.length]);
 
   const confirmSelection = useCallback(
     (partyGuid: string) => {

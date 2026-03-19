@@ -1,4 +1,5 @@
 import { apiClient } from "@/shared/api/client";
+import type { components } from "@/shared/api/schema";
 
 export interface OrderListParams {
   party_guid?: string;
@@ -26,26 +27,15 @@ export const ordersApi = {
     party_guid: string;
     order_date: string;
     payment_method_guid?: string | null;
+    payment_term_guid?: string | null;
     billing_location_guid?: string | null;
     shipping_location_guid?: string | null;
   }) => apiClient.POST("/orders", { body }),
 
-  updateStatus: (orderGuid: string, body: { status_code: string; note?: string | null }) =>
+  update: (orderGuid: string, body: components["schemas"]["OrderUpdate"]) =>
     apiClient.PATCH("/orders/{order_guid}", {
       params: { path: { order_guid: orderGuid } },
       body,
-    }),
-
-  updateAddresses: (
-    orderGuid: string,
-    body: {
-      shipping_location_guid?: string | null;
-      billing_location_guid?: string | null;
-    },
-  ) =>
-    apiClient.PATCH("/orders/{order_guid}", {
-      params: { path: { order_guid: orderGuid } },
-      body: body as never,
     }),
 
   confirm: (orderGuid: string) =>
@@ -105,6 +95,11 @@ export const ordersApi = {
     apiClient.PATCH("/order-rows/{order_row_guid}", {
       params: { path: { order_row_guid: orderRowGuid } },
       body,
+    }),
+
+  deleteRow: (orderRowGuid: string) =>
+    apiClient.DELETE("/order-rows/{order_row_guid}", {
+      params: { path: { order_row_guid: orderRowGuid } },
     }),
 
   createPickNoteFromOrder: (orderGuid: string, warehouseGuid: string) =>

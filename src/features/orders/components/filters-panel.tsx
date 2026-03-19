@@ -1,5 +1,5 @@
 import { Button } from "@/shared/ui/button";
-import { ORDER_STATUSES, STATUS_LABELS } from "../types/order-status";
+import { useOrderStatuses } from "@/shared/hooks/use-lookups";
 
 interface OrderFilterValues {
   status_code?: string;
@@ -14,6 +14,8 @@ interface FiltersPanelProps {
 }
 
 export function FiltersPanel({ filters, onFilterChange, onReset }: FiltersPanelProps) {
+  const { data: orderStatuses } = useOrderStatuses();
+
   return (
     <div className="w-56 space-y-5 border-r border-border/40 pr-5">
       <div>
@@ -30,20 +32,20 @@ export function FiltersPanel({ filters, onFilterChange, onReset }: FiltersPanelP
             />
             All Statuses
           </label>
-          {ORDER_STATUSES.map((status) => (
-            <label key={status} className="flex items-center gap-2 text-[13px] cursor-pointer">
+          {orderStatuses.map((s) => (
+            <label key={s.code} className="flex items-center gap-2 text-[13px] cursor-pointer">
               <input
                 type="checkbox"
-                checked={filters.status_code === status}
+                checked={filters.status_code === s.code}
                 onChange={() =>
                   onFilterChange({
                     ...filters,
-                    status_code: filters.status_code === status ? undefined : status,
+                    status_code: filters.status_code === s.code ? undefined : s.code,
                   })
                 }
                 className="h-3.5 w-3.5 rounded border-border text-primary accent-primary"
               />
-              {STATUS_LABELS[status]}
+              {s.description}
             </label>
           ))}
         </div>

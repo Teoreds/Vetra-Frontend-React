@@ -124,7 +124,7 @@ export function OrderWizardPage() {
       if (shippingChanged || billingChanged) {
         setStep1Pending(true);
         try {
-          const { error } = await ordersApi.updateAddresses(id, {
+          const { error } = await ordersApi.update(id, {
             shipping_location_guid: data.shipping_location_guid || null,
             billing_location_guid: data.billing_location_guid || null,
           });
@@ -169,6 +169,8 @@ export function OrderWizardPage() {
       const { data: newOrder, error } = await ordersApi.create({
         party_guid: data.party_guid,
         order_date: data.order_date,
+        payment_method_guid: data.payment_method_guid || null,
+        payment_term_guid: data.payment_term_guid || null,
         shipping_location_guid: data.shipping_location_guid || null,
         billing_location_guid: data.billing_location_guid || null,
       });

@@ -50,6 +50,16 @@ export function NewPartyPage() {
         description: s1.description,
         vat_number: s1.vat_number || null,
         type_code: s1.type_code,
+        bank_name: s1.bank_name || null,
+        bank_iban: s1.bank_iban || null,
+        bank_bic: s1.bank_bic || null,
+        courier_guid: s1.courier_guid || null,
+        shipping_mode: s1.shipping_mode || "FRANCO",
+        fiscal_area_code: s1.fiscal_area_code || null,
+        sdi_code: s1.sdi_code || null,
+        category_code: s1.category_code || null,
+        default_payment_method_guid: s1.default_payment_method_guid || null,
+        default_payment_term_guid: s1.default_payment_term_guid || null,
       });
 
       if (partyError || !party) {
@@ -115,7 +125,7 @@ export function NewPartyPage() {
               articlesApi.addSupplier(a.article_guid, {
                 party_guid: partyGuid,
                 supplier_code: a.supplier_code || null,
-                list_price: a.list_price ? Number(a.list_price) : null,
+                purchase_price: a.purchase_price ? Number(a.purchase_price) : null,
                 is_preferred: a.is_preferred,
               }),
             ),

@@ -3,14 +3,7 @@ import * as Popover from "@radix-ui/react-popover";
 import { ChevronDown } from "lucide-react";
 import { CheckboxDisplay } from "@/shared/ui/checkbox";
 import { cn } from "@/shared/lib/utils";
-
-const PARTY_TYPES = ["CUSTOMER", "SUPPLIER", "CARRIER"] as const;
-
-const TYPE_LABELS: Record<string, string> = {
-  CUSTOMER: "Cliente",
-  SUPPLIER: "Fornitore",
-  CARRIER: "Trasportatore",
-};
+import { usePartyTypes } from "@/shared/hooks/use-lookups";
 
 interface TypeMultiSelectProps {
   value: string[];
@@ -19,6 +12,7 @@ interface TypeMultiSelectProps {
 
 export function TypeMultiSelect({ value, onChange }: TypeMultiSelectProps) {
   const [open, setOpen] = useState(false);
+  const { data: partyTypes } = usePartyTypes();
 
   function toggle(type: string) {
     if (value.includes(type)) {
@@ -54,16 +48,16 @@ export function TypeMultiSelect({ value, onChange }: TypeMultiSelectProps) {
           sideOffset={4}
           className="z-50 min-w-[180px] rounded-xl border border-border bg-popover p-1.5 shadow-[0_8px_30px_rgba(0,0,0,0.10)] outline-none animate-in fade-in-0 zoom-in-95"
         >
-          {PARTY_TYPES.map((type) => (
+          {partyTypes.map((pt) => (
             <div
-              key={type}
+              key={pt.code}
               role="option"
-              aria-selected={value.includes(type)}
+              aria-selected={value.includes(pt.code)}
               className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] transition-colors hover:bg-muted/60"
-              onClick={() => toggle(type)}
+              onClick={() => toggle(pt.code)}
             >
-              <CheckboxDisplay checked={value.includes(type)} />
-              {TYPE_LABELS[type]}
+              <CheckboxDisplay checked={value.includes(pt.code)} />
+              {pt.description}
             </div>
           ))}
         </Popover.Content>
@@ -71,5 +65,3 @@ export function TypeMultiSelect({ value, onChange }: TypeMultiSelectProps) {
     </Popover.Root>
   );
 }
-
-export { TYPE_LABELS };

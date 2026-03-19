@@ -55,7 +55,7 @@ export function DataTable<T>({
   }
 
   return (
-    <div className="w-full overflow-auto">
+    <div className="w-full overflow-hidden rounded-b-xl">
       <table className="w-full caption-bottom text-sm">
         <thead>
           <tr className="border-b border-border">
@@ -81,7 +81,7 @@ export function DataTable<T>({
                 key={keyExtractor(row)}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
                 className={cn(
-                  "group/row border-b border-border/50 transition-colors duration-100",
+                  "group/row border-b border-border/50 last:border-0 transition-colors duration-100",
                   "hover:bg-slate-50/80",
                   idx % 2 === 1 && "bg-slate-50/50",
                   onRowClick && "cursor-pointer",

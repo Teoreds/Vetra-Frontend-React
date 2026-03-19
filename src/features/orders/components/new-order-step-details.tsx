@@ -2,17 +2,21 @@ import { useEffect } from "react";
 import { useForm, useWatch, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
-import { ArrowRight, MapPin, Loader2 } from "lucide-react";
+import { ArrowRight, MapPin, Loader2, CreditCard, CalendarClock } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
 import { DatePicker } from "@/shared/ui/date-picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { PartySearchSelect } from "@/features/parties/components/party-search-select";
 import { usePartyLocations, type PartyLocationWithAddress } from "@/features/parties/hooks/use-party-locations";
+import { usePaymentMethods, usePaymentTerms } from "@/shared/hooks/use-lookups";
+import { useParty } from "@/features/parties/hooks/use-party";
 
 const step1Schema = z.object({
   party_guid: z.uuid("Seleziona un cliente valido"),
   order_date: z.string().min(1, "La data è obbligatoria"),
+  payment_method_guid: z.string().optional(),
+  payment_term_guid: z.string().optional(),
   shipping_location_guid: z.string().optional(),
   billing_location_guid: z.string().optional(),
 });
@@ -35,6 +39,8 @@ function formatAddress(loc: PartyLocationWithAddress): string {
 
 export function NewOrderStepDetails({ defaultValues, onNext, isPending, error, readOnly }: NewOrderStepDetailsProps) {
   const today = new Date().toISOString().slice(0, 10);
+  const { data: paymentMethods } = usePaymentMethods();
+  const { data: paymentTerms } = usePaymentTerms();
 
   const { handleSubmit, control, setValue, formState: { errors } } = useForm<Step1Data>({
     resolver: zodResolver(step1Schema),
@@ -42,18 +48,32 @@ export function NewOrderStepDetails({ defaultValues, onNext, isPending, error, r
   });
 
   const selectedPartyGuid = useWatch({ control, name: "party_guid" });
+  const { data: selectedParty } = useParty(selectedPartyGuid || "");
   const { data: locations = [], isLoading: isLoadingLocations } = usePartyLocations(
     selectedPartyGuid || undefined,
   );
 
-  // Reset and preselect primary addresses when party changes (create mode only)
+  // Reset and preselect defaults when party changes (create mode only)
   useEffect(() => {
     if (readOnly || !selectedPartyGuid) return;
 
-    // Clear previous selections so primaries can be applied
+    // Clear previous selections so primaries/defaults can be applied
     setValue("shipping_location_guid", undefined);
     setValue("billing_location_guid", undefined);
+    setValue("payment_method_guid", undefined);
+    setValue("payment_term_guid", undefined);
   }, [selectedPartyGuid, setValue, readOnly]);
+
+  // Pre-fill payment defaults from party
+  useEffect(() => {
+    if (readOnly || !selectedParty) return;
+    if (selectedParty.default_payment_method_guid) {
+      setValue("payment_method_guid", selectedParty.default_payment_method_guid);
+    }
+    if (selectedParty.default_payment_term_guid) {
+      setValue("payment_term_guid", selectedParty.default_payment_term_guid);
+    }
+  }, [selectedParty, setValue, readOnly]);
 
   useEffect(() => {
     if (readOnly || isLoadingLocations || locations.length === 0) return;
@@ -77,15 +97,15 @@ export function NewOrderStepDetails({ defaultValues, onNext, isPending, error, r
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <h2 className="text-[15px] font-semibold">Dati Ordine</h2>
-        <p className="text-[13px] text-muted-foreground">
-          Seleziona il cliente, la data e gli indirizzi.
-        </p>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <Card>
+        <CardHeader>
+          <h2 className="text-[15px] font-semibold">Dati Ordine</h2>
+          <p className="text-[13px] text-muted-foreground">
+            Seleziona il cliente, la data e gli indirizzi.
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-5">
           {/* Row 1: Cliente + Data */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
@@ -126,7 +146,68 @@ export function NewOrderStepDetails({ defaultValues, onNext, isPending, error, r
             </div>
           </div>
 
-          {/* Row 2: Indirizzi (condizionale) */}
+          {/* Row 2: Metodo di Pagamento + Condizioni */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-1.5 text-[13px] font-medium">
+                <CreditCard className="h-3.5 w-3.5 text-muted-foreground" />
+                Metodo di Pagamento
+              </label>
+              <Controller
+                control={control}
+                name="payment_method_guid"
+                render={({ field }) => (
+                  <Select
+                    value={field.value ?? ""}
+                    onValueChange={field.onChange}
+                    disabled={readOnly}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleziona metodo…" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {paymentMethods.map((pm) => (
+                        <SelectItem key={pm.guid} value={pm.guid}>
+                          {pm.description}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-1.5 text-[13px] font-medium">
+                <CalendarClock className="h-3.5 w-3.5 text-muted-foreground" />
+                Condizioni di Pagamento
+              </label>
+              <Controller
+                control={control}
+                name="payment_term_guid"
+                render={({ field }) => (
+                  <Select
+                    value={field.value ?? ""}
+                    onValueChange={field.onChange}
+                    disabled={readOnly}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleziona condizioni…" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {paymentTerms.map((pt) => (
+                        <SelectItem key={pt.guid} value={pt.guid}>
+                          {pt.description}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
+          </div>
+
+          {/* Row 3: Indirizzi (condizionale) */}
           {selectedPartyGuid && (
             <div className="grid grid-cols-2 gap-4">
               {/* Spedizione */}
@@ -212,30 +293,30 @@ export function NewOrderStepDetails({ defaultValues, onNext, isPending, error, r
               </div>
             </div>
           )}
+        </CardContent>
+      </Card>
 
-          {error && (
-            <div className="rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3">
-              <p className="text-[13px] text-destructive">{error}</p>
-            </div>
+      {error && (
+        <div className="rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3">
+          <p className="text-[13px] text-destructive">{error}</p>
+        </div>
+      )}
+
+      <div className="flex justify-end">
+        <Button type="submit" disabled={isPending}>
+          {isPending ? (
+            <>
+              <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+              Creazione bozza…
+            </>
+          ) : (
+            <>
+              Avanti
+              <ArrowRight className="ml-1.5 h-4 w-4" />
+            </>
           )}
-
-          <div className="flex justify-end border-t border-border/60 pt-4">
-            <Button type="submit" disabled={isPending}>
-              {isPending ? (
-                <>
-                  <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
-                  Creazione bozza…
-                </>
-              ) : (
-                <>
-                  Avanti
-                  <ArrowRight className="ml-1.5 h-4 w-4" />
-                </>
-              )}
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+        </Button>
+      </div>
+    </form>
   );
 }

@@ -29,7 +29,7 @@ export function AuthLayout() {
       <div
         className="relative hidden flex-col justify-between overflow-hidden p-12 lg:flex lg:w-1/2"
         style={{
-          background: "linear-gradient(140deg, #1d4ed8 0%, #2563eb 55%, #3b82f6 100%)",
+          background: "linear-gradient(140deg, var(--color-primary-hover) 0%, var(--color-primary) 55%, var(--color-primary-light) 100%)",
         }}
       >
         {/* Dot pattern */}

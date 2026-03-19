@@ -26,10 +26,7 @@ export function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-4 gap-4">
-        <KpiCard title="Ordini Aperti" value={ordersData?.total ?? "..."} changePercent={12.5} />
-        <KpiCard title="TEST" value="..." changePercent={5} />
-        <KpiCard title="Pronti da spedire" value="..." changePercent={-2.1} />
-        <KpiCard title="BOH" value="..." changePercent={8.3} />
+        <KpiCard title="Ordini Totali" value={ordersData?.total ?? "..."} changePercent={12.5} />
       </div>
 
       <div className="grid grid-cols-3 gap-5">

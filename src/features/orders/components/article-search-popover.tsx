@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
 import { Search, Plus, Loader2 } from "lucide-react";
 import * as Popover from "@radix-ui/react-popover";
 import { Button } from "@/shared/ui/button";
@@ -20,22 +20,22 @@ export function ArticleSearchPopover({ onSelect }: ArticleSearchPopoverProps) {
   );
   const articles = data?.items ?? [];
 
-  useEffect(() => {
-    if (open) {
+  const handleOpenChange = useCallback((next: boolean) => {
+    setOpen(next);
+    if (next) {
       setTimeout(() => inputRef.current?.focus(), 50);
     } else {
       setSearch("");
     }
-  }, [open]);
+  }, []);
 
   function handleSelect(article: ArticleOut) {
     onSelect(article);
-    setOpen(false);
-    setSearch("");
+    handleOpenChange(false);
   }
 
   return (
-    <Popover.Root open={open} onOpenChange={setOpen}>
+    <Popover.Root open={open} onOpenChange={handleOpenChange}>
       <Popover.Trigger asChild>
         <Button size="sm" variant="outline">
           <Plus className="h-3.5 w-3.5" />

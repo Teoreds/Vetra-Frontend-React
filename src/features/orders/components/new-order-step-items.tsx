@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
@@ -138,6 +138,22 @@ export function NewOrderStepItems({
     commitment.append(row);
   }
 
+  async function handleRemoveRow(
+    rows: OrderRowDraft[],
+    index: number,
+    removeFromForm: (index: number) => void,
+  ) {
+    const row = rows[index];
+    if (row?._serverGuid) {
+      const { error } = await ordersApi.deleteRow(row._serverGuid);
+      if (error) {
+        setSaveError("Errore nell'eliminazione della riga. Riprova.");
+        return;
+      }
+    }
+    removeFromForm(index);
+  }
+
   const onSubmit = async (values: Step2FormValues) => {
     setIsSaving(true);
     setSaveError(null);
@@ -150,11 +166,11 @@ export function NewOrderStepItems({
         allRows.map((r) => r._serverGuid).filter(Boolean) as string[],
       );
 
-      // Soft-delete removed rows (set quantity to 0)
+      // Delete removed rows from the server
       if (originalRowGuids) {
         for (const guid of originalRowGuids) {
           if (!currentServerGuids.has(guid)) {
-            const { error } = await ordersApi.updateRow(guid, { quantity: 0 });
+            const { error } = await ordersApi.deleteRow(guid);
             if (error) {
               setSaveError("Errore nel salvataggio delle righe. Riprova.");
               setIsSaving(false);
@@ -410,7 +426,7 @@ export function NewOrderStepItems({
                   moveToCommitment,
                   ArrowDown,
                   "Sposta in Impegno",
-                  (i) => available.remove(i),
+                  (i) => handleRemoveRow(watchedAvailable ?? [], i, available.remove),
                 )
               )}
             </CardContent>
@@ -442,7 +458,7 @@ export function NewOrderStepItems({
                   moveToAvailable,
                   ArrowUp,
                   "Sposta in Disponibili",
-                  (i) => commitment.remove(i),
+                  (i) => handleRemoveRow(watchedCommitment ?? [], i, commitment.remove),
                 )
               )}
             </CardContent>

@@ -42,9 +42,8 @@ export const ArticleInlineSearch = forwardRef<ArticleInlineSearchHandle, Article
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   // Reset focused index when results change
-  useEffect(() => {
-    setFocusedIndex(0);
-  }, [articles.length]);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { setFocusedIndex(0); }, [articles.length]);
 
   // Scroll focused item into view
   useEffect(() => {

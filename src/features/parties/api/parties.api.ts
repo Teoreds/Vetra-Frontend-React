@@ -1,4 +1,7 @@
 import { apiClient } from "@/shared/api/client";
+import type { components } from "@/shared/api/schema";
+import { env } from "@/config/env";
+import { useAuthStore } from "@/features/auth/hooks/use-auth-store";
 
 export interface PartyListParams {
   type_code?: string;
@@ -6,6 +9,9 @@ export interface PartyListParams {
   offset?: number;
   limit?: number;
 }
+
+type PartyCreate = components["schemas"]["PartyCreate"];
+type PartyUpdate = components["schemas"]["PartyUpdate"];
 
 export const partiesApi = {
   list: (params?: PartyListParams) =>
@@ -16,10 +22,10 @@ export const partiesApi = {
       params: { path: { party_guid: partyGuid } },
     }),
 
-  create: (body: { description: string; vat_number?: string | null; type_code: string }) =>
+  create: (body: PartyCreate) =>
     apiClient.POST("/parties", { body }),
 
-  update: (partyGuid: string, body: { description?: string | null; vat_number?: string | null; type_code?: string | null }) =>
+  update: (partyGuid: string, body: PartyUpdate) =>
     apiClient.PATCH("/parties/{party_guid}", {
       params: { path: { party_guid: partyGuid } },
       body,
@@ -75,4 +81,22 @@ export const partiesApi = {
     article_type_code?: string | null;
     discount_percent: number | string;
   }) => apiClient.POST("/party-discounts", { body }),
+
+  uploadImage: async (partyGuid: string, file: File) => {
+    const token = useAuthStore.getState().accessToken;
+    const form = new FormData();
+    form.append("file", file);
+    const res = await fetch(`${env.API_BASE_URL}/parties/${partyGuid}/image`, {
+      method: "POST",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: form,
+    });
+    if (!res.ok) throw new Error("Upload failed");
+    return (await res.json()) as components["schemas"]["PartyOut"];
+  },
+
+  deleteImage: (partyGuid: string) =>
+    apiClient.DELETE("/parties/{party_guid}/image", {
+      params: { path: { party_guid: partyGuid } },
+    }),
 };

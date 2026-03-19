@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { Pencil, Printer, Copy, MoreVertical, ClipboardList } from "lucide-react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { DataTable, type Column } from "@/shared/ui/data-table";
-import { StatusBadge, getStatusVariant } from "@/shared/ui/status-badge";
+import { StatusBadge } from "@/shared/ui/status-badge";
+import { getStatusVariant } from "@/shared/ui/status-variants";
 import { formatDate } from "@/shared/lib/utils";
-import { getStatusLabel } from "../types/order-status";
 import { useParties } from "@/features/parties/hooks/use-parties";
+import { useOrderStatuses } from "@/shared/hooks/use-lookups";
 import { useLocationsMap } from "@/features/parties/hooks/use-locations-map";
 import type { OrderOut } from "../types/order.types";
 
@@ -16,7 +17,7 @@ interface OrdersTableProps {
 }
 
 const AVATAR_COLORS = [
-  { bg: "bg-blue-500/12", text: "text-blue-600" },
+  { bg: "bg-primary/12", text: "text-primary" },
   { bg: "bg-emerald-500/12", text: "text-emerald-600" },
   { bg: "bg-violet-500/12", text: "text-violet-600" },
   { bg: "bg-amber-500/12", text: "text-amber-600" },
@@ -43,6 +44,7 @@ function fmt(n: number) {
 
 export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
   const navigate = useNavigate();
+  const { map: statusLabels } = useOrderStatuses();
   const { data: partiesData } = useParties({ limit: 200 });
 
   const shippingGuids = useMemo(
@@ -104,7 +106,7 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
       render: (row) => (
         <StatusBadge
           variant={getStatusVariant(row.status_code)}
-          label={getStatusLabel(row.status_code)}
+          label={statusLabels.get(row.status_code) ?? row.status_code}
         />
       ),
     },

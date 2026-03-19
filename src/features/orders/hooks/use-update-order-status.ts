@@ -7,7 +7,7 @@ export function useUpdateOrderStatus(orderGuid: string) {
 
   return useMutation({
     mutationFn: async (body: { status_code: string; note?: string | null }) => {
-      const { data, error } = await ordersApi.updateStatus(orderGuid, body);
+      const { data, error } = await ordersApi.update(orderGuid, body);
       if (error) throw error;
       return data;
     },

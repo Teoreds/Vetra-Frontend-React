@@ -13,6 +13,7 @@ export interface NewArticleDraft {
   unit_of_measure_code: string;
   type_code?: string;
   is_active: boolean;
+  list_price?: number | null;
   suppliers: NewArticleSupplierDraft[];
 }
 

@@ -46,7 +46,7 @@ function ReadOnlyTable({ rows, label }: { rows: OrderRowDraft[]; label: string }
             <TableHead>Articolo</TableHead>
             <TableHead className="w-20 text-right">Qtà</TableHead>
             <TableHead className="w-28 text-right">Prezzo</TableHead>
-            <TableHead className="w-20 text-right">Sconto %</TableHead>
+            <TableHead className="w-20 text-right whitespace-nowrap pl-4">Sconto %</TableHead>
             <TableHead className="w-28 text-right">Subtotale</TableHead>
           </TableRow>
         </TableHeader>
@@ -62,7 +62,12 @@ function ReadOnlyTable({ rows, label }: { rows: OrderRowDraft[]; label: string }
                   <p className="font-medium">{row.article_description}</p>
                   <p className="text-[11px] text-muted-foreground">{row.article_code}</p>
                 </TableCell>
-                <TableCell className="text-right">{row.quantity}</TableCell>
+                <TableCell className="text-right">
+                  {row.quantity}
+                  {row.unit_of_measure_code && (
+                    <span className="ml-1 text-[11px] text-muted-foreground">{row.unit_of_measure_code}</span>
+                  )}
+                </TableCell>
                 <TableCell className="text-right">{fmt(Number(row.unit_price) || 0)}</TableCell>
                 <TableCell className="text-right">
                   {discPct > 0 ? `${discPct}%` : "—"}

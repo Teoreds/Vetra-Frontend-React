@@ -20,23 +20,6 @@ interface PickNoteContentProps {
   pickNote: PickNoteDetailOut;
 }
 
-function InfoRow({
-  label,
-  value,
-}: {
-  label: string;
-  value: string | null | undefined;
-}) {
-  return (
-    <div className="flex justify-between py-1.5">
-      <span className="text-[13px] text-muted-foreground">{label}</span>
-      <span className="text-right text-[13px] font-medium">
-        {value || "\u2014"}
-      </span>
-    </div>
-  );
-}
-
 export function PickNoteContent({ pickNote }: PickNoteContentProps) {
   const { data: warehousesData } = useWarehouses();
   const { data: workersData } = useWarehouseWorkers();

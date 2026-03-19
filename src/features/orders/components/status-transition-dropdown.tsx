@@ -1,7 +1,8 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/shared/ui/button";
-import { getValidTransitions, getStatusLabel } from "../types/order-status";
+import { getValidTransitions } from "../types/order-status";
+import { useOrderStatuses } from "@/shared/hooks/use-lookups";
 
 interface StatusTransitionDropdownProps {
   currentStatus: string;
@@ -14,6 +15,7 @@ export function StatusTransitionDropdown({
   onTransition,
   disabled,
 }: StatusTransitionDropdownProps) {
+  const { map: statusLabels } = useOrderStatuses();
   const validTransitions = getValidTransitions(currentStatus);
 
   if (validTransitions.length === 0) {
@@ -40,7 +42,7 @@ export function StatusTransitionDropdown({
               onClick={() => onTransition(status)}
               className="cursor-pointer rounded-lg px-3 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
             >
-              {getStatusLabel(status)}
+              {statusLabels.get(status) ?? status}
             </DropdownMenu.Item>
           ))}
         </DropdownMenu.Content>

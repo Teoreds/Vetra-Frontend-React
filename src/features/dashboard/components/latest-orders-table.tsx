@@ -1,10 +1,11 @@
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { DataTable, type Column } from "@/shared/ui/data-table";
-import { StatusBadge, getStatusVariant } from "@/shared/ui/status-badge";
+import { StatusBadge } from "@/shared/ui/status-badge";
+import { getStatusVariant } from "@/shared/ui/status-variants";
 import { formatDate } from "@/shared/lib/utils";
-import { getStatusLabel } from "@/features/orders/types/order-status";
 import { useParties } from "@/features/parties/hooks/use-parties";
+import { useOrderStatuses } from "@/shared/hooks/use-lookups";
 import type { OrderOut } from "@/features/orders/types/order.types";
 
 interface LatestOrdersTableProps {
@@ -14,6 +15,7 @@ interface LatestOrdersTableProps {
 
 export function LatestOrdersTable({ orders, isLoading }: LatestOrdersTableProps) {
   const navigate = useNavigate();
+  const { map: statusLabels } = useOrderStatuses();
   const { data: partiesData } = useParties({ limit: 200 });
 
   const partyMap = useMemo(() => {
@@ -69,7 +71,7 @@ export function LatestOrdersTable({ orders, isLoading }: LatestOrdersTableProps)
       render: (row) => (
         <StatusBadge
           variant={getStatusVariant(row.status_code)}
-          label={getStatusLabel(row.status_code)}
+          label={statusLabels.get(row.status_code) ?? row.status_code}
         />
       ),
     },

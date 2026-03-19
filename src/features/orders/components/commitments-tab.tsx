@@ -1,5 +1,6 @@
 import { DataTable, type Column } from "@/shared/ui/data-table";
-import { StatusBadge, getStatusVariant } from "@/shared/ui/status-badge";
+import { StatusBadge } from "@/shared/ui/status-badge";
+import { getStatusVariant } from "@/shared/ui/status-variants";
 import { formatDate } from "@/shared/lib/utils";
 import type { CommitmentOut } from "../types/order.types";
 

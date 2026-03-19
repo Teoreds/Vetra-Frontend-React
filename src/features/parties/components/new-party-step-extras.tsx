@@ -15,19 +15,7 @@ import {
 } from "@/shared/ui/select";
 import { useArticleTypes } from "@/features/articles/hooks/use-article-lookups";
 import { useArticles } from "@/features/articles/hooks/use-articles";
-
-/* ── Types ────────────────────────────────────────────── */
-
-const CONTACT_TYPES = [
-  { value: "EMAIL", label: "Email" },
-  { value: "PHONE", label: "Telefono" },
-  { value: "PEC", label: "PEC" },
-] as const;
-
-const LOCATION_TYPES = [
-  { value: "SHIPPING", label: "Spedizione" },
-  { value: "BILLING", label: "Fatturazione" },
-] as const;
+import { useContactTypes, useLocationTypes } from "@/shared/hooks/use-lookups";
 
 /* ── Drafts ───────────────────────────────────────────── */
 
@@ -55,7 +43,7 @@ export interface DiscountDraft {
 export interface SupplierArticleDraft {
   article_guid: string;
   supplier_code: string;
-  list_price: string;
+  purchase_price: string;
   is_preferred: boolean;
 }
 
@@ -91,7 +79,7 @@ const step2Schema = z
       z.object({
         article_guid: z.string(),
         supplier_code: z.string().optional().default(""),
-        list_price: z.string().optional().default(""),
+        purchase_price: z.string().optional().default(""),
         is_preferred: z.boolean().default(false),
       }),
     ),
@@ -158,7 +146,7 @@ const EMPTY_DISCOUNT: DiscountDraft = {
 const EMPTY_SUPPLIER_ARTICLE: SupplierArticleDraft = {
   article_guid: "",
   supplier_code: "",
-  list_price: "",
+  purchase_price: "",
   is_preferred: false,
 };
 
@@ -197,6 +185,8 @@ export function NewPartyStepExtras({
   const isCustomer = typeCode === "CUSTOMER";
   const isSupplier = typeCode === "SUPPLIER";
 
+  const { data: contactTypes } = useContactTypes();
+  const { data: locationTypes } = useLocationTypes();
   const { data: articleTypes } = useArticleTypes();
   const { data: articlesData } = useArticles(isSupplier ? { limit: 500 } : undefined);
   const articles = articlesData?.items ?? [];
@@ -275,9 +265,9 @@ export function NewPartyStepExtras({
                         <SelectValue placeholder="Tipo…" />
                       </SelectTrigger>
                       <SelectContent>
-                        {CONTACT_TYPES.map((ct) => (
-                          <SelectItem key={ct.value} value={ct.value}>
-                            {ct.label}
+                        {contactTypes.map((ct) => (
+                          <SelectItem key={ct.code} value={ct.code}>
+                            {ct.description}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -427,9 +417,9 @@ export function NewPartyStepExtras({
                           <SelectValue placeholder="Tipo…" />
                         </SelectTrigger>
                         <SelectContent>
-                          {LOCATION_TYPES.map((lt) => (
-                            <SelectItem key={lt.value} value={lt.value}>
-                              {lt.label}
+                          {locationTypes.map((lt) => (
+                            <SelectItem key={lt.code} value={lt.code}>
+                              {lt.description}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -605,12 +595,12 @@ export function NewPartyStepExtras({
                 </div>
 
                 <div className="w-28 space-y-1">
-                  <label className="text-[12px] font-medium">Prezzo</label>
+                  <label className="text-[12px] font-medium">Pr. Acquisto</label>
                   <Input
                     type="number"
                     step="0.01"
                     min="0"
-                    {...register(`supplier_articles.${index}.list_price`)}
+                    {...register(`supplier_articles.${index}.purchase_price`)}
                     placeholder="0.00"
                   />
                 </div>

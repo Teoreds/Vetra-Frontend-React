@@ -10,6 +10,7 @@ export function useCreateOrder() {
       party_guid: string;
       order_date: string;
       payment_method_guid?: string | null;
+      payment_term_guid?: string | null;
       billing_location_guid?: string | null;
       shipping_location_guid?: string | null;
     }) => {

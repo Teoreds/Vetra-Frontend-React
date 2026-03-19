@@ -11,17 +11,25 @@ const authMiddleware: Middleware = {
     }
     return request;
   },
-  async onResponse({ response }) {
+  async onResponse({ request, response }) {
     if (response.status === 401) {
       const store = useAuthStore.getState();
       if (store.refreshToken) {
         const refreshed = await refreshTokens(store.refreshToken);
         if (refreshed) {
-          return; // middleware will retry
+          // Retry the original request with the new token
+          const newToken = useAuthStore.getState().accessToken;
+          const retryRequest = new Request(request, {
+            headers: new Headers(request.headers),
+          });
+          if (newToken) {
+            retryRequest.headers.set("Authorization", `Bearer ${newToken}`);
+          }
+          return fetch(retryRequest);
         }
       }
       store.logout();
-      window.location.href = "/login";
+      useAuthStore.getState().setSessionExpired(true);
     }
     return response;
   },

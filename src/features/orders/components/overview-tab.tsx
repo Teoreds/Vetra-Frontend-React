@@ -1,4 +1,4 @@
-import { Building2, MapPin, Plus, Package } from "lucide-react";
+import { Building2, MapPin, Plus, Package, CreditCard } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
 import { Separator } from "@/shared/ui/separator";
 import { Badge } from "@/shared/ui/badge";
@@ -13,6 +13,7 @@ import {
 import { useParties } from "@/features/parties/hooks/use-parties";
 import { usePartyLocations } from "@/features/parties/hooks/use-party-locations";
 import { useArticles } from "@/features/articles/hooks/use-articles";
+import { usePaymentMethods, usePaymentTerms } from "@/shared/hooks/use-lookups";
 import type { OrderOut } from "../types/order.types";
 
 interface OverviewTabProps {
@@ -24,23 +25,6 @@ function fmt(n: number) {
     style: "currency",
     currency: "EUR",
   }).format(n);
-}
-
-function InfoRow({
-  label,
-  value,
-}: {
-  label: string;
-  value: string | null | undefined;
-}) {
-  return (
-    <div className="flex justify-between py-1.5">
-      <span className="text-[13px] text-muted-foreground">{label}</span>
-      <span className="text-right text-[13px] font-medium">
-        {value || "\u2014"}
-      </span>
-    </div>
-  );
 }
 
 function fmtAddress(loc: {
@@ -62,6 +46,8 @@ export function OverviewTab({ order }: OverviewTabProps) {
   const party = partiesData?.items.find((p) => p.guid === order.party_guid);
   const { data: locations = [] } = usePartyLocations(order.party_guid);
   const { data: articlesData } = useArticles({ limit: 200 });
+  const { map: paymentMethodMap } = usePaymentMethods();
+  const { map: paymentTermMap } = usePaymentTerms();
 
   const articleMap = new Map(
     (articlesData?.items ?? []).map((a) => [a.guid, a]),
@@ -83,7 +69,6 @@ export function OverviewTab({ order }: OverviewTabProps) {
   const totalDiscount = Number(order.total_discount ?? 0);
   const totalVat = Number(order.total_vat ?? 0);
   const totalNet = Number(order.total_net ?? 0);
-  const grandTotal = totalNet + totalVat;
 
   const rows = order.rows ?? [];
 
@@ -175,7 +160,7 @@ export function OverviewTab({ order }: OverviewTabProps) {
               <div className="flex items-center gap-6">
                 <div>
                   <p className="text-[11px] font-medium text-muted-foreground">Imponibile</p>
-                  <p className="text-[14px] font-semibold tabular-nums">{fmt(totalGross)}</p>
+                  <p className="text-[14px] font-semibold tabular-nums">{fmt(totalNet)}</p>
                 </div>
                 <div className="h-8 w-px bg-border/60" />
                 <div>
@@ -192,7 +177,7 @@ export function OverviewTab({ order }: OverviewTabProps) {
               </div>
               <div className="text-right">
                 <p className="text-[11px] font-medium text-muted-foreground">Totale</p>
-                <p className="text-[18px] font-bold tabular-nums text-primary">{fmt(grandTotal)}</p>
+                <p className="text-[18px] font-bold tabular-nums text-primary">{fmt(totalGross)}</p>
               </div>
             </div>
           </CardContent>
@@ -249,6 +234,36 @@ export function OverviewTab({ order }: OverviewTabProps) {
               <p className="pl-[22px] text-[13px]">
                 {shippingLoc ? fmtAddress(shippingLoc) : "Non specificato"}
               </p>
+            </div>
+
+            <Separator />
+
+            {/* Pagamento */}
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-2">
+                <CreditCard className="h-3.5 w-3.5 text-muted-foreground" />
+                <h4 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  Pagamento
+                </h4>
+              </div>
+              <dl className="space-y-1 pl-[22px]">
+                <div className="flex justify-between gap-2">
+                  <dt className="text-[12px] text-muted-foreground">Metodo</dt>
+                  <dd className="text-[12px] font-medium text-right">
+                    {order.payment_method_guid
+                      ? paymentMethodMap.get(order.payment_method_guid) ?? "\u2014"
+                      : "Non specificato"}
+                  </dd>
+                </div>
+                <div className="flex justify-between gap-2">
+                  <dt className="text-[12px] text-muted-foreground">Condizioni</dt>
+                  <dd className="text-[12px] font-medium text-right">
+                    {order.payment_term_guid
+                      ? paymentTermMap.get(order.payment_term_guid) ?? "\u2014"
+                      : "Non specificato"}
+                  </dd>
+                </div>
+              </dl>
             </div>
 
             <Separator />

@@ -1,5 +1,4 @@
 import { Paperclip } from "lucide-react";
-import { FileUpload } from "@/shared/ui/file-upload";
 import { formatDate } from "@/shared/lib/utils";
 import { useOrderAttachments } from "../hooks/use-order-attachments";
 import type { AttachmentOut } from "../types/order.types";
@@ -11,14 +10,10 @@ interface AttachmentsTabProps {
 export function AttachmentsTab({ orderGuid }: AttachmentsTabProps) {
   const { data: attachments = [] } = useOrderAttachments(orderGuid);
 
-  function handleFileSelect(_file: File) {
-    // TODO: implementare upload tramite API allegati
-  }
-
   return (
     <div className="space-y-6">
       <h3 className="text-[15px] font-semibold">Documenti Correlati</h3>
-      <FileUpload onFileSelect={handleFileSelect} />
+      {/* TODO: aggiungere FileUpload quando l'API allegati è disponibile */}
       <AttachmentsList attachments={attachments} />
     </div>
   );

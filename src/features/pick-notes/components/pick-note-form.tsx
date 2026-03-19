@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { Loader2, MapPin, PackageCheck, PenLine, StickyNote } from "lucide-react";
-import { Badge } from "@/shared/ui/badge";
 import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
@@ -480,47 +479,46 @@ export function PickNoteForm({ defaultOrderGuid }: PickNoteFormProps) {
         </Card>
       )}
 
-      {/* Firma Operatore */}
-      <Card className={!pickerGuid ? "border-amber-200 bg-amber-50/40 dark:border-amber-900/40 dark:bg-amber-950/20" : "border-emerald-200 bg-emerald-50/40 dark:border-emerald-900/40 dark:bg-emerald-950/20"}>
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <PenLine className={`h-4 w-4 ${!pickerGuid ? "text-amber-500" : "text-emerald-500"}`} />
-            <h3 className="text-[14px] font-semibold">Firma Operatore</h3>
-            {!pickerGuid && (
-              <Badge variant="secondary" className="ml-auto border-amber-200 bg-amber-100 text-amber-700 dark:border-amber-900/40 dark:bg-amber-950 dark:text-amber-400">
-                Richiesta
-              </Badge>
-            )}
-          </div>
-          <p className="text-[13px] text-muted-foreground">
-            Seleziona l'operatore che effettuerà il prelievo.
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-4 pt-0">
-          <Select value={pickerGuid} onValueChange={setPickerGuid}>
-            <SelectTrigger>
-              <SelectValue placeholder="Seleziona operatore…" />
-            </SelectTrigger>
-            <SelectContent>
-              {workers.map((w) => (
-                <SelectItem key={w.guid} value={w.guid}>
-                  {w.name} {w.surname}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <div className="space-y-1.5">
-            <label className="flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground">
-              <StickyNote className="h-3.5 w-3.5" />
-              Note
-            </label>
-            <textarea
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              placeholder="Note aggiuntive…"
-              rows={2}
-              className="flex w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all placeholder:text-muted-foreground/60 hover:border-border focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20 resize-none"
-            />
+      {/* Operatore & Note */}
+      <Card className={cn(
+        "transition-colors",
+        pickerGuid
+          ? "border-emerald-200 bg-emerald-50/40 dark:border-emerald-900/40 dark:bg-emerald-950/20"
+          : "border-amber-200 bg-amber-50/40 dark:border-amber-900/40 dark:bg-amber-950/20",
+      )}>
+        <CardContent className="py-4">
+          <div className="grid grid-cols-[280px_1fr] gap-5">
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-1.5 text-[13px] font-medium">
+                <PenLine className={cn("h-3.5 w-3.5", pickerGuid ? "text-emerald-500" : "text-amber-500")} />
+                Operatore *
+              </label>
+              <Select value={pickerGuid} onValueChange={setPickerGuid}>
+                <SelectTrigger className={cn(!pickerGuid && "border-amber-300 dark:border-amber-800")}>
+                  <SelectValue placeholder="Seleziona operatore…" />
+                </SelectTrigger>
+                <SelectContent>
+                  {workers.map((w) => (
+                    <SelectItem key={w.guid} value={w.guid}>
+                      {w.name} {w.surname}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground">
+                <StickyNote className="h-3.5 w-3.5" />
+                Note
+              </label>
+              <textarea
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                placeholder="Note aggiuntive…"
+                rows={1}
+                className="flex w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all placeholder:text-muted-foreground/60 hover:border-border focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20 resize-none"
+              />
+            </div>
           </div>
         </CardContent>
       </Card>

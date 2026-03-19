@@ -80,16 +80,6 @@ export function PickNoteCheckPanel({
     });
   }
 
-  function toggleAll() {
-    if (!pickNote) return;
-    const allChecked = pickNote.rows.length > 0 && checkedRows.size === pickNote.rows.length;
-    if (allChecked) {
-      setCheckedRows(new Set());
-    } else {
-      setCheckedRows(new Set(pickNote.rows.map((r) => r.guid)));
-    }
-  }
-
   const allChecked = (pickNote?.rows.length ?? 0) > 0 && checkedRows.size === (pickNote?.rows.length ?? 0);
 
   async function handleSubmit() {

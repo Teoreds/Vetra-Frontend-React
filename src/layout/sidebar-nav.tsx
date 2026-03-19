@@ -4,27 +4,26 @@ import {
   LayoutDashboard,
   ShoppingCart,
   ClipboardList,
+  Truck,
   Users,
   Package,
-  Warehouse,
-  Settings,
+  SlidersHorizontal,
   HelpCircle,
 } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 import { env } from "@/config/env";
-import { LogoIcon } from "@/shared/ui/logo-icon";
 
 const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/orders", label: "Ordini", icon: ShoppingCart },
   { to: "/pick-notes", label: "Note Prelievo", icon: ClipboardList },
+  { to: "/shipments", label: "Spedizioni", icon: Truck },
   { to: "/parties", label: "Anagrafica", icon: Users },
   { to: "/articles", label: "Articoli", icon: Package },
-  { to: "/warehouses", label: "Magazzino", icon: Warehouse },
 ] as const;
 
 const bottomItems = [
-  { to: "/settings", label: "Impostazioni", icon: Settings },
+  { to: "/admin", label: "Centro di Controllo", icon: SlidersHorizontal },
   { to: "/support", label: "Supporto", icon: HelpCircle },
 ] as const;
 
@@ -51,7 +50,7 @@ export function SidebarNav() {
     >
       {/* Logo — icon always centered at 64px, text flows after */}
       <div className="flex items-center h-[60px] px-[14px]">
-        <div className="relative h-8 w-8 shrink-0 rounded-xl overflow-hidden shadow-sm ml-[5px] bg-primary">
+        <div className="relative h-8 w-8 shrink-0 rounded-xl overflow-hidden shadow-sm ml-[5px] bg-primary rotate-[2deg]">
           <img
             src="/logo_big.svg"
             alt="Logo"

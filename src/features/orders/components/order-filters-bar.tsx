@@ -27,6 +27,7 @@ export function OrderFiltersBar({
       }
     }, 300);
     return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchInput]);
 
   const statusValues = filters.status_code
@@ -46,7 +47,7 @@ export function OrderFiltersBar({
         <Input
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
-          placeholder="Cerca ordini..."
+          placeholder="Cerca per cliente o articolo..."
           className="h-9 w-56 pl-9 text-[13px]"
         />
       </div>

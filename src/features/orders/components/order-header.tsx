@@ -4,23 +4,24 @@ import { Button } from "@/shared/ui/button";
 import { Stepper } from "@/shared/ui/stepper";
 import { isOrderEditable } from "../types/order-status";
 import { useWarehouseWorkers } from "@/features/warehouses/hooks/use-warehouse-workers";
+import { useOrderStatuses } from "@/shared/hooks/use-lookups";
 import type { OrderOut } from "../types/order.types";
 
 interface OrderHeaderProps {
   order: OrderOut;
 }
 
-const PIPELINE_STEPS = [
-  { label: "Bozza", statuses: ["DRAFT"] },
-  { label: "Confermato", statuses: ["CONFIRMED"] },
-  { label: "Parz. Evaso", statuses: ["COMMITTED", "PICKING"] },
-  { label: "Evaso", statuses: ["SHIPPED"] },
-  { label: "Completato", statuses: ["COMPLETED"] },
+const PIPELINE_STATUSES = [
+  { statuses: ["DRAFT"] },
+  { statuses: ["CONFIRMED"] },
+  { statuses: ["PARTIAL"] },
+  { statuses: ["FULFILLED"] },
+  { statuses: ["COMPLETED"] },
 ] as const;
 
 function getStepFromStatus(status: string): number {
   const upper = status.toUpperCase();
-  const index = PIPELINE_STEPS.findIndex((s) =>
+  const index = PIPELINE_STATUSES.findIndex((s) =>
     (s.statuses as readonly string[]).includes(upper),
   );
   return index + 1;
@@ -29,13 +30,14 @@ function getStepFromStatus(status: string): number {
 export function OrderHeader({ order }: OrderHeaderProps) {
   const navigate = useNavigate();
   const { data: workersData } = useWarehouseWorkers();
+  const { map: statusLabels } = useOrderStatuses();
   const workers = workersData?.items ?? [];
   const assignee = order.warehouse_worker_guid
     ? workers.find((w) => w.guid === order.warehouse_worker_guid)
     : null;
 
   const canCreatePickNote =
-    order.status_code === "COMMITTED" || order.status_code === "PICKING";
+    order.status_code === "CONFIRMED" || order.status_code === "PARTIAL";
 
   return (
     <div className="space-y-3">
@@ -103,7 +105,9 @@ export function OrderHeader({ order }: OrderHeaderProps) {
       {/* Stepper centrato col body */}
       <div className="mx-auto max-w-4xl">
         <Stepper
-          steps={PIPELINE_STEPS.map((s) => ({ label: s.label }))}
+          steps={PIPELINE_STATUSES.map((s) => ({
+            label: s.statuses.map((c) => statusLabels.get(c) ?? c).join(" / "),
+          }))}
           currentStep={getStepFromStatus(order.status_code)}
         />
       </div>

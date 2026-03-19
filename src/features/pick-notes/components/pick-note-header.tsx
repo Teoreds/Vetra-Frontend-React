@@ -3,22 +3,23 @@ import { ArrowLeft, Printer } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Stepper } from "@/shared/ui/stepper";
 import { useWarehouseWorkers } from "@/features/warehouses/hooks/use-warehouse-workers";
+import { usePickNoteStatuses } from "@/shared/hooks/use-lookups";
 import type { PickNoteDetailOut } from "../types/pick-note.types";
 
 interface PickNoteHeaderProps {
   pickNote: PickNoteDetailOut;
 }
 
-const PIPELINE_STEPS = [
-  { label: "Creata", statuses: ["CREATED"] },
-  { label: "In Prelievo", statuses: ["PICKING"] },
-  { label: "Controllata", statuses: ["CHECKED"] },
-  { label: "Completata", statuses: ["COMPLETED"] },
+const PIPELINE_STATUSES = [
+  { statuses: ["CREATED"] },
+  { statuses: ["PICKING"] },
+  { statuses: ["CHECKED"] },
+  { statuses: ["COMPLETED"] },
 ] as const;
 
 function getStepFromStatus(status: string): number {
   const upper = status.toUpperCase();
-  const index = PIPELINE_STEPS.findIndex((s) =>
+  const index = PIPELINE_STATUSES.findIndex((s) =>
     (s.statuses as readonly string[]).includes(upper),
   );
   return index >= 0 ? index + 1 : 0;
@@ -26,6 +27,7 @@ function getStepFromStatus(status: string): number {
 
 export function PickNoteHeader({ pickNote }: PickNoteHeaderProps) {
   const navigate = useNavigate();
+  const { map: statusLabels } = usePickNoteStatuses();
   const { data: workersData } = useWarehouseWorkers();
   const workers = workersData?.items ?? [];
   const picker = pickNote.picker_guid
@@ -79,7 +81,9 @@ export function PickNoteHeader({ pickNote }: PickNoteHeaderProps) {
       {/* Stepper centrato col body */}
       <div className="mx-auto max-w-4xl">
         <Stepper
-          steps={PIPELINE_STEPS.map((s) => ({ label: s.label }))}
+          steps={PIPELINE_STATUSES.map((s) => ({
+            label: s.statuses.map((c) => statusLabels.get(c) ?? c).join(" / "),
+          }))}
           currentStep={getStepFromStatus(pickNote.status_code)}
         />
       </div>

@@ -3,10 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { Eye, Printer, MoreVertical, ClipboardCheck } from "lucide-react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { DataTable, type Column } from "@/shared/ui/data-table";
-import { StatusBadge, getStatusVariant } from "@/shared/ui/status-badge";
+import { StatusBadge } from "@/shared/ui/status-badge";
+import { getStatusVariant } from "@/shared/ui/status-variants";
 import { formatDateTime } from "@/shared/lib/utils";
 import { useWarehouses } from "@/features/warehouses/hooks/use-warehouses";
 import { PickNoteCheckPanel } from "./pick-note-check-panel";
+import { usePickNoteStatuses } from "@/shared/hooks/use-lookups";
 import type { PickNoteOut } from "../types/pick-note.types";
 
 interface PickNotesTableProps {
@@ -14,15 +16,9 @@ interface PickNotesTableProps {
   isLoading?: boolean;
 }
 
-const STATUS_LABELS: Record<string, string> = {
-  CREATED: "Creata",
-  PICKING: "In Prelievo",
-  CHECKED: "Controllata",
-  COMPLETED: "Completata",
-};
-
 export function PickNotesTable({ pickNotes, isLoading }: PickNotesTableProps) {
   const navigate = useNavigate();
+  const { map: statusLabels } = usePickNoteStatuses();
   const { data: warehousesData } = useWarehouses();
   const [checkingGuid, setCheckingGuid] = useState<string | null>(null);
 
@@ -66,7 +62,7 @@ export function PickNotesTable({ pickNotes, isLoading }: PickNotesTableProps) {
       render: (row) => (
         <StatusBadge
           variant={getStatusVariant(row.status_code)}
-          label={STATUS_LABELS[row.status_code] ?? row.status_code}
+          label={statusLabels.get(row.status_code) ?? row.status_code}
         />
       ),
     },

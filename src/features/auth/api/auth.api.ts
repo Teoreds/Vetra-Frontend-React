@@ -20,4 +20,7 @@ export const authApi = {
     }),
 
   me: () => apiClient.GET("/auth/me"),
+
+  lookupTenant: (username: string) =>
+    apiClient.GET("/auth/tenant", { params: { query: { username } } }),
 };

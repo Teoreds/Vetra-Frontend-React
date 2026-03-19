@@ -1,9 +1,8 @@
 export const ORDER_STATUSES = [
   "DRAFT",
   "CONFIRMED",
-  "COMMITTED",
-  "PICKING",
-  "SHIPPED",
+  "PARTIAL",
+  "FULFILLED",
   "COMPLETED",
 ] as const;
 
@@ -15,10 +14,9 @@ export type OrderStatus = (typeof ORDER_STATUSES)[number];
  */
 const ORDER_TRANSITIONS: Record<OrderStatus, readonly OrderStatus[]> = {
   DRAFT: ["CONFIRMED"],
-  CONFIRMED: ["COMMITTED"],
-  COMMITTED: ["PICKING"],
-  PICKING: ["SHIPPED"],
-  SHIPPED: ["COMPLETED"],
+  CONFIRMED: ["PARTIAL"],
+  PARTIAL: ["FULFILLED"],
+  FULFILLED: ["COMPLETED"],
   COMPLETED: [],
 };
 
@@ -36,24 +34,10 @@ export function canTransitionTo(
   );
 }
 
-export const STATUS_LABELS: Record<OrderStatus, string> = {
-  DRAFT: "Bozza",
-  CONFIRMED: "Confermato",
-  COMMITTED: "Impegnato",
-  PICKING: "In Prelievo",
-  SHIPPED: "Spedito",
-  COMPLETED: "Completato",
-};
-
-export function getStatusLabel(status: string): string {
-  return STATUS_LABELS[status.toUpperCase() as OrderStatus] ?? status;
-}
-
 export const EDITABLE_STATUSES: readonly OrderStatus[] = [
   "DRAFT",
   "CONFIRMED",
-  "COMMITTED",
-  "PICKING",
+  "PARTIAL",
 ] as const;
 
 export function isOrderEditable(status: string): boolean {

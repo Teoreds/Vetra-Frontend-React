@@ -7,8 +7,9 @@ const statusBadgeVariants = cva(
     variants: {
       variant: {
         draft: "bg-slate-500/8 text-slate-500",
-        confirmed: "bg-blue-500/8 text-blue-600",
-        committed: "bg-indigo-500/8 text-indigo-600",
+        confirmed: "bg-primary/8 text-primary",
+        partial: "bg-indigo-500/8 text-indigo-600",
+        fulfilled: "bg-emerald-500/8 text-emerald-600",
         picking: "bg-amber-500/10 text-amber-600",
         shipped: "bg-emerald-500/8 text-emerald-600",
         completed: "bg-green-500/8 text-green-600",
@@ -41,20 +42,3 @@ export function StatusBadge({ variant, label, className }: StatusBadgeProps) {
   );
 }
 
-const STATUS_VARIANT_MAP: Record<string, StatusBadgeVariant> = {
-  CREATED: "pending",
-  DRAFT: "draft",
-  CONFIRMED: "confirmed",
-  COMMITTED: "committed",
-  PICKING: "picking",
-  CHECKED: "shipped",
-  SHIPPED: "shipped",
-  COMPLETED: "completed",
-  CANCELLED: "cancelled",
-  PENDING: "pending",
-  DELIVERED: "delivered",
-};
-
-export function getStatusVariant(statusCode: string): StatusBadgeVariant {
-  return STATUS_VARIANT_MAP[statusCode.toUpperCase()] ?? "default";
-}

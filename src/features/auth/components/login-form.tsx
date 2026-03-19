@@ -1,12 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useQuery } from "@tanstack/react-query";
 import { z } from "zod/v4";
 import { Button } from "@/shared/ui/button";
 import { useLogin } from "../hooks/use-login";
+import { authApi } from "../api/auth.api";
+import { applyThemeToRoot, getCachedTenantGuid } from "@/shared/hooks/use-apply-tenant-theme";
 
 const loginSchema = z.object({
-  username: z.string().min(1, "Username is required"),
-  password: z.string().min(1, "Password is required"),
+  username: z.string().min(1, "Username obbligatorio"),
+  password: z.string().min(1, "Password obbligatoria"),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -14,7 +17,41 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 export function LoginForm() {
   const login = useLogin();
   const [validationErrors, setValidationErrors] = useState<Partial<Record<keyof LoginFormValues, string>>>({});
-  const { register, handleSubmit } = useForm<LoginFormValues>();
+  const { register, handleSubmit, watch } = useForm<LoginFormValues>();
+
+  // Apply cached theme immediately on mount
+  useEffect(() => {
+    applyThemeToRoot(getCachedTenantGuid());
+  }, []);
+
+  const username = watch("username");
+  const [debouncedUsername, setDebouncedUsername] = useState("");
+
+  useEffect(() => {
+    if (!username || username.length < 2) {
+      setDebouncedUsername("");
+      return;
+    }
+    const timer = setTimeout(() => setDebouncedUsername(username), 500);
+    return () => clearTimeout(timer);
+  }, [username]);
+
+  const tenantQuery = useQuery({
+    queryKey: ["auth", "tenant", debouncedUsername],
+    queryFn: async () => {
+      const { data, error } = await authApi.lookupTenant(debouncedUsername);
+      if (error) throw error;
+      return data;
+    },
+    enabled: debouncedUsername.length >= 2,
+    retry: false,
+  });
+
+  useEffect(() => {
+    if (tenantQuery.data?.master_data_guid) {
+      applyThemeToRoot(tenantQuery.data.master_data_guid);
+    }
+  }, [tenantQuery.data?.master_data_guid]);
 
   const onSubmit = (values: LoginFormValues) => {
     const parsed = loginSchema.safeParse(values);

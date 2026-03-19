@@ -3,7 +3,8 @@ import { Pencil, MoreVertical } from "lucide-react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { DataTable, type Column } from "@/shared/ui/data-table";
 import type { PartyOut } from "../types/party.types";
-import { TYPE_LABELS } from "./type-multi-select";
+import { usePartyTypes } from "@/shared/hooks/use-lookups";
+import { PartyAvatar } from "./party-avatar";
 
 interface PartiesTableProps {
   parties: PartyOut[];
@@ -11,32 +12,14 @@ interface PartiesTableProps {
 }
 
 const TYPE_BADGE_STYLES: Record<string, string> = {
-  CUSTOMER: "bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-200",
+  CUSTOMER: "bg-primary/8 text-primary ring-1 ring-inset ring-primary/20",
   SUPPLIER: "bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-200",
   CARRIER: "bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-200",
 };
 
-const AVATAR_COLORS = [
-  { bg: "bg-blue-500/12", text: "text-blue-600" },
-  { bg: "bg-emerald-500/12", text: "text-emerald-600" },
-  { bg: "bg-violet-500/12", text: "text-violet-600" },
-  { bg: "bg-amber-500/12", text: "text-amber-600" },
-  { bg: "bg-rose-500/12", text: "text-rose-600" },
-  { bg: "bg-cyan-500/12", text: "text-cyan-600" },
-  { bg: "bg-indigo-500/12", text: "text-indigo-600" },
-  { bg: "bg-orange-500/12", text: "text-orange-600" },
-];
-
-function getAvatarColor(name: string) {
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
-}
-
 export function PartiesTable({ parties, isLoading }: PartiesTableProps) {
   const navigate = useNavigate();
+  const { map: typeLabels } = usePartyTypes();
 
   const columns: Column<PartyOut>[] = [
     {
@@ -44,14 +27,15 @@ export function PartiesTable({ parties, isLoading }: PartiesTableProps) {
       header: "Nome",
       render: (row) => {
         const name = row.description ?? "?";
-        const color = getAvatarColor(name);
         return (
           <div className="flex items-center gap-2.5">
-            <span
-              className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold ${color.bg} ${color.text}`}
-            >
-              {name.charAt(0).toUpperCase()}
-            </span>
+            <PartyAvatar
+              partyGuid={row.guid}
+              name={name}
+              imagePath={row.image_path}
+              className="h-7 w-7"
+              textClassName="text-[11px]"
+            />
             <span className="text-[13px] font-medium">{name}</span>
           </div>
         );
@@ -67,7 +51,7 @@ export function PartiesTable({ parties, isLoading }: PartiesTableProps) {
             TYPE_BADGE_STYLES[row.type_code] ?? "bg-slate-100 text-slate-600"
           }`}
         >
-          {TYPE_LABELS[row.type_code] ?? row.type_code}
+          {typeLabels.get(row.type_code) ?? row.type_code}
         </span>
       ),
     },

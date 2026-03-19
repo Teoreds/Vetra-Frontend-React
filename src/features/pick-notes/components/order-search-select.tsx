@@ -2,9 +2,10 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { Search, Loader2, X } from "lucide-react";
 import { useOrders } from "@/features/orders/hooks/use-orders";
 import { useParties } from "@/features/parties/hooks/use-parties";
-import { StatusBadge, getStatusVariant } from "@/shared/ui/status-badge";
-import { getStatusLabel } from "@/features/orders/types/order-status";
+import { StatusBadge } from "@/shared/ui/status-badge";
+import { getStatusVariant } from "@/shared/ui/status-variants";
 import { formatDate } from "@/shared/lib/utils";
+import { useOrderStatuses } from "@/shared/hooks/use-lookups";
 import { cn } from "@/shared/lib/utils";
 
 interface OrderSearchSelectProps {
@@ -14,6 +15,7 @@ interface OrderSearchSelectProps {
 }
 
 export function OrderSearchSelect({ value, onChange, disabled }: OrderSearchSelectProps) {
+  const { map: statusLabels } = useOrderStatuses();
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(0);
@@ -48,9 +50,8 @@ export function OrderSearchSelect({ value, onChange, disabled }: OrderSearchSele
     return () => document.removeEventListener("mousedown", onMouseDown);
   }, []);
 
-  useEffect(() => {
-    setFocusedIndex(0);
-  }, [orders.length]);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { setFocusedIndex(0); }, [orders.length]);
 
   const confirmSelection = useCallback(
     (orderGuid: string) => {
@@ -206,7 +207,7 @@ export function OrderSearchSelect({ value, onChange, disabled }: OrderSearchSele
                   </span>
                   <StatusBadge
                     variant={getStatusVariant(order.status_code)}
-                    label={getStatusLabel(order.status_code)}
+                    label={statusLabels.get(order.status_code) ?? order.status_code}
                   />
                 </div>
                 <p className="text-[11px] text-muted-foreground truncate">

@@ -1,59 +1,76 @@
+import { lazy } from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import { AppLayout } from "@/layout/app-layout";
 import { AuthLayout } from "@/layout/auth-layout";
 import { AuthGuard } from "@/features/auth/components/auth-guard";
 import { GuestGuard } from "@/features/auth/components/guest-guard";
-import { LoginPage } from "@/features/auth/pages/login-page";
-import { DashboardPage } from "@/features/dashboard/pages/dashboard-page";
-import { OrderListPage } from "@/features/orders/pages/order-list-page";
-import { OrderDetailPage } from "@/features/orders/pages/order-detail-page";
-import { NewOrderPage } from "@/features/orders/pages/new-order-page";
-import { OrderWizardPage } from "@/features/orders/pages/order-wizard-page";
-import { PartiesListPage } from "@/features/parties/pages/parties-list-page";
-import { PartyDetailPage } from "@/features/parties/pages/party-detail-page";
-import { NewPartyPage } from "@/features/parties/pages/new-party-page";
-import { ArticlesListPage } from "@/features/articles/pages/articles-list-page";
-import { ArticleDetailPage } from "@/features/articles/pages/article-detail-page";
-import { NewArticlePage } from "@/features/articles/pages/new-article-page";
-import { WarehousesListPage } from "@/features/warehouses/pages/warehouses-list-page";
-import { WarehouseDetailPage } from "@/features/warehouses/pages/warehouse-detail-page";
-import { NewPickNotePage } from "@/features/pick-notes/pages/new-pick-note-page";
-import { PickNoteListPage } from "@/features/pick-notes/pages/pick-note-list-page";
-import { PickNoteDetailPage } from "@/features/pick-notes/pages/pick-note-detail-page";
+import { RouteErrorPage } from "./route-error-page";
+import { NotFoundPage } from "./not-found-page";
+import { LazyPage } from "./lazy-page";
+
+// Lazy-loaded pages for code splitting
+const LoginPage = lazy(() => import("@/features/auth/pages/login-page").then((m) => ({ default: m.LoginPage })));
+const DashboardPage = lazy(() => import("@/features/dashboard/pages/dashboard-page").then((m) => ({ default: m.DashboardPage })));
+const OrderListPage = lazy(() => import("@/features/orders/pages/order-list-page").then((m) => ({ default: m.OrderListPage })));
+const OrderDetailPage = lazy(() => import("@/features/orders/pages/order-detail-page").then((m) => ({ default: m.OrderDetailPage })));
+const NewOrderPage = lazy(() => import("@/features/orders/pages/new-order-page").then((m) => ({ default: m.NewOrderPage })));
+const OrderEditPage = lazy(() => import("@/features/orders/pages/order-edit-page").then((m) => ({ default: m.OrderEditPage })));
+const PartiesListPage = lazy(() => import("@/features/parties/pages/parties-list-page").then((m) => ({ default: m.PartiesListPage })));
+const PartyDetailPage = lazy(() => import("@/features/parties/pages/party-detail-page").then((m) => ({ default: m.PartyDetailPage })));
+const NewPartyPage = lazy(() => import("@/features/parties/pages/new-party-page").then((m) => ({ default: m.NewPartyPage })));
+const PartyEditPage = lazy(() => import("@/features/parties/pages/party-edit-page").then((m) => ({ default: m.PartyEditPage })));
+const ArticlesListPage = lazy(() => import("@/features/articles/pages/articles-list-page").then((m) => ({ default: m.ArticlesListPage })));
+const ArticleDetailPage = lazy(() => import("@/features/articles/pages/article-detail-page").then((m) => ({ default: m.ArticleDetailPage })));
+const ArticleEditPage = lazy(() => import("@/features/articles/pages/article-edit-page").then((m) => ({ default: m.ArticleEditPage })));
+const NewArticlePage = lazy(() => import("@/features/articles/pages/new-article-page").then((m) => ({ default: m.NewArticlePage })));
+const PickNoteListPage = lazy(() => import("@/features/pick-notes/pages/pick-note-list-page").then((m) => ({ default: m.PickNoteListPage })));
+const NewPickNotePage = lazy(() => import("@/features/pick-notes/pages/new-pick-note-page").then((m) => ({ default: m.NewPickNotePage })));
+const PickNoteDetailPage = lazy(() => import("@/features/pick-notes/pages/pick-note-detail-page").then((m) => ({ default: m.PickNoteDetailPage })));
+const ShipmentsListPage = lazy(() => import("@/features/shipments/pages/shipments-list-page").then((m) => ({ default: m.ShipmentsListPage })));
+const AdminPage = lazy(() => import("@/features/admin/pages/admin-page").then((m) => ({ default: m.AdminPage })));
+
+function lz(Page: React.LazyExoticComponent<React.ComponentType>) {
+  return <LazyPage><Page /></LazyPage>;
+}
 
 export const router = createBrowserRouter([
   {
     element: <GuestGuard />,
+    errorElement: <RouteErrorPage />,
     children: [
       {
         element: <AuthLayout />,
-        children: [{ path: "/login", element: <LoginPage /> }],
+        children: [{ path: "/login", element: lz(LoginPage) }],
       },
     ],
   },
   {
     element: <AuthGuard />,
+    errorElement: <RouteErrorPage />,
     children: [
       {
         element: <AppLayout />,
         children: [
           { index: true, element: <Navigate to="/dashboard" replace /> },
-          { path: "/dashboard", element: <DashboardPage /> },
-          { path: "/orders", element: <OrderListPage /> },
-          { path: "/orders/new", element: <NewOrderPage /> },
-          { path: "/orders/:id", element: <OrderDetailPage /> },
-          { path: "/orders/:id/edit", element: <OrderWizardPage /> },
-          { path: "/parties", element: <PartiesListPage /> },
-          { path: "/parties/new", element: <NewPartyPage /> },
-          { path: "/parties/:id", element: <PartyDetailPage /> },
-          { path: "/articles", element: <ArticlesListPage /> },
-          { path: "/articles/new", element: <NewArticlePage /> },
-          { path: "/articles/:id", element: <ArticleDetailPage /> },
-          { path: "/warehouses", element: <WarehousesListPage /> },
-          { path: "/warehouses/:id", element: <WarehouseDetailPage /> },
-          { path: "/pick-notes", element: <PickNoteListPage /> },
-          { path: "/pick-notes/new", element: <NewPickNotePage /> },
-          { path: "/pick-notes/:id", element: <PickNoteDetailPage /> },
+          { path: "/dashboard", element: lz(DashboardPage) },
+          { path: "/orders", element: lz(OrderListPage) },
+          { path: "/orders/new", element: lz(NewOrderPage) },
+          { path: "/orders/:id", element: lz(OrderDetailPage) },
+          { path: "/orders/:id/edit", element: lz(OrderEditPage) },
+          { path: "/parties", element: lz(PartiesListPage) },
+          { path: "/parties/new", element: lz(NewPartyPage) },
+          { path: "/parties/:id", element: lz(PartyDetailPage) },
+          { path: "/parties/:id/edit", element: lz(PartyEditPage) },
+          { path: "/articles", element: lz(ArticlesListPage) },
+          { path: "/articles/new", element: lz(NewArticlePage) },
+          { path: "/articles/:id", element: lz(ArticleDetailPage) },
+          { path: "/articles/:id/edit", element: lz(ArticleEditPage) },
+          { path: "/pick-notes", element: lz(PickNoteListPage) },
+          { path: "/pick-notes/new", element: lz(NewPickNotePage) },
+          { path: "/pick-notes/:id", element: lz(PickNoteDetailPage) },
+          { path: "/shipments", element: lz(ShipmentsListPage) },
+          { path: "/admin", element: lz(AdminPage) },
+          { path: "*", element: <NotFoundPage /> },
         ],
       },
     ],

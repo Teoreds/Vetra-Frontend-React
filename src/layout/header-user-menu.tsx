@@ -3,13 +3,20 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import * as Avatar from "@radix-ui/react-avatar";
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
 import { useAuthStore } from "@/features/auth/hooks/use-auth-store";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/shared/ui/button";
 import { Breadcrumb } from "@/shared/ui/breadcrumb";
 import { TenantBadge } from "@/layout/tenant-badge";
 
 export function HeaderUserMenu() {
   const { data: user } = useCurrentUser();
-  const logout = useAuthStore((s) => s.logout);
+  const storeLogout = useAuthStore((s) => s.logout);
+  const queryClient = useQueryClient();
+
+  const logout = () => {
+    storeLogout();
+    queryClient.clear();
+  };
 
   const initials = user?.display_name
     ?.split(" ")

@@ -3,7 +3,7 @@ import * as Popover from "@radix-ui/react-popover";
 import { ChevronDown } from "lucide-react";
 import { CheckboxDisplay } from "@/shared/ui/checkbox";
 import { cn } from "@/shared/lib/utils";
-import { ORDER_STATUSES, STATUS_LABELS } from "../types/order-status";
+import { useOrderStatuses } from "@/shared/hooks/use-lookups";
 
 interface StatusMultiSelectProps {
   value: string[];
@@ -12,6 +12,7 @@ interface StatusMultiSelectProps {
 
 export function StatusMultiSelect({ value, onChange }: StatusMultiSelectProps) {
   const [open, setOpen] = useState(false);
+  const { data: orderStatuses } = useOrderStatuses();
 
   function toggle(status: string) {
     if (value.includes(status)) {
@@ -47,16 +48,16 @@ export function StatusMultiSelect({ value, onChange }: StatusMultiSelectProps) {
           sideOffset={4}
           className="z-50 min-w-[180px] rounded-xl border border-border bg-popover p-1.5 shadow-[0_8px_30px_rgba(0,0,0,0.10)] outline-none animate-in fade-in-0 zoom-in-95"
         >
-          {ORDER_STATUSES.map((status) => (
+          {orderStatuses.map((s) => (
             <div
-              key={status}
+              key={s.code}
               role="option"
-              aria-selected={value.includes(status)}
+              aria-selected={value.includes(s.code)}
               className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] transition-colors hover:bg-muted/60"
-              onClick={() => toggle(status)}
+              onClick={() => toggle(s.code)}
             >
-              <CheckboxDisplay checked={value.includes(status)} />
-              {STATUS_LABELS[status]}
+              <CheckboxDisplay checked={value.includes(s.code)} />
+              {s.description}
             </div>
           ))}
         </Popover.Content>
