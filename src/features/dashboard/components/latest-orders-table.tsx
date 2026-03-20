@@ -1,90 +1,63 @@
-import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { DataTable, type Column } from "@/shared/ui/data-table";
 import { StatusBadge } from "@/shared/ui/status-badge";
 import { getStatusVariant } from "@/shared/ui/status-variants";
-import { formatDate } from "@/shared/lib/utils";
-import { useParties } from "@/features/parties/hooks/use-parties";
 import { useOrderStatuses } from "@/shared/hooks/use-lookups";
-import type { OrderOut } from "@/features/orders/types/order.types";
+import { formatDate } from "@/shared/lib/utils";
+import type { components } from "@/shared/api/schema";
 
-interface LatestOrdersTableProps {
-  orders: OrderOut[];
-  isLoading?: boolean;
+type RecentOrder = components["schemas"]["RecentOrder"];
+
+function fmtEur(n: number) {
+  return new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(n);
 }
 
-export function LatestOrdersTable({ orders, isLoading }: LatestOrdersTableProps) {
+export function LatestOrdersTable({ orders }: { orders: RecentOrder[] }) {
   const navigate = useNavigate();
   const { map: statusLabels } = useOrderStatuses();
-  const { data: partiesData } = useParties({ limit: 200 });
 
-  const partyMap = useMemo(() => {
-    const map = new Map<string, string>();
-    if (partiesData?.items) {
-      for (const p of partiesData.items) {
-        map.set(p.guid, p.description ?? p.guid.slice(0, 8));
-      }
-    }
-    return map;
-  }, [partiesData]);
-
-  const columns: Column<OrderOut>[] = [
-    {
-      key: "guid",
-      header: "ID Ordine",
-      render: (row) => (
-        <span className="font-medium text-primary">
-          #{row.guid.slice(0, 8).toUpperCase()}
-        </span>
-      ),
-    },
-    {
-      key: "party",
-      header: "Cliente",
-      render: (row) => {
-        const name = partyMap.get(row.party_guid);
-        if (name) {
-          return (
-            <div className="flex items-center gap-2.5">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/8 text-[11px] font-semibold text-primary">
-                {name.charAt(0).toUpperCase()}
-              </span>
-              <span className="text-[13px] font-medium">{name}</span>
-            </div>
-          );
-        }
-        return (
-          <span className="text-[13px] text-muted-foreground font-mono">
-            #{row.party_guid.slice(0, 8).toUpperCase()}
-          </span>
-        );
-      },
-    },
-    {
-      key: "order_date",
-      header: "Data",
-      render: (row) => <span className="text-sm">{formatDate(row.order_date)}</span>,
-    },
-    {
-      key: "status_code",
-      header: "Stato",
-      render: (row) => (
-        <StatusBadge
-          variant={getStatusVariant(row.status_code)}
-          label={statusLabels.get(row.status_code) ?? row.status_code}
-        />
-      ),
-    },
-  ];
+  if (orders.length === 0) {
+    return (
+      <div className="flex flex-col items-center gap-1 py-8 text-center">
+        <p className="text-[13px] text-muted-foreground">Nessun ordine recente.</p>
+      </div>
+    );
+  }
 
   return (
-    <DataTable
-      columns={columns}
-      data={orders}
-      keyExtractor={(row) => row.guid}
-      onRowClick={(row) => navigate(`/orders/${row.guid}`)}
-      isLoading={isLoading}
-      emptyMessage="Nessun ordine recente."
-    />
+    <div className="space-y-0.5">
+      {orders.map((o) => (
+        <button
+          key={o.guid}
+          type="button"
+          onClick={() => navigate(`/orders/${o.guid}`)}
+          className="group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-muted/60"
+        >
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/6 text-[12px] font-semibold text-primary ring-1 ring-primary/10">
+            {o.party_description.charAt(0).toUpperCase()}
+          </span>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2">
+              <p className="truncate text-[13px] font-medium group-hover:text-primary transition-colors">
+                {o.party_description}
+              </p>
+              <StatusBadge
+                variant={getStatusVariant(o.status_code)}
+                label={statusLabels.get(o.status_code) ?? o.status_code}
+                className="text-[9px] px-1.5 py-0.5"
+              />
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              {formatDate(o.order_date)}
+              {o.total_gross != null && (
+                <span className="ml-1.5 font-medium text-foreground/60">{fmtEur(Number(o.total_gross))}</span>
+              )}
+            </p>
+          </div>
+          <span className="shrink-0 text-[10px] font-mono text-muted-foreground/40 opacity-0 group-hover:opacity-100 transition-opacity">
+            #{o.guid.slice(0, 8).toUpperCase()}
+          </span>
+        </button>
+      ))}
+    </div>
   );
 }

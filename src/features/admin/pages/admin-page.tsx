@@ -4,8 +4,10 @@ import { cn } from "@/shared/lib/utils";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
 import { LOOKUP_CONFIGS } from "../api/admin.api";
 import { LookupTable } from "../components/lookup-table";
+import { PaymentMethodsTable } from "../components/payment-methods-table";
 import { PaymentTermsTable } from "../components/payment-terms-table";
 
+const PAYMENT_METHODS_KEY = "payment-methods-crud";
 const PAYMENT_TERMS_KEY = "payment-terms-crud";
 
 interface SidebarItem {
@@ -18,6 +20,17 @@ interface SidebarGroup {
   items: SidebarItem[];
 }
 
+const CUSTOM_DESCRIPTIONS: Record<string, { title: string; subtitle: string }> = {
+  [PAYMENT_METHODS_KEY]: {
+    title: "Metodi di Pagamento",
+    subtitle: "Gestisci i metodi di pagamento disponibili (es. Ri.Ba., Bonifico, Contrassegno).",
+  },
+  [PAYMENT_TERMS_KEY]: {
+    title: "Condizioni di Pagamento",
+    subtitle: "Codice, descrizione e rate per le condizioni di pagamento.",
+  },
+};
+
 export function AdminPage() {
   const [activeKey, setActiveKey] = useState(LOOKUP_CONFIGS[0].key);
 
@@ -28,8 +41,9 @@ export function AdminPage() {
       arr.push({ key: cfg.key, label: cfg.label });
       map.set(cfg.group, arr);
     }
-    // Add payment terms to Pagamenti group
+    // Add custom entries to Pagamenti group
     const pagamenti = map.get("Pagamenti") ?? [];
+    pagamenti.push({ key: PAYMENT_METHODS_KEY, label: "Metodi di Pagamento" });
     pagamenti.push({ key: PAYMENT_TERMS_KEY, label: "Condizioni di Pagamento" });
     map.set("Pagamenti", pagamenti);
 
@@ -37,12 +51,17 @@ export function AdminPage() {
   }, []);
 
   const activeLookup = LOOKUP_CONFIGS.find((c) => c.key === activeKey);
-  const isPaymentTerms = activeKey === PAYMENT_TERMS_KEY;
+  const customDesc = CUSTOM_DESCRIPTIONS[activeKey];
 
-  const title = isPaymentTerms ? "Condizioni di Pagamento" : activeLookup?.label ?? "";
-  const subtitle = isPaymentTerms
-    ? "Codice, descrizione e rate per le condizioni di pagamento."
-    : `Codice e descrizione per la tabella ${activeLookup?.path ?? ""}`;
+  const title = customDesc?.title ?? activeLookup?.label ?? "";
+  const subtitle = customDesc?.subtitle ?? `Codice e descrizione per la tabella ${activeLookup?.path ?? ""}`;
+
+  function renderContent() {
+    if (activeKey === PAYMENT_METHODS_KEY) return <PaymentMethodsTable />;
+    if (activeKey === PAYMENT_TERMS_KEY) return <PaymentTermsTable />;
+    if (activeLookup) return <LookupTable key={activeKey} lookupKey={activeKey} path={activeLookup.path} />;
+    return null;
+  }
 
   return (
     <div className="space-y-5">
@@ -98,11 +117,7 @@ export function AdminPage() {
             <p className="text-[12px] text-muted-foreground">{subtitle}</p>
           </CardHeader>
           <CardContent>
-            {isPaymentTerms ? (
-              <PaymentTermsTable />
-            ) : activeLookup ? (
-              <LookupTable key={activeKey} lookupKey={activeKey} path={activeLookup.path} />
-            ) : null}
+            {renderContent()}
           </CardContent>
         </Card>
       </div>

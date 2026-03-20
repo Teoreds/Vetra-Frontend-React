@@ -3,20 +3,26 @@ import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/shared/ui/button";
-import { NewOrderStepper, type StepConfig } from "@/features/orders/components/new-order-stepper";
-import { NewPartyStepDetails, type Step1Data } from "../components/new-party-step-details";
-import {
-  NewPartyStepExtras,
-  type Step2Data,
-} from "../components/new-party-step-extras";
+import { Stepper } from "@/shared/ui/stepper";
+import { NewPartyStepDetails } from "../components/new-party-step-details";
+import { NewPartyStepContacts } from "../components/new-party-step-contacts";
+import { NewPartyStepCommercial } from "../components/new-party-step-commercial";
+import { NewPartyStepReview } from "../components/new-party-step-review";
 import { partiesApi } from "../api/parties.api";
 import { partyKeys } from "../api/parties.queries";
 import { articlesApi } from "@/features/articles/api/articles.api";
-import { useNewPartyStore } from "../stores/use-new-party-store";
+import {
+  useNewPartyStore,
+  type PartyIdentityData,
+  type PartyContactsData,
+  type PartyCommercialData,
+} from "../stores/use-new-party-store";
 
-const STEPS: StepConfig[] = [
-  { label: "Dati Anagrafica", description: "Info generali" },
-  { label: "Dettagli", description: "Contatti, indirizzi e altro" },
+const STEPS = [
+  { label: "Identità", description: "Chi è" },
+  { label: "Contatti & Indirizzi", description: "Dove sta" },
+  { label: "Commerciale", description: "Come ci lavori" },
+  { label: "Riepilogo", description: "Conferma" },
 ];
 
 export function NewPartyPage() {
@@ -27,39 +33,88 @@ export function NewPartyPage() {
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  function handleStep1Next(data: Step1Data) {
+  // Image state — held in the page (not store) because File is not serializable
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  function handleImageSelect(file: File) {
+    setImageFile(file);
+    const url = URL.createObjectURL(file);
+    setImagePreview((prev) => { if (prev) URL.revokeObjectURL(prev); return url; });
+  }
+
+  function handleImageClear() {
+    setImageFile(null);
+    setImagePreview((prev) => { if (prev) URL.revokeObjectURL(prev); return null; });
+  }
+
+  /* ── Step handlers ─────────────────────────────────── */
+
+  function handleStep1Next(data: PartyIdentityData) {
     store.setStep1Data(data);
     store.setCurrentStep(2);
     setError(null);
   }
 
-  async function handleStep2Submit(data: Step2Data) {
-    if (!store.step1Data) return;
+  function handleStep2Next(data: PartyContactsData) {
     store.setStep2Data(data);
+    store.setCurrentStep(3);
     setError(null);
-    await submitAll(store.step1Data, data);
   }
 
-  async function submitAll(s1: Step1Data, s2: Step2Data) {
+  function handleStep2Back(draft: PartyContactsData) {
+    store.setStep2Data(draft);
+    store.setCurrentStep(1);
+  }
+
+  function handleStep3Next(data: PartyCommercialData) {
+    store.setStep3Data(data);
+    store.setCurrentStep(4);
+    setError(null);
+  }
+
+  function handleStep3Back(draft: PartyCommercialData) {
+    store.setStep3Data(draft);
+    store.setCurrentStep(2);
+  }
+
+  function handleStep4Back() {
+    store.setCurrentStep(3);
+  }
+
+  function handleClearAndNavigate() {
+    handleImageClear();
+    store.clear();
+    navigate("/parties");
+  }
+
+  /* ── Submit all ────────────────────────────────────── */
+
+  async function handleConfirm() {
+    const s1 = store.step1Data;
+    const s2 = store.step2Data;
+    const s3 = store.step3Data;
+    if (!s1 || !s2 || !s3) return;
+
     setIsPending(true);
     setError(null);
 
     try {
-      // 1. Create the party
+      // 1. Create party
       const { data: party, error: partyError } = await partiesApi.create({
         description: s1.description,
         vat_number: s1.vat_number || null,
         type_code: s1.type_code,
-        bank_name: s1.bank_name || null,
-        bank_iban: s1.bank_iban || null,
-        bank_bic: s1.bank_bic || null,
-        courier_guid: s1.courier_guid || null,
-        shipping_mode: s1.shipping_mode || "FRANCO",
+        category_code: s1.category_code || null,
         fiscal_area_code: s1.fiscal_area_code || null,
         sdi_code: s1.sdi_code || null,
-        category_code: s1.category_code || null,
-        default_payment_method_guid: s1.default_payment_method_guid || null,
-        default_payment_term_guid: s1.default_payment_term_guid || null,
+        bank_name: s3.bank_name || null,
+        bank_iban: s3.bank_iban || null,
+        bank_bic: s3.bank_bic || null,
+        courier_guid: s3.courier_guid || null,
+        shipping_mode: s3.shipping_mode || "FRANCO",
+        default_payment_method_guid: s3.default_payment_method_guid || null,
+        default_payment_term_guid: s3.default_payment_term_guid || null,
       });
 
       if (partyError || !party) {
@@ -69,7 +124,12 @@ export function NewPartyPage() {
 
       const partyGuid = party.guid;
 
-      // 2. Create contacts
+      // 2. Upload image
+      if (imageFile) {
+        await partiesApi.uploadImage(partyGuid, imageFile);
+      }
+
+      // 3. Create contacts
       for (const c of s2.contacts) {
         await partiesApi.createContact(partyGuid, {
           type_code: c.type_code,
@@ -79,7 +139,7 @@ export function NewPartyPage() {
         });
       }
 
-      // 3. Create locations then link them
+      // 4. Create locations then link them
       for (const addr of s2.addresses) {
         const { data: loc, error: locError } = await partiesApi.createLocation({
           address_line: addr.address_line || null,
@@ -97,10 +157,10 @@ export function NewPartyPage() {
         });
       }
 
-      // 4. Create discounts (CUSTOMER)
+      // 5. Create discounts (CUSTOMER)
       if (s1.type_code === "CUSTOMER") {
         const discountResults = await Promise.all(
-          s2.discounts
+          s3.discounts
             .filter((d) => d.discount_percent !== "")
             .map((d) =>
               partiesApi.createPartyDiscount({
@@ -111,15 +171,15 @@ export function NewPartyPage() {
             ),
         );
         if (discountResults.some((r) => r.error)) {
-          setError("Errore nel salvataggio degli sconti. L'anagrafica è stata creata, ma alcuni sconti non sono stati salvati.");
+          setError("Anagrafica creata, ma alcuni sconti non sono stati salvati.");
           return;
         }
       }
 
-      // 5. Create supplier articles (SUPPLIER)
+      // 6. Create supplier articles (SUPPLIER)
       if (s1.type_code === "SUPPLIER") {
         const supplierResults = await Promise.all(
-          s2.supplier_articles
+          s3.supplier_articles
             .filter((a) => a.article_guid !== "")
             .map((a) =>
               articlesApi.addSupplier(a.article_guid, {
@@ -131,14 +191,15 @@ export function NewPartyPage() {
             ),
         );
         if (supplierResults.some((r) => r.error)) {
-          setError("Errore nel salvataggio degli articoli fornitore. L'anagrafica è stata creata, ma alcuni articoli non sono stati salvati.");
+          setError("Anagrafica creata, ma alcuni articoli fornitore non sono stati salvati.");
           return;
         }
       }
 
-      // 6. Invalidate and navigate
+      // 7. Invalidate and navigate
       queryClient.invalidateQueries({ queryKey: partyKeys.lists() });
       queryClient.invalidateQueries({ queryKey: partyKeys.locations(partyGuid) });
+      handleImageClear();
       store.clear();
       navigate(`/parties/${partyGuid}`);
     } catch {
@@ -148,6 +209,8 @@ export function NewPartyPage() {
     }
   }
 
+  /* ── Render ────────────────────────────────────────── */
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -156,7 +219,7 @@ export function NewPartyPage() {
           variant="ghost"
           size="icon"
           className="h-8 w-8"
-          onClick={() => { store.clear(); navigate("/parties"); }}
+          onClick={handleClearAndNavigate}
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
@@ -170,7 +233,7 @@ export function NewPartyPage() {
 
       {/* Stepper */}
       <div className="py-2">
-        <NewOrderStepper steps={STEPS} currentStep={store.currentStep} />
+        <Stepper steps={STEPS} currentStep={store.currentStep} />
       </div>
 
       {/* Step 1 — Identity */}
@@ -180,18 +243,48 @@ export function NewPartyPage() {
             defaultValues={store.step1Data ?? undefined}
             onNext={handleStep1Next}
             error={error}
+            imagePreview={imagePreview}
+            onImageSelect={handleImageSelect}
+            onImageClear={handleImageClear}
           />
         </div>
       )}
 
-      {/* Step 2 — Contacts, addresses, type-specific extras */}
+      {/* Step 2 — Contacts & Addresses */}
       {store.currentStep === 2 && store.step1Data && (
         <div className="mx-auto max-w-3xl">
-          <NewPartyStepExtras
-            typeCode={store.step1Data.type_code}
+          <NewPartyStepContacts
             defaultValues={store.step2Data ?? undefined}
-            onSubmit={handleStep2Submit}
-            onBack={(draft) => { store.setStep2Data(draft); store.setCurrentStep(1); }}
+            onNext={handleStep2Next}
+            onBack={handleStep2Back}
+            error={error}
+          />
+        </div>
+      )}
+
+      {/* Step 3 — Commercial */}
+      {store.currentStep === 3 && store.step1Data && (
+        <div className="mx-auto max-w-2xl">
+          <NewPartyStepCommercial
+            typeCode={store.step1Data.type_code}
+            defaultValues={store.step3Data ?? undefined}
+            onNext={handleStep3Next}
+            onBack={handleStep3Back}
+            error={error}
+          />
+        </div>
+      )}
+
+      {/* Step 4 — Review */}
+      {store.currentStep === 4 && store.step1Data && store.step2Data && store.step3Data && (
+        <div className="mx-auto max-w-2xl">
+          <NewPartyStepReview
+            identity={store.step1Data}
+            contacts={store.step2Data}
+            commercial={store.step3Data}
+            imagePreview={imagePreview}
+            onBack={handleStep4Back}
+            onConfirm={handleConfirm}
             isPending={isPending}
             error={error}
           />

@@ -1,5 +1,4 @@
 import { apiClient } from "@/shared/api/client";
-import type { paths } from "@/shared/api/schema";
 
 type LookupPath =
   | "/party-types"
@@ -9,7 +8,6 @@ type LookupPath =
   | "/fiscal-areas"
   | "/article-types"
   | "/unit-of-measures"
-  | "/payment-method-types"
   | "/order-statuses"
   | "/order-row-availability-statuses"
   | "/pick-note-statuses"
@@ -25,7 +23,6 @@ type LookupDetailPath =
   | "/fiscal-areas/{code}"
   | "/article-types/{code}"
   | "/unit-of-measures/{code}"
-  | "/payment-method-types/{code}"
   | "/order-statuses/{code}"
   | "/order-row-availability-statuses/{code}"
   | "/pick-note-statuses/{code}"
@@ -41,7 +38,6 @@ const detailPaths: Record<LookupPath, LookupDetailPath> = {
   "/fiscal-areas": "/fiscal-areas/{code}",
   "/article-types": "/article-types/{code}",
   "/unit-of-measures": "/unit-of-measures/{code}",
-  "/payment-method-types": "/payment-method-types/{code}",
   "/order-statuses": "/order-statuses/{code}",
   "/order-row-availability-statuses": "/order-row-availability-statuses/{code}",
   "/pick-note-statuses": "/pick-note-statuses/{code}",
@@ -105,7 +101,6 @@ export const LOOKUP_CONFIGS: {
   { key: "fiscal-areas", label: "Aree Fiscali", path: "/fiscal-areas", group: "Anagrafica" },
   { key: "article-types", label: "Tipi Articolo", path: "/article-types", group: "Articoli" },
   { key: "unit-of-measures", label: "Unità di Misura", path: "/unit-of-measures", group: "Articoli" },
-  { key: "payment-method-types", label: "Tipi Metodo Pagamento", path: "/payment-method-types", group: "Pagamenti" },
   { key: "order-statuses", label: "Stati Ordine", path: "/order-statuses", group: "Ordini" },
   { key: "order-row-availability-statuses", label: "Stati Disponibilità Riga", path: "/order-row-availability-statuses", group: "Ordini" },
   { key: "pick-note-statuses", label: "Stati Nota Prelievo", path: "/pick-note-statuses", group: "Logistica" },

@@ -61,10 +61,6 @@ export function usePartyCategories() {
   return useLookup("party-categories", lookupsApi.partyCategories);
 }
 
-export function usePaymentMethodTypes() {
-  return useLookup("payment-method-types", lookupsApi.paymentMethodTypes);
-}
-
 export function usePaymentMethods() {
   const query = useQuery({
     queryKey: ["lookups", "payment-methods"],

@@ -1255,6 +1255,23 @@ export interface paths {
         patch: operations["update_payment_term_payment_terms__guid__patch"];
         trace?: never;
     };
+    "/stats/dashboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Dashboard KPI e statistiche */
+        get: operations["get_dashboard_stats_dashboard_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/party-types": {
         parameters: {
             query?: never;
@@ -1476,43 +1493,6 @@ export interface paths {
         head?: never;
         /** Aggiorna Unità di misura */
         patch: operations["update_unit_of_measure_unit_of_measures__code__patch"];
-        trace?: never;
-    };
-    "/payment-method-types": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Lista tipi metodo pagamento */
-        get: operations["list_payment_method_types_payment_method_types_get"];
-        put?: never;
-        /** Crea Tipo metodo pagamento */
-        post: operations["create_payment_method_type_payment_method_types_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/payment-method-types/{code}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Dettaglio Tipo metodo pagamento */
-        get: operations["get_payment_method_type_payment_method_types__code__get"];
-        put?: never;
-        post?: never;
-        /** Elimina Tipo metodo pagamento */
-        delete: operations["delete_payment_method_type_payment_method_types__code__delete"];
-        options?: never;
-        head?: never;
-        /** Aggiorna Tipo metodo pagamento */
-        patch: operations["update_payment_method_type_payment_method_types__code__patch"];
         trace?: never;
     };
     "/order-statuses": {
@@ -2051,6 +2031,22 @@ export interface components {
             /** Is Primary */
             is_primary?: boolean | null;
         };
+        /** DashboardOut */
+        DashboardOut: {
+            kpis: components["schemas"]["KPIs"];
+            /** Orders By Status */
+            orders_by_status: components["schemas"]["StatusBreakdown"][];
+            /** Monthly Trend */
+            monthly_trend: components["schemas"]["MonthlyTrend"][];
+            /** Recent Orders */
+            recent_orders: components["schemas"]["RecentOrder"][];
+            /** Overdue Orders */
+            overdue_orders: components["schemas"]["OverdueOrder"][];
+            /** Top Parties */
+            top_parties: components["schemas"]["TopParty"][];
+            /** Top Articles */
+            top_articles: components["schemas"]["TopArticle"][];
+        };
         /** DeliveryNoteCreate */
         DeliveryNoteCreate: {
             /**
@@ -2281,6 +2277,21 @@ export interface components {
             /** Is Active */
             is_active?: boolean | null;
         };
+        /** KPIs */
+        KPIs: {
+            /** Orders Count */
+            orders_count: number;
+            /** Orders Count Prev */
+            orders_count_prev: number;
+            /** Total Gross */
+            total_gross: string;
+            /** Total Gross Prev */
+            total_gross_prev: string;
+            /** Backlog Count */
+            backlog_count: number;
+            /** Avg Fulfillment Days */
+            avg_fulfillment_days: number | null;
+        };
         /** LocationCreate */
         LocationCreate: {
             /** Address Line */
@@ -2491,6 +2502,15 @@ export interface components {
             bank_name?: string | null;
             /** Bank Iban */
             bank_iban?: string | null;
+        };
+        /** MonthlyTrend */
+        MonthlyTrend: {
+            /** Month */
+            month: string;
+            /** Order Count */
+            order_count: number;
+            /** Total Gross */
+            total_gross: string;
         };
         /** OrderCreate */
         OrderCreate: {
@@ -2797,6 +2817,32 @@ export interface components {
             status_code: string;
             /** Note */
             note?: string | null;
+        };
+        /** OverdueOrder */
+        OverdueOrder: {
+            /**
+             * Guid
+             * Format: uuid
+             */
+            guid: string;
+            /**
+             * Party Guid
+             * Format: uuid
+             */
+            party_guid: string;
+            /** Party Description */
+            party_description: string;
+            /** Status Code */
+            status_code: string;
+            /**
+             * Order Date
+             * Format: date
+             */
+            order_date: string;
+            /** Total Gross */
+            total_gross: string | null;
+            /** Days Overdue */
+            days_overdue: number;
         };
         /** Page[ArticleOut] */
         Page_ArticleOut_: {
@@ -3128,8 +3174,6 @@ export interface components {
         };
         /** PaymentMethodCreate */
         PaymentMethodCreate: {
-            /** Type Code */
-            type_code: string;
             /** Description */
             description: string;
         };
@@ -3145,15 +3189,11 @@ export interface components {
              * Format: uuid
              */
             master_data_guid: string;
-            /** Type Code */
-            type_code: string;
             /** Description */
             description: string;
         };
         /** PaymentMethodUpdate */
         PaymentMethodUpdate: {
-            /** Type Code */
-            type_code?: string | null;
             /** Description */
             description?: string | null;
         };
@@ -3380,6 +3420,35 @@ export interface components {
              */
             received_at: string;
         };
+        /** RecentOrder */
+        RecentOrder: {
+            /**
+             * Guid
+             * Format: uuid
+             */
+            guid: string;
+            /**
+             * Party Guid
+             * Format: uuid
+             */
+            party_guid: string;
+            /** Party Description */
+            party_description: string;
+            /** Status Code */
+            status_code: string;
+            /**
+             * Order Date
+             * Format: date
+             */
+            order_date: string;
+            /** Total Gross */
+            total_gross: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
         /** RefreshRequest */
         RefreshRequest: {
             /** Refresh Token */
@@ -3419,6 +3488,15 @@ export interface components {
             /** Notes */
             notes?: string | null;
         };
+        /** StatusBreakdown */
+        StatusBreakdown: {
+            /** Status Code */
+            status_code: string;
+            /** Count */
+            count: number;
+            /** Total */
+            total: string;
+        };
         /** TenantLookupOut */
         TenantLookupOut: {
             /**
@@ -3440,6 +3518,36 @@ export interface components {
              * @default bearer
              */
             token_type: string;
+        };
+        /** TopArticle */
+        TopArticle: {
+            /**
+             * Article Guid
+             * Format: uuid
+             */
+            article_guid: string;
+            /** Code */
+            code: string;
+            /** Description */
+            description: string;
+            /** Total Quantity */
+            total_quantity: string;
+            /** Total Value */
+            total_value: string;
+        };
+        /** TopParty */
+        TopParty: {
+            /**
+             * Party Guid
+             * Format: uuid
+             */
+            party_guid: string;
+            /** Description */
+            description: string;
+            /** Order Count */
+            order_count: number;
+            /** Total Gross */
+            total_gross: string;
         };
         /** UnitOfMeasureOut */
         UnitOfMeasureOut: {
@@ -7259,6 +7367,40 @@ export interface operations {
             };
         };
     };
+    get_dashboard_stats_dashboard_get: {
+        parameters: {
+            query?: {
+                /** @description Inizio periodo (default: primo giorno del mese corrente) */
+                date_from?: string | null;
+                /** @description Fine periodo (default: oggi) */
+                date_to?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DashboardOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_party_types_party_types_get: {
         parameters: {
             query?: never;
@@ -8155,154 +8297,6 @@ export interface operations {
         };
     };
     update_unit_of_measure_unit_of_measures__code__patch: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                code: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["LookupUpdate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LookupOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    list_payment_method_types_payment_method_types_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LookupOut"][];
-                };
-            };
-        };
-    };
-    create_payment_method_type_payment_method_types_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["LookupCreate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LookupOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_payment_method_type_payment_method_types__code__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                code: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LookupOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    delete_payment_method_type_payment_method_types__code__delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                code: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    update_payment_method_type_payment_method_types__code__patch: {
         parameters: {
             query?: never;
             header?: never;

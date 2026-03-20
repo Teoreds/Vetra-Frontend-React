@@ -9,7 +9,6 @@ export const lookupsApi = {
   logActionTypes: () => apiClient.GET("/log-action-types"),
   fiscalAreas: () => apiClient.GET("/fiscal-areas"),
   partyCategories: () => apiClient.GET("/party-categories"),
-  paymentMethodTypes: () => apiClient.GET("/payment-method-types"),
   paymentMethods: (params?: { offset?: number; limit?: number }) =>
     apiClient.GET("/payment-methods", { params: { query: params } }),
   paymentTerms: (params?: { offset?: number; limit?: number }) =>
