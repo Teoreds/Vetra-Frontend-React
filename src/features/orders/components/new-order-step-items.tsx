@@ -256,16 +256,16 @@ export function NewOrderStepItems({
     removeAction: (index: number) => void,
   ) {
     return (
-      <div className="max-h-64 overflow-y-auto">
+      <div>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className={th}>Articolo</TableHead>
-              <TableHead className={cn(th, "w-20")}>Qtà</TableHead>
-              <TableHead className={cn(th, "w-16")}>UdM</TableHead>
-              <TableHead className={cn(th, "w-28 whitespace-nowrap")}>Prezzo ({currency})</TableHead>
-              <TableHead className={cn(th, "w-24 whitespace-nowrap")}>Sconto %</TableHead>
-              <TableHead className={cn(th, "w-16")} />
+              <TableHead className={cn(th, "min-w-[180px]")}>Articolo</TableHead>
+              <TableHead className={cn(th, "w-16")}>Qtà</TableHead>
+              <TableHead className={cn(th, "w-14 pl-4")}>UdM</TableHead>
+              <TableHead className={cn(th, "w-24 pl-4 whitespace-nowrap")}>Prezzo ({currency})</TableHead>
+              <TableHead className={cn(th, "w-20 pl-4 whitespace-nowrap")}>Sconto %</TableHead>
+              <TableHead className={cn(th, "w-12")} />
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -293,8 +293,8 @@ export function NewOrderStepItems({
                 </TableCell>
                 <TableCell className={td}>
                   <div className="group/uom relative">
-                    <span className="flex h-7 items-center px-2 text-[11px] text-muted-foreground group-focus-within/uom:invisible">
-                      {watchedRows[index]?.unit_of_measure_code || "—"}
+                    <span className="flex h-7 items-center px-2 text-[11px] text-muted-foreground uppercase group-focus-within/uom:invisible">
+                      {(uomList ?? []).find((u) => u.code === watchedRows[index]?.unit_of_measure_code)?.description || watchedRows[index]?.unit_of_measure_code || "—"}
                     </span>
                     <select
                       {...register(`${prefix}.${index}.unit_of_measure_code`)}
@@ -302,7 +302,7 @@ export function NewOrderStepItems({
                       className="absolute inset-0 h-full w-full cursor-pointer rounded-md border border-border/60 bg-background px-2 text-[11px] opacity-0 outline-none transition-all focus:opacity-100 focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20 appearance-none"
                     >
                       {(uomList ?? []).map((u) => (
-                        <option key={u.code} value={u.code}>{u.code}</option>
+                        <option key={u.code} value={u.code}>{u.description}</option>
                       ))}
                     </select>
                   </div>
@@ -499,7 +499,7 @@ export function NewOrderStepItems({
         </div>
 
         {/* Sidebar summary */}
-        <div className="w-80 shrink-0">
+        <div className="w-72 shrink-0">
           <NewOrderSummaryCard
             availableRows={watchedAvailable ?? []}
             commitmentRows={watchedCommitment ?? []}

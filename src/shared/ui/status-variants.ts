@@ -9,6 +9,7 @@ const STATUS_VARIANT_MAP: Record<string, StatusBadgeVariant> = {
   PICKING: "picking",
   CHECKED: "shipped",
   SHIPPED: "shipped",
+  CLOSED: "completed",
   COMPLETED: "completed",
   CANCELLED: "cancelled",
   PENDING: "pending",

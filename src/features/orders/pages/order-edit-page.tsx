@@ -6,10 +6,12 @@ import {
   ArrowLeft,
   Loader2,
   Trash2,
+  PenLine,
 } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
 import { Input } from "@/shared/ui/input";
+import { Badge } from "@/shared/ui/badge";
 import {
   Select,
   SelectContent,
@@ -29,6 +31,8 @@ import {
 import { PartySearchSelect } from "@/features/parties/components/party-search-select";
 import { usePartyLocations, type PartyLocationWithAddress } from "@/features/parties/hooks/use-party-locations";
 import { useArticles } from "@/features/articles/hooks/use-articles";
+import { usePaymentMethods, usePaymentTerms, useOrderStatuses } from "@/shared/hooks/use-lookups";
+import { useWarehouseWorkers } from "@/features/warehouses/hooks/use-warehouse-workers";
 import { ArticleInlineSearch } from "../components/article-inline-search";
 import { useOrder } from "../hooks/use-order";
 import { ordersApi } from "../api/orders.api";
@@ -50,8 +54,12 @@ interface EditFormRow {
 interface EditForm {
   party_guid: string;
   order_date: string;
+  status_code: string;
   shipping_location_guid: string;
   billing_location_guid: string;
+  payment_method_guid: string;
+  payment_term_guid: string;
+  warehouse_worker_guid: string;
   rows: EditFormRow[];
 }
 
@@ -74,6 +82,11 @@ export function OrderEditPage() {
 
   const { data: order, isLoading } = useOrder(id!);
   const { data: articlesData } = useArticles({ limit: 200 });
+  const { data: paymentMethods } = usePaymentMethods();
+  const { data: paymentTerms } = usePaymentTerms();
+  const { data: orderStatuses } = useOrderStatuses();
+  const { data: workersData, isLoading: isLoadingWorkers } = useWarehouseWorkers();
+  const workers = workersData?.items ?? [];
 
   const articleMap = useMemo(() => {
     const map = new Map<string, ArticleOut>();
@@ -111,8 +124,12 @@ export function OrderEditPage() {
       ? {
           party_guid: order.party_guid,
           order_date: order.order_date,
+          status_code: order.status_code,
           shipping_location_guid: order.shipping_location_guid ?? "",
           billing_location_guid: order.billing_location_guid ?? "",
+          payment_method_guid: order.payment_method_guid ?? "",
+          payment_term_guid: order.payment_term_guid ?? "",
+          warehouse_worker_guid: order.warehouse_worker_guid ?? "",
           rows: initialRows,
         }
       : undefined,
@@ -169,9 +186,13 @@ export function OrderEditPage() {
     try {
       // 1. Update order header
       const { error: updateErr } = await ordersApi.update(order.guid, {
+        status_code: values.status_code,
         order_date: values.order_date,
         shipping_location_guid: values.shipping_location_guid || null,
         billing_location_guid: values.billing_location_guid || null,
+        payment_method_guid: values.payment_method_guid || null,
+        payment_term_guid: values.payment_term_guid || null,
+        warehouse_worker_guid: values.warehouse_worker_guid || null,
       });
       if (updateErr) throw updateErr;
 
@@ -244,14 +265,14 @@ export function OrderEditPage() {
             <h2 className="text-[15px] font-semibold">Dati Ordine</h2>
           </CardHeader>
           <CardContent className="space-y-5">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div className="space-y-1.5">
                 <label className="text-[13px] font-medium">Cliente</label>
                 <Controller
                   control={control}
                   name="party_guid"
                   render={({ field }) => (
-                    <PartySearchSelect value={field.value} onChange={field.onChange} />
+                    <PartySearchSelect value={field.value} onChange={field.onChange} typeCode="CUSTOMER" />
                   )}
                 />
                 {errors.party_guid && (
@@ -267,12 +288,77 @@ export function OrderEditPage() {
                     <DatePicker value={field.value} onChange={field.onChange} placeholder="Seleziona data…" />
                   )}
                 />
-                {errors.order_date && (
-                  <p className="text-[12px] text-destructive">{errors.order_date.message}</p>
-                )}
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[13px] font-medium">Stato</label>
+                <Controller
+                  control={control}
+                  name="status_code"
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleziona…" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {orderStatuses.map((s) => (
+                          <SelectItem key={s.code} value={s.code}>
+                            {s.description}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
               </div>
             </div>
 
+            {/* Payment */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-[13px] font-medium">Metodo di Pagamento</label>
+                <Controller
+                  control={control}
+                  name="payment_method_guid"
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Nessuno…" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {paymentMethods.map((pm) => (
+                          <SelectItem key={pm.code} value={pm.code}>
+                            {pm.description}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[13px] font-medium">Termine di Pagamento</label>
+                <Controller
+                  control={control}
+                  name="payment_term_guid"
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Nessuno…" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {paymentTerms.map((pt) => (
+                          <SelectItem key={pt.code} value={pt.code}>
+                            {pt.description}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </div>
+            </div>
+
+            {/* Addresses */}
             {selectedPartyGuid && (
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
@@ -451,6 +537,51 @@ export function OrderEditPage() {
             )}
           </CardContent>
         </Card>
+
+        {/* Firma operatore */}
+        <Controller
+          control={control}
+          name="warehouse_worker_guid"
+          render={({ field }) => (
+            <Card className={!field.value ? "border-amber-200 bg-amber-50/40 dark:border-amber-900/40 dark:bg-amber-950/20" : "border-emerald-200 bg-emerald-50/40 dark:border-emerald-900/40 dark:bg-emerald-950/20"}>
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <PenLine className={`h-4 w-4 ${!field.value ? "text-amber-500" : "text-emerald-500"}`} />
+                  <h3 className="text-[14px] font-semibold">Firma Operatore</h3>
+                  {!field.value && (
+                    <Badge variant="secondary" className="ml-auto border-amber-200 bg-amber-100 text-amber-700 dark:border-amber-900/40 dark:bg-amber-950 dark:text-amber-400">
+                      Richiesta
+                    </Badge>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="mb-3 text-[13px] text-muted-foreground">
+                  Seleziona l'operatore responsabile della modifica.
+                </p>
+                {isLoadingWorkers ? (
+                  <div className="flex items-center gap-2 py-2">
+                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                    <span className="text-[13px] text-muted-foreground">Caricamento operatori…</span>
+                  </div>
+                ) : (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleziona operatore…" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {workers.map((w) => (
+                        <SelectItem key={w.guid} value={w.guid}>
+                          {w.name} {w.surname}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              </CardContent>
+            </Card>
+          )}
+        />
 
         {/* Error banner */}
         {error && (

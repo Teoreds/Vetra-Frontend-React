@@ -32,10 +32,17 @@ export const ordersApi = {
     shipping_location_guid?: string | null;
   }) => apiClient.POST("/orders", { body }),
 
-  update: (orderGuid: string, body: components["schemas"]["OrderUpdate"]) =>
+  update: (orderGuid: string, body: components["schemas"]["OrderUpdate"] & {
+    order_date?: string;
+    shipping_location_guid?: string | null;
+    billing_location_guid?: string | null;
+    payment_method_guid?: string | null;
+    payment_term_guid?: string | null;
+    warehouse_worker_guid?: string | null;
+  }) =>
     apiClient.PATCH("/orders/{order_guid}", {
       params: { path: { order_guid: orderGuid } },
-      body,
+      body: body as components["schemas"]["OrderUpdate"],
     }),
 
   confirm: (orderGuid: string) =>

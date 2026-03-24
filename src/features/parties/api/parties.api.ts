@@ -82,6 +82,19 @@ export const partiesApi = {
     discount_percent: number | string;
   }) => apiClient.POST("/party-discounts", { body }),
 
+  listPartyDiscounts: (partyGuid: string, params?: { offset?: number; limit?: number }) =>
+    apiClient.GET("/party-discounts", {
+      params: { query: { party_guid: partyGuid, ...params } },
+    }),
+
+  listIntentLetters: (partyGuid: string, params?: { offset?: number; limit?: number }) =>
+    apiClient.GET("/intent-letters", {
+      params: { query: { party_guid: partyGuid, ...params } },
+    }),
+
+  createIntentLetter: (body: components["schemas"]["IntentLetterCreate"]) =>
+    apiClient.POST("/intent-letters", { body }),
+
   uploadImage: async (partyGuid: string, file: File) => {
     const token = useAuthStore.getState().accessToken;
     const form = new FormData();

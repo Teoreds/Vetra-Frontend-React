@@ -82,7 +82,7 @@ export function PickNotesTable({ pickNotes, isLoading }: PickNotesTableProps) {
       className: "w-0",
       render: (row) => (
         <div className="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover/row:opacity-100">
-          {row.status_code !== "COMPLETED" && row.status_code !== "CHECKED" && (
+          {row.status_code !== "CLOSED" && row.status_code !== "CHECKED" && (
             <button
               type="button"
               className="flex items-center gap-1.5 rounded-md px-2 py-1 text-[12px] font-medium text-primary transition-colors hover:bg-primary/8"
@@ -119,7 +119,7 @@ export function PickNotesTable({ pickNotes, isLoading }: PickNotesTableProps) {
                   <Eye className="h-3.5 w-3.5 text-muted-foreground" />
                   Visualizza
                 </DropdownMenu.Item>
-                {row.status_code !== "COMPLETED" && row.status_code !== "CHECKED" && (
+                {row.status_code !== "CLOSED" && row.status_code !== "CHECKED" && (
                   <DropdownMenu.Item
                     className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
                     onSelect={() => setCheckingGuid(row.guid)}

@@ -27,7 +27,7 @@ export function OrderDetailPage() {
   return (
     <div>
       {/* Sezione superiore: intestazione e flusso di stato */}
-      <div className="sticky -top-6 z-30 -mx-8 -mt-6 bg-page/80 backdrop-blur-sm px-8 pt-6 pb-3">
+      <div className="sticky -top-6 z-30 -mx-8 -mt-6 bg-page/80 backdrop-blur-sm px-8 pt-6">
         <OrderHeader order={order} />
       </div>
 

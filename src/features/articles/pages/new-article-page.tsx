@@ -274,7 +274,7 @@ export function NewArticlePage() {
                       <SelectContent>
                         {unitOfMeasures.map((uom) => (
                           <SelectItem key={uom.code} value={uom.code}>
-                            {uom.code}
+                            {uom.description}
                           </SelectItem>
                         ))}
                       </SelectContent>

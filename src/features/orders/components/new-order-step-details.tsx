@@ -118,6 +118,7 @@ export function NewOrderStepDetails({ defaultValues, onNext, isPending, error, r
                     value={field.value ?? ""}
                     onChange={field.onChange}
                     disabled={readOnly}
+                    typeCode="CUSTOMER"
                   />
                 )}
               />

@@ -7,9 +7,10 @@ interface PartySearchSelectProps {
   value?: string;
   onChange: (partyGuid: string) => void;
   disabled?: boolean;
+  typeCode?: string;
 }
 
-export function PartySearchSelect({ value, onChange, disabled }: PartySearchSelectProps) {
+export function PartySearchSelect({ value, onChange, disabled, typeCode }: PartySearchSelectProps) {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(0);
@@ -18,12 +19,14 @@ export function PartySearchSelect({ value, onChange, disabled }: PartySearchSele
 
   // Fetch parties matching the search term
   const { data, isLoading } = useParties(
-    search.trim().length >= 1 ? { search: search.trim(), limit: 20 } : { limit: 20 },
+    search.trim().length >= 1
+      ? { search: search.trim(), limit: 20, ...(typeCode ? { type_code: typeCode } : {}) }
+      : { limit: 20, ...(typeCode ? { type_code: typeCode } : {}) },
   );
   const parties = data?.items ?? [];
 
   // Resolve selected party name for display
-  const { data: selectedData } = useParties(value ? { limit: 200 } : undefined);
+  const { data: selectedData } = useParties(value ? { limit: 200, ...(typeCode ? { type_code: typeCode } : {}) } : undefined);
   const selectedParty = value
     ? (selectedData?.items ?? []).find((p) => p.guid === value)
     : null;

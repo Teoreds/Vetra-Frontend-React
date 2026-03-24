@@ -1,7 +1,21 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Pencil, ImagePlus, Trash2, Loader2 } from "lucide-react";
+import {
+  ArrowLeft,
+  Pencil,
+  ImagePlus,
+  Trash2,
+  Loader2,
+  Plus,
+  ChevronDown,
+  Mail,
+  MapPin,
+  Percent,
+  FileText,
+  Package,
+} from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { Button } from "@/shared/ui/button";
 import { useParty } from "../hooks/use-party";
 import { partiesApi } from "../api/parties.api";
@@ -13,6 +27,13 @@ import { RelatedOrdersSection } from "../components/related-orders-section";
 import { PartyAvatar } from "../components/party-avatar";
 import { AuthImage } from "@/shared/ui/auth-image";
 import { usePartyTypes } from "@/shared/hooks/use-lookups";
+import { AddContactDialog } from "../components/add-contact-dialog";
+import { AddAddressDialog } from "../components/add-address-dialog";
+import { AddDiscountDialog } from "../components/add-discount-dialog";
+import { AddIntentLetterDialog } from "../components/add-intent-letter-dialog";
+import { AddSupplierArticleDialog } from "../components/add-supplier-article-dialog";
+
+type DialogType = "contact" | "address" | "discount" | "intent-letter" | "supplier-article" | null;
 
 export function PartyDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -21,6 +42,7 @@ export function PartyDetailPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { data: party, isLoading, error } = useParty(id!);
   const { map: typeLabels } = usePartyTypes();
+  const [openDialog, setOpenDialog] = useState<DialogType>(null);
 
   const uploadImage = useMutation({
     mutationFn: (file: File) => partiesApi.uploadImage(party!.guid, file),
@@ -61,11 +83,13 @@ export function PartyDetailPage() {
   }
 
   const isBusy = uploadImage.isPending || deleteImage.isPending;
+  const isCustomer = party.type_code === "CUSTOMER";
+  const isSupplier = party.type_code === "SUPPLIER";
 
   return (
     <div>
       {/* Sticky header */}
-      <div className="sticky -top-6 z-30 -mx-8 -mt-6 bg-page/80 backdrop-blur-sm px-8 pt-6 pb-3">
+      <div className="sticky -top-6 z-30 -mx-8 -mt-6 bg-page/80 backdrop-blur-sm px-8 pt-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate("/parties")}>
@@ -125,10 +149,76 @@ export function PartyDetailPage() {
             </div>
           </div>
 
-          <Button size="sm" onClick={() => navigate(`/parties/${party.guid}/edit`)}>
-            <Pencil className="mr-1.5 h-3.5 w-3.5" />
-            Modifica
-          </Button>
+          <div className="flex items-center gap-1.5">
+            {/* Add dropdown */}
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger asChild>
+                <Button size="sm" variant="outline">
+                  <Plus className="mr-1 h-3.5 w-3.5" />
+                  Aggiungi
+                  <ChevronDown className="ml-1 h-3 w-3 text-muted-foreground" />
+                </Button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Portal>
+                <DropdownMenu.Content
+                  align="end"
+                  sideOffset={4}
+                  className="z-50 min-w-[200px] rounded-lg border border-border/60 bg-popover p-1 shadow-lg animate-in fade-in-0 zoom-in-95"
+                >
+                  <DropdownMenu.Item
+                    className="flex cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
+                    onSelect={() => setOpenDialog("contact")}
+                  >
+                    <Mail className="h-3.5 w-3.5 text-muted-foreground" />
+                    Contatto
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item
+                    className="flex cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
+                    onSelect={() => setOpenDialog("address")}
+                  >
+                    <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
+                    Indirizzo
+                  </DropdownMenu.Item>
+                  {isCustomer && (
+                    <>
+                      <DropdownMenu.Separator className="my-1 h-px bg-border/60" />
+                      <DropdownMenu.Item
+                        className="flex cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
+                        onSelect={() => setOpenDialog("discount")}
+                      >
+                        <Percent className="h-3.5 w-3.5 text-muted-foreground" />
+                        Sconto
+                      </DropdownMenu.Item>
+                      <DropdownMenu.Item
+                        className="flex cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
+                        onSelect={() => setOpenDialog("intent-letter")}
+                      >
+                        <FileText className="h-3.5 w-3.5 text-muted-foreground" />
+                        Lettera d'Intento
+                      </DropdownMenu.Item>
+                    </>
+                  )}
+                  {isSupplier && (
+                    <>
+                      <DropdownMenu.Separator className="my-1 h-px bg-border/60" />
+                      <DropdownMenu.Item
+                        className="flex cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
+                        onSelect={() => setOpenDialog("supplier-article")}
+                      >
+                        <Package className="h-3.5 w-3.5 text-muted-foreground" />
+                        Articolo Fornito
+                      </DropdownMenu.Item>
+                    </>
+                  )}
+                </DropdownMenu.Content>
+              </DropdownMenu.Portal>
+            </DropdownMenu.Root>
+
+            <Button size="sm" onClick={() => navigate(`/parties/${party.guid}/edit`)}>
+              <Pencil className="mr-1.5 h-3.5 w-3.5" />
+              Modifica
+            </Button>
+          </div>
         </div>
 
         <div className="mt-3 h-px bg-border/60" />
@@ -149,6 +239,39 @@ export function PartyDetailPage() {
           <RelatedOrdersSection partyGuid={party.guid} />
         </div>
       </div>
+
+      {/* Dialogs */}
+      <AddContactDialog
+        open={openDialog === "contact"}
+        onOpenChange={(v) => !v && setOpenDialog(null)}
+        partyGuid={party.guid}
+      />
+      <AddAddressDialog
+        open={openDialog === "address"}
+        onOpenChange={(v) => !v && setOpenDialog(null)}
+        partyGuid={party.guid}
+      />
+      {isCustomer && (
+        <>
+          <AddDiscountDialog
+            open={openDialog === "discount"}
+            onOpenChange={(v) => !v && setOpenDialog(null)}
+            partyGuid={party.guid}
+          />
+          <AddIntentLetterDialog
+            open={openDialog === "intent-letter"}
+            onOpenChange={(v) => !v && setOpenDialog(null)}
+            partyGuid={party.guid}
+          />
+        </>
+      )}
+      {isSupplier && (
+        <AddSupplierArticleDialog
+          open={openDialog === "supplier-article"}
+          onOpenChange={(v) => !v && setOpenDialog(null)}
+          partyGuid={party.guid}
+        />
+      )}
     </div>
   );
 }

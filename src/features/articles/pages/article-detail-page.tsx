@@ -16,7 +16,7 @@ import {
 } from "@/shared/ui/table";
 import { articlesApi } from "../api/articles.api";
 import { articleKeys } from "../api/articles.queries";
-import { useArticleTypes } from "../hooks/use-article-lookups";
+import { useArticleTypes, useUnitOfMeasures } from "../hooks/use-article-lookups";
 import { useParties } from "@/features/parties/hooks/use-parties";
 import { AuthImage } from "@/shared/ui/auth-image";
 
@@ -48,6 +48,8 @@ export function ArticleDetailPage() {
 
   const { data: articleTypes = [] } = useArticleTypes();
   const typeMap = new Map(articleTypes.map((t) => [t.code, t.description]));
+  const { data: unitOfMeasures = [] } = useUnitOfMeasures();
+  const uomMap = new Map(unitOfMeasures.map((u) => [u.code, u.description]));
 
   const { data: suppliersData } = useQuery({
     queryKey: articleKeys.suppliers(article?.guid ?? ""),
@@ -111,7 +113,7 @@ export function ArticleDetailPage() {
   return (
     <div>
       {/* Sticky header */}
-      <div className="sticky -top-6 z-30 -mx-8 -mt-6 bg-page/80 backdrop-blur-sm px-8 pt-6 pb-3">
+      <div className="sticky -top-6 z-30 -mx-8 -mt-6 bg-page/80 backdrop-blur-sm px-8 pt-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate("/articles")}>
@@ -205,7 +207,7 @@ export function ArticleDetailPage() {
                   </div>
                   <div className="flex justify-between py-1.5">
                     <dt className="text-[13px] text-muted-foreground">Unità di Misura</dt>
-                    <dd className="font-mono text-[13px] font-medium">{article.unit_of_measure_code}</dd>
+                    <dd className="text-[13px] font-medium">{uomMap.get(article.unit_of_measure_code) ?? article.unit_of_measure_code}</dd>
                   </div>
                   <div className="flex justify-between py-1.5">
                     <dt className="text-[13px] text-muted-foreground">Prezzo di Listino</dt>
@@ -323,8 +325,8 @@ export function ArticleDetailPage() {
                       Unità di Misura
                     </h4>
                   </div>
-                  <p className="pl-[22px] font-mono text-[13px] font-medium">
-                    {article.unit_of_measure_code}
+                  <p className="pl-[22px] text-[13px] font-medium">
+                    {uomMap.get(article.unit_of_measure_code) ?? article.unit_of_measure_code}
                   </p>
                 </div>
 

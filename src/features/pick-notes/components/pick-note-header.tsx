@@ -11,10 +11,9 @@ interface PickNoteHeaderProps {
 }
 
 const PIPELINE_STATUSES = [
-  { statuses: ["CREATED"] },
   { statuses: ["PICKING"] },
   { statuses: ["CHECKED"] },
-  { statuses: ["COMPLETED"] },
+  { statuses: ["CLOSED"] },
 ] as const;
 
 function getStepFromStatus(status: string): number {

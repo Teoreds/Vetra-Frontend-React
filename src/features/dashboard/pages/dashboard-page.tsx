@@ -20,10 +20,17 @@ import { OverdueOrdersTable } from "../components/overdue-orders-table";
 import { TopPartiesList, TopArticlesList } from "../components/top-lists";
 
 function useDashboard() {
+  const dateFrom = new Date();
+  dateFrom.setFullYear(dateFrom.getFullYear() - 1);
+  dateFrom.setDate(1);
+  const dateFromStr = dateFrom.toISOString().slice(0, 10);
+
   return useQuery({
-    queryKey: ["dashboard"],
+    queryKey: ["dashboard", dateFromStr],
     queryFn: async () => {
-      const { data, error } = await apiClient.GET("/stats/dashboard");
+      const { data, error } = await apiClient.GET("/stats/dashboard", {
+        params: { query: { date_from: dateFromStr } },
+      });
       if (error) throw error;
       return data;
     },

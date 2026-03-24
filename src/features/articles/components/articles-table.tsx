@@ -3,7 +3,7 @@ import { Pencil, MoreVertical } from "lucide-react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { DataTable, type Column } from "@/shared/ui/data-table";
 import { AuthImage } from "@/shared/ui/auth-image";
-import { useArticleTypes } from "../hooks/use-article-lookups";
+import { useArticleTypes, useUnitOfMeasures } from "../hooks/use-article-lookups";
 import type { ArticleOut } from "../types/article.types";
 
 interface ArticlesTableProps {
@@ -23,6 +23,8 @@ export function ArticlesTable({ articles, isLoading }: ArticlesTableProps) {
   const navigate = useNavigate();
   const { data: articleTypes = [] } = useArticleTypes();
   const typeMap = new Map(articleTypes.map((t) => [t.code, t.description]));
+  const { data: unitOfMeasures = [] } = useUnitOfMeasures();
+  const uomMap = new Map(unitOfMeasures.map((u) => [u.code, u.description]));
 
   const columns: Column<ArticleOut>[] = [
     {
@@ -58,8 +60,8 @@ export function ArticlesTable({ articles, isLoading }: ArticlesTableProps) {
       header: "UdM",
       className: "w-20",
       render: (row) => (
-        <span className="text-[13px] font-mono text-muted-foreground">
-          {row.unit_of_measure_code}
+        <span className="text-[13px] text-muted-foreground">
+          {uomMap.get(row.unit_of_measure_code) ?? row.unit_of_measure_code}
         </span>
       ),
     },

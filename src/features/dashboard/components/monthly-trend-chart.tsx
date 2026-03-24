@@ -46,7 +46,7 @@ export function MonthlyTrendChart({ data }: MonthlyTrendChartProps) {
           <div className="border-b border-dashed border-border/40" />
           <div />
         </div>
-        <div className="relative flex items-end gap-1" style={{ height: 160 }}>
+        <div className="relative flex items-end justify-center gap-2" style={{ height: 160 }}>
           {data.map((d, i) => {
             const gross = Number(d.total_gross);
             const grossH = (gross / maxGross) * 100;
@@ -54,8 +54,8 @@ export function MonthlyTrendChart({ data }: MonthlyTrendChartProps) {
             return (
               <div
                 key={d.month}
-                className="group/bar relative flex flex-1 flex-col items-center justify-end cursor-default"
-                style={{ height: "100%" }}
+                className="group/bar relative flex flex-col items-center justify-end cursor-default"
+                style={{ height: "100%", width: `${Math.min(100 / data.length, 12)}%`, minWidth: 12, maxWidth: 48 }}
                 onMouseEnter={() => setHovered(i)}
                 onMouseLeave={() => setHovered(null)}
               >
@@ -80,14 +80,15 @@ export function MonthlyTrendChart({ data }: MonthlyTrendChartProps) {
       </div>
 
       {/* X-axis labels */}
-      <div className="flex gap-1">
+      <div className="flex justify-center gap-2">
         {data.map((d, i) => (
           <div
             key={d.month}
             className={cn(
-              "flex-1 text-center text-[10px] font-medium transition-colors",
+              "text-center text-[10px] font-medium transition-colors",
               hovered === i ? "text-foreground" : "text-muted-foreground",
             )}
+            style={{ width: `${Math.min(100 / data.length, 12)}%`, minWidth: 12, maxWidth: 48 }}
           >
             {fmtMonth(d.month)}
           </div>
