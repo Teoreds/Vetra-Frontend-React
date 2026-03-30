@@ -87,7 +87,7 @@ export function AddAddressDialog({ open, onOpenChange, partyGuid }: Props) {
           <label className="text-[13px] font-medium">Indirizzo *</label>
           <Input {...register("address_line")} placeholder="Via Roma 1" error={!!errors.address_line} />
           {errors.address_line && (
-            <p className="text-[12px] text-destructive">{errors.address_line.message}</p>
+            <p className="text-[11px] text-destructive">{errors.address_line.message}</p>
           )}
         </div>
 
@@ -127,7 +127,7 @@ export function AddAddressDialog({ open, onOpenChange, partyGuid }: Props) {
             )}
           />
           {errors.type_code && (
-            <p className="text-[12px] text-destructive">{errors.type_code.message}</p>
+            <p className="text-[11px] text-destructive">{errors.type_code.message}</p>
           )}
         </div>
 

@@ -44,7 +44,7 @@ function InstalmentRow({ value, onChange, onRemove, index }: InstalmentRowProps)
         value={value.days}
         onChange={(e) => onChange({ ...value, days: Number(e.target.value) })}
         placeholder="0"
-        className="h-7 text-[12px]"
+        className="h-7 text-[13px]"
         min={0}
       />
       <div className="flex items-center justify-center">
@@ -60,7 +60,7 @@ function InstalmentRow({ value, onChange, onRemove, index }: InstalmentRowProps)
         value={value.extra_days}
         onChange={(e) => onChange({ ...value, extra_days: Number(e.target.value) })}
         placeholder="0"
-        className="h-7 text-[12px]"
+        className="h-7 text-[13px]"
         min={0}
       />
       <Input
@@ -68,7 +68,7 @@ function InstalmentRow({ value, onChange, onRemove, index }: InstalmentRowProps)
         value={Number(value.percentage)}
         onChange={(e) => onChange({ ...value, percentage: Number(e.target.value) })}
         placeholder="0"
-        className="h-7 text-[12px]"
+        className="h-7 text-[13px]"
         min={0}
         max={100}
         step="0.01"
@@ -171,14 +171,14 @@ function TermForm({ initialCode = "", initialDescription = "", initialInstalment
         <button
           type="button"
           onClick={addInst}
-          className="flex items-center gap-1 text-[12px] text-primary hover:underline"
+          className="flex items-center gap-1 text-[13px] text-primary hover:underline"
         >
           <Plus className="h-3 w-3" />
           Aggiungi rata
         </button>
       </div>
 
-      {error && <p className="text-[12px] text-destructive">{error}</p>}
+      {error && <p className="text-[11px] text-destructive">{error}</p>}
 
       <div className="flex items-center justify-end gap-2 pt-1">
         <Button variant="outline" size="sm" onClick={onCancel} disabled={isPending}>
@@ -360,7 +360,7 @@ export function PaymentTermsTable() {
                             )}
                           </button>
                         </td>
-                        <td className="px-4 py-2.5 font-mono text-[12px] text-muted-foreground">
+                        <td className="px-4 py-2.5 font-mono text-[11px] text-muted-foreground">
                           {term.code}
                         </td>
                         <td className="px-4 py-2.5">
@@ -370,7 +370,7 @@ export function PaymentTermsTable() {
                             {isExpanded && term.instalments.length > 0 && (
                               <div className="mt-2 space-y-1 rounded-md border border-border/40 bg-muted/20 p-2.5">
                                 {term.instalments.map((inst, i) => (
-                                  <div key={inst.guid} className="flex items-center gap-3 text-[12px] text-muted-foreground">
+                                  <div key={inst.guid} className="flex items-center gap-3 text-[11px] text-muted-foreground">
                                     <span className="w-4 text-center font-mono text-[11px]">{i + 1}.</span>
                                     <span className="font-medium text-foreground">{inst.days} giorni</span>
                                     {inst.end_of_month && (
@@ -386,7 +386,7 @@ export function PaymentTermsTable() {
                             )}
                           </div>
                         </td>
-                        <td className="px-4 py-2.5 text-[12px] text-muted-foreground">
+                        <td className="px-4 py-2.5 text-[11px] text-muted-foreground">
                           {term.instalments.length === 1
                             ? instalmentSummary(term.instalments[0])
                             : `${term.instalments.length} rate`}

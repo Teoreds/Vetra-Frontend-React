@@ -1,6 +1,6 @@
 import { type ReactNode } from "react";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
-import { cn } from "@/shared/lib/utils";
+import { cn, formatCurrency, formatNumber } from "@/shared/lib/utils";
 
 interface KpiCardProps {
   title: string;
@@ -11,10 +11,6 @@ interface KpiCardProps {
   format?: "number" | "currency" | "days";
 }
 
-function fmtEur(n: number) {
-  return new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(n);
-}
-
 function fmtDays(n: number) {
   return `${n.toFixed(1)} gg`;
 }
@@ -23,9 +19,9 @@ export function KpiCard({ title, value, prevValue, icon, accent, format = "numbe
   const numValue = typeof value === "string" ? parseFloat(value) : value;
 
   let display: string;
-  if (format === "currency") display = fmtEur(numValue);
+  if (format === "currency") display = formatCurrency(numValue);
   else if (format === "days") display = fmtDays(numValue);
-  else display = new Intl.NumberFormat("it-IT").format(numValue);
+  else display = formatNumber(numValue);
 
   let changePercent: number | null = null;
   if (prevValue != null && prevValue > 0) {
@@ -33,10 +29,10 @@ export function KpiCard({ title, value, prevValue, icon, accent, format = "numbe
   }
 
   return (
-    <div className="group relative overflow-hidden rounded-xl border border-border/60 bg-card p-5 shadow-[0_1px_3px_0_rgba(0,0,0,0.04)] transition-shadow hover:shadow-[0_2px_8px_0_rgba(0,0,0,0.08)]">
+    <div className="group relative overflow-hidden rounded-xl border border-border/60 bg-card p-5 shadow-sm transition-shadow hover:shadow-md">
       <div className="flex items-start justify-between">
         <div className="space-y-2">
-          <p className="text-[12px] font-medium tracking-wide text-muted-foreground uppercase">{title}</p>
+          <p className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">{title}</p>
           <p className="text-[26px] font-semibold tracking-tight tabular-nums leading-none">{display}</p>
         </div>
         {icon && (

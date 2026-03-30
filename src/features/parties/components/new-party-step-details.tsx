@@ -22,7 +22,7 @@ const step1Schema = z.object({
   type_code: z.string().min(1, "Seleziona un tipo"),
   category_code: z.string().optional().default(""),
   fiscal_area_code: z.string().optional().default(""),
-  sdi_code: z.string().max(7, "Max 7 caratteri").optional().default(""),
+  sdi_code: z.string().max(320, "Max 320 caratteri").optional().default(""),
 });
 
 export type Step1Data = PartyIdentityData;
@@ -87,6 +87,7 @@ export function NewPartyStepDetails({ defaultValues, onNext, error, imagePreview
             <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
             <button
               type="button"
+              tabIndex={-1}
               onClick={() => imageInputRef.current?.click()}
               className="group/avatar relative h-[88px] w-[88px] shrink-0 overflow-hidden rounded-full border border-border/60 bg-muted/50 transition-colors hover:border-primary/40"
             >
@@ -113,7 +114,7 @@ export function NewPartyStepDetails({ defaultValues, onNext, error, imagePreview
                     autoFocus
                   />
                   {errors.description && (
-                    <p className="text-[12px] text-destructive">{errors.description.message}</p>
+                    <p className="text-[11px] text-destructive">{errors.description.message}</p>
                   )}
                 </div>
                 <div className="space-y-1.5">
@@ -124,6 +125,7 @@ export function NewPartyStepDetails({ defaultValues, onNext, error, imagePreview
               {imagePreview && (
                 <button
                   type="button"
+                  tabIndex={-1}
                   onClick={onImageClear}
                   className="self-start text-[11px] text-muted-foreground hover:text-destructive"
                 >
@@ -156,7 +158,7 @@ export function NewPartyStepDetails({ defaultValues, onNext, error, imagePreview
                 )}
               />
               {errors.type_code && (
-                <p className="text-[12px] text-destructive">{errors.type_code.message}</p>
+                <p className="text-[11px] text-destructive">{errors.type_code.message}</p>
               )}
             </div>
             <div className="space-y-1.5">
@@ -184,11 +186,11 @@ export function NewPartyStepDetails({ defaultValues, onNext, error, imagePreview
               <label className="text-[13px] font-medium">Codice SDI</label>
               <Input
                 {...register("sdi_code")}
-                placeholder="0000000"
-                maxLength={7}
+                placeholder="0000000 o indirizzo PEC"
+                maxLength={320}
               />
               {errors.sdi_code && (
-                <p className="text-[12px] text-destructive">{errors.sdi_code.message}</p>
+                <p className="text-[11px] text-destructive">{errors.sdi_code.message}</p>
               )}
             </div>
           </div>

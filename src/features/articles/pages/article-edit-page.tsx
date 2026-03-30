@@ -159,7 +159,7 @@ export function ArticleEditPage() {
   if (isLoading || !article) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        <Loader2 className="h-6 w-6 animate-spin text-primary/40" />
       </div>
     );
   }
@@ -230,7 +230,7 @@ export function ArticleEditPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-3">
+      <div className="mx-auto max-w-2xl flex items-center gap-3">
         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate(-1)}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
@@ -310,7 +310,7 @@ export function ArticleEditPage() {
                 <label className="text-[13px] font-medium">Descrizione</label>
                 <Input {...register("description")} error={!!errors.description} />
                 {errors.description && (
-                  <p className="text-[12px] text-destructive">{errors.description.message}</p>
+                  <p className="text-[11px] text-destructive">{errors.description.message}</p>
                 )}
               </div>
             </div>
@@ -338,7 +338,7 @@ export function ArticleEditPage() {
                   )}
                 />
                 {errors.unit_of_measure_code && (
-                  <p className="text-[12px] text-destructive">{errors.unit_of_measure_code.message}</p>
+                  <p className="text-[11px] text-destructive">{errors.unit_of_measure_code.message}</p>
                 )}
               </div>
 

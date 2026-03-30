@@ -80,7 +80,7 @@ export function AddIntentLetterDialog({ open, onOpenChange, partyGuid }: Props) 
             <label className="text-[13px] font-medium">Anno *</label>
             <Input type="number" {...register("year")} error={!!errors.year} />
             {errors.year && (
-              <p className="text-[12px] text-destructive">{errors.year.message}</p>
+              <p className="text-[11px] text-destructive">{errors.year.message}</p>
             )}
           </div>
         </div>
@@ -96,7 +96,7 @@ export function AddIntentLetterDialog({ open, onOpenChange, partyGuid }: Props) 
             error={!!errors.max_amount}
           />
           {errors.max_amount && (
-            <p className="text-[12px] text-destructive">{errors.max_amount.message}</p>
+            <p className="text-[11px] text-destructive">{errors.max_amount.message}</p>
           )}
         </div>
 
@@ -105,14 +105,14 @@ export function AddIntentLetterDialog({ open, onOpenChange, partyGuid }: Props) 
             <label className="text-[13px] font-medium">Valida dal *</label>
             <Input type="date" {...register("valid_from")} error={!!errors.valid_from} />
             {errors.valid_from && (
-              <p className="text-[12px] text-destructive">{errors.valid_from.message}</p>
+              <p className="text-[11px] text-destructive">{errors.valid_from.message}</p>
             )}
           </div>
           <div className="space-y-1.5">
             <label className="text-[13px] font-medium">Valida al *</label>
             <Input type="date" {...register("valid_to")} error={!!errors.valid_to} />
             {errors.valid_to && (
-              <p className="text-[12px] text-destructive">{errors.valid_to.message}</p>
+              <p className="text-[11px] text-destructive">{errors.valid_to.message}</p>
             )}
           </div>
         </div>

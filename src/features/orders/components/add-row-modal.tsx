@@ -65,7 +65,7 @@ export function AddRowModal({ open, onOpenChange, orderGuid }: AddRowModalProps)
             placeholder="UUID dell'articolo"
           />
           {errors.article_guid && (
-            <p className="text-[12px] text-destructive">{errors.article_guid.message}</p>
+            <p className="text-[11px] text-destructive">{errors.article_guid.message}</p>
           )}
         </div>
 
@@ -79,7 +79,7 @@ export function AddRowModal({ open, onOpenChange, orderGuid }: AddRowModalProps)
               className="flex h-9 w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20"
             />
             {errors.quantity && (
-              <p className="text-[12px] text-destructive">{errors.quantity.message}</p>
+              <p className="text-[11px] text-destructive">{errors.quantity.message}</p>
             )}
           </div>
           <div className="space-y-1.5">
@@ -91,7 +91,7 @@ export function AddRowModal({ open, onOpenChange, orderGuid }: AddRowModalProps)
               className="flex h-9 w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20"
             />
             {errors.unit_price && (
-              <p className="text-[12px] text-destructive">{errors.unit_price.message}</p>
+              <p className="text-[11px] text-destructive">{errors.unit_price.message}</p>
             )}
           </div>
         </div>

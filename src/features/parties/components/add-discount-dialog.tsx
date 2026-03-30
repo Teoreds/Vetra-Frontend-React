@@ -92,7 +92,7 @@ export function AddDiscountDialog({ open, onOpenChange, partyGuid }: Props) {
             error={!!errors.discount_percent}
           />
           {errors.discount_percent && (
-            <p className="text-[12px] text-destructive">{errors.discount_percent.message}</p>
+            <p className="text-[11px] text-destructive">{errors.discount_percent.message}</p>
           )}
         </div>
 

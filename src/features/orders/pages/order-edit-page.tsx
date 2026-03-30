@@ -34,6 +34,7 @@ import { useArticles } from "@/features/articles/hooks/use-articles";
 import { usePaymentMethods, usePaymentTerms, useOrderStatuses } from "@/shared/hooks/use-lookups";
 import { useWarehouseWorkers } from "@/features/warehouses/hooks/use-warehouse-workers";
 import { ArticleInlineSearch } from "../components/article-inline-search";
+import { formatCurrency } from "@/shared/lib/utils";
 import { useOrder } from "../hooks/use-order";
 import { ordersApi } from "../api/orders.api";
 import { orderKeys } from "../api/orders.queries";
@@ -66,10 +67,6 @@ interface EditForm {
 function formatAddress(loc: PartyLocationWithAddress): string {
   const parts = [loc.address_line, loc.city].filter(Boolean);
   return parts.length > 0 ? parts.join(", ") : loc.type_code;
-}
-
-function fmt(n: number) {
-  return new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(n);
 }
 
 export function OrderEditPage() {
@@ -159,7 +156,7 @@ export function OrderEditPage() {
   if (isLoading || !order) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        <Loader2 className="h-6 w-6 animate-spin text-primary/40" />
       </div>
     );
   }
@@ -276,7 +273,7 @@ export function OrderEditPage() {
                   )}
                 />
                 {errors.party_guid && (
-                  <p className="text-[12px] text-destructive">{errors.party_guid.message}</p>
+                  <p className="text-[11px] text-destructive">{errors.party_guid.message}</p>
                 )}
               </div>
               <div className="space-y-1.5">
@@ -377,7 +374,7 @@ export function OrderEditPage() {
                           <SelectContent>
                             {shippingLocations.map((loc) => (
                               <SelectItem key={loc.guid} value={loc.location_guid}>
-                                {formatAddress(loc)}{loc.is_primary ? " (Primario)" : ""}
+                                {formatAddress(loc)}{loc.is_primary && <span className="ml-1.5 inline-block h-1.5 w-1.5 rounded-full bg-foreground/25 align-middle" />}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -402,7 +399,7 @@ export function OrderEditPage() {
                           <SelectContent>
                             {billingLocations.map((loc) => (
                               <SelectItem key={loc.guid} value={loc.location_guid}>
-                                {formatAddress(loc)}{loc.is_primary ? " (Primario)" : ""}
+                                {formatAddress(loc)}{loc.is_primary && <span className="ml-1.5 inline-block h-1.5 w-1.5 rounded-full bg-foreground/25 align-middle" />}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -421,7 +418,7 @@ export function OrderEditPage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <h2 className="text-[15px] font-semibold">Righe Ordine</h2>
-              <span className="text-[12px] text-muted-foreground">{fields.length} articoli</span>
+              <span className="text-[11px] text-muted-foreground">{fields.length} articoli</span>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -456,7 +453,7 @@ export function OrderEditPage() {
                         <TableRow key={field.id}>
                           <TableCell className="px-2 py-2">
                             <div>
-                              <p className="text-[12px] font-medium leading-tight">{field.article_description}</p>
+                              <p className="text-[13px] font-medium leading-tight">{field.article_description}</p>
                               <p className="text-[11px] text-muted-foreground">{field.article_code}</p>
                             </div>
                           </TableCell>
@@ -466,7 +463,7 @@ export function OrderEditPage() {
                               step="0.01"
                               min="0.01"
                               {...register(`rows.${index}.quantity`, { valueAsNumber: true })}
-                              className="h-7 w-full text-right text-[12px]"
+                              className="h-7 w-full text-right text-[13px]"
                             />
                           </TableCell>
                           <TableCell className="px-2 py-2">
@@ -475,7 +472,7 @@ export function OrderEditPage() {
                               step="0.01"
                               min="0"
                               {...register(`rows.${index}.unit_price`, { valueAsNumber: true })}
-                              className="h-7 w-full text-right text-[12px]"
+                              className="h-7 w-full text-right text-[13px]"
                             />
                           </TableCell>
                           <TableCell className="px-2 py-2">
@@ -485,11 +482,11 @@ export function OrderEditPage() {
                               min="0"
                               max="100"
                               {...register(`rows.${index}.discount_percent`, { valueAsNumber: true })}
-                              className="h-7 w-full text-right text-[12px]"
+                              className="h-7 w-full text-right text-[13px]"
                             />
                           </TableCell>
-                          <TableCell className="px-2 py-2 text-right text-[12px] font-medium tabular-nums">
-                            {fmt(lineTotal)}
+                          <TableCell className="px-2 py-2 text-right text-[13px] font-medium tabular-nums">
+                            {formatCurrency(lineTotal)}
                           </TableCell>
                           <TableCell className="px-2 py-2">
                             <Button
@@ -511,7 +508,7 @@ export function OrderEditPage() {
             )}
 
             {errors.rows?.message && (
-              <p className="text-[12px] text-destructive">{errors.rows.message}</p>
+              <p className="text-[11px] text-destructive">{errors.rows.message}</p>
             )}
 
             {/* Totals summary */}
@@ -519,18 +516,18 @@ export function OrderEditPage() {
               <div className="flex justify-end">
                 <div className="space-y-1 text-right">
                   <div className="flex items-center gap-4">
-                    <span className="text-[12px] text-muted-foreground">Lordo</span>
-                    <span className="text-[13px] tabular-nums">{fmt(totals.gross)}</span>
+                    <span className="text-[11px] text-muted-foreground">Lordo</span>
+                    <span className="text-[13px] tabular-nums">{formatCurrency(totals.gross)}</span>
                   </div>
                   {totals.discount > 0 && (
                     <div className="flex items-center gap-4">
-                      <span className="text-[12px] text-muted-foreground">Sconto</span>
-                      <span className="text-[13px] tabular-nums text-destructive">-{fmt(totals.discount)}</span>
+                      <span className="text-[11px] text-muted-foreground">Sconto</span>
+                      <span className="text-[13px] tabular-nums text-destructive">-{formatCurrency(totals.discount)}</span>
                     </div>
                   )}
                   <div className="flex items-center gap-4 border-t border-border/60 pt-1">
-                    <span className="text-[12px] font-medium">Netto</span>
-                    <span className="text-[14px] font-semibold tabular-nums text-primary">{fmt(totals.net)}</span>
+                    <span className="text-[13px] font-medium">Netto</span>
+                    <span className="text-sm font-semibold tabular-nums text-primary">{formatCurrency(totals.net)}</span>
                   </div>
                 </div>
               </div>
@@ -547,7 +544,7 @@ export function OrderEditPage() {
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <PenLine className={`h-4 w-4 ${!field.value ? "text-amber-500" : "text-emerald-500"}`} />
-                  <h3 className="text-[14px] font-semibold">Firma Operatore</h3>
+                  <h3 className="text-sm font-semibold">Firma Operatore</h3>
                   {!field.value && (
                     <Badge variant="secondary" className="ml-auto border-amber-200 bg-amber-100 text-amber-700 dark:border-amber-900/40 dark:bg-amber-950 dark:text-amber-400">
                       Richiesta

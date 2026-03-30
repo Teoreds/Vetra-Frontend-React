@@ -111,7 +111,7 @@ export function DateRangePicker({
           )}
         >
           <CalendarIcon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-          <span>{displayValue ?? placeholder}</span>
+          {displayValue && <span>{displayValue}</span>}
         </button>
       </Popover.Trigger>
 
@@ -120,7 +120,7 @@ export function DateRangePicker({
           align="start"
           sideOffset={4}
           onOpenAutoFocus={(e) => e.preventDefault()}
-          className="z-50 rounded-xl border border-border bg-popover p-3 shadow-[0_8px_30px_rgba(0,0,0,0.10)] outline-none animate-in fade-in-0 zoom-in-95"
+          className="z-50 rounded-xl border border-border/60 bg-popover p-3 shadow-lg outline-none animate-in fade-in-0 zoom-in-95"
         >
           <DayPicker
             mode="range"

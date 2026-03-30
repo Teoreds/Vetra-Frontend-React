@@ -40,7 +40,7 @@ export function ArticlesTable({ articles, isLoading }: ArticlesTableProps) {
           />
           <div className="min-w-0">
             <p className="truncate text-[13px] font-semibold">{row.code}</p>
-            <p className="truncate text-[12px] text-muted-foreground">{row.description}</p>
+            <p className="truncate text-[11px] text-muted-foreground">{row.description}</p>
           </div>
         </div>
       ),
@@ -84,7 +84,7 @@ export function ArticlesTable({ articles, isLoading }: ArticlesTableProps) {
           className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold leading-none tracking-wide ${
             row.is_active
               ? "bg-emerald-500/8 text-emerald-600"
-              : "bg-slate-500/8 text-slate-500"
+              : "bg-muted-foreground/8 text-muted-foreground"
           }`}
         >
           {row.is_active ? "Attivo" : "Inattivo"}
@@ -111,7 +111,7 @@ export function ArticlesTable({ articles, isLoading }: ArticlesTableProps) {
               <DropdownMenu.Content
                 align="end"
                 sideOffset={4}
-                className="z-50 min-w-[160px] rounded-lg border border-border/60 bg-popover p-1 shadow-lg animate-in fade-in-0 zoom-in-95"
+                className="z-50 min-w-[160px] rounded-xl border border-border/60 bg-popover p-1 shadow-lg animate-in fade-in-0 zoom-in-95"
                 onClick={(e) => e.stopPropagation()}
               >
                 <DropdownMenu.Item

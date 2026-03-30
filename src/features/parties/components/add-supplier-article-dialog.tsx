@@ -99,7 +99,7 @@ export function AddSupplierArticleDialog({ open, onOpenChange, partyGuid }: Prop
             />
           )}
           {errors.article_guid && (
-            <p className="text-[12px] text-destructive">{errors.article_guid.message}</p>
+            <p className="text-[11px] text-destructive">{errors.article_guid.message}</p>
           )}
         </div>
 

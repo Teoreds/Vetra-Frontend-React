@@ -52,20 +52,22 @@ export function OrderFiltersBar({
         />
       </div>
 
+      <DateRangePicker
+        from={filters.date_from}
+        to={filters.date_to}
+        onChange={(range) =>
+          onFilterChange({ date_from: range.from, date_to: range.to })
+        }
+      />
+
+      <div className="h-4 w-px bg-border/50" />
+
       <StatusMultiSelect
         value={statusValues}
         onChange={(selected) =>
           onFilterChange({
             status_code: selected.length > 0 ? selected.join(",") : undefined,
           })
-        }
-      />
-
-      <DateRangePicker
-        from={filters.date_from}
-        to={filters.date_to}
-        onChange={(range) =>
-          onFilterChange({ date_from: range.from, date_to: range.to })
         }
       />
 

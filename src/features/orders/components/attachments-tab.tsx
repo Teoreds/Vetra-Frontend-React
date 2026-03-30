@@ -29,7 +29,7 @@ function AttachmentsList({ attachments }: { attachments: AttachmentOut[] }) {
   }
 
   return (
-    <ul className="divide-y divide-border/50 rounded-xl border border-border/60 bg-card shadow-[0_1px_3px_0_rgba(0,0,0,0.04)]">
+    <ul className="divide-y divide-border/50 rounded-xl border border-border/60 bg-card shadow-sm">
       {attachments.map((att) => (
         <li
           key={att.guid}

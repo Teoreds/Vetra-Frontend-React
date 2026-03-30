@@ -38,7 +38,7 @@ const editSchema = z.object({
   courier_guid: z.string().optional().default(""),
   shipping_mode: z.string().default("FRANCO"),
   fiscal_area_code: z.string().optional().default(""),
-  sdi_code: z.string().max(7, "Max 7 caratteri").optional().default(""),
+  sdi_code: z.string().max(320, "Max 320 caratteri").optional().default(""),
   category_code: z.string().optional().default(""),
   default_payment_method_guid: z.string().optional().default(""),
   default_payment_term_guid: z.string().optional().default(""),
@@ -111,7 +111,7 @@ export function PartyEditPage() {
   if (isLoading || !party) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        <Loader2 className="h-6 w-6 animate-spin text-primary/40" />
       </div>
     );
   }
@@ -146,7 +146,7 @@ export function PartyEditPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
+      <div className="mx-auto max-w-xl flex items-center gap-3">
         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate(-1)}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
@@ -217,7 +217,7 @@ export function PartyEditPage() {
                   error={!!errors.description}
                 />
                 {errors.description && (
-                  <p className="text-[12px] text-destructive">{errors.description.message}</p>
+                  <p className="text-[11px] text-destructive">{errors.description.message}</p>
                 )}
               </div>
               <div className="space-y-1.5">
@@ -420,9 +420,9 @@ export function PartyEditPage() {
               </div>
               <div className="space-y-1.5">
                 <label className="text-[13px] font-medium">Codice SDI</label>
-                <Input {...register("sdi_code")} maxLength={7} />
+                <Input {...register("sdi_code")} maxLength={320} placeholder="0000000 o indirizzo PEC" />
                 {errors.sdi_code && (
-                  <p className="text-[12px] text-destructive">{errors.sdi_code.message}</p>
+                  <p className="text-[11px] text-destructive">{errors.sdi_code.message}</p>
                 )}
               </div>
               <div className="space-y-1.5">

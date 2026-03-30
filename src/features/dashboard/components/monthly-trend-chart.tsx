@@ -1,21 +1,11 @@
 import { useState } from "react";
-import { cn } from "@/shared/lib/utils";
+import { cn, formatCurrency, formatCurrencyCompact } from "@/shared/lib/utils";
 import type { components } from "@/shared/api/schema";
 
 type MonthlyTrend = components["schemas"]["MonthlyTrend"];
 
 interface MonthlyTrendChartProps {
   data: MonthlyTrend[];
-}
-
-function fmtEurShort(n: number) {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1000) return `${(n / 1000).toFixed(0)}k`;
-  return n.toFixed(0);
-}
-
-function fmtEur(n: number) {
-  return new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(n);
 }
 
 function fmtMonth(m: string) {
@@ -62,8 +52,8 @@ export function MonthlyTrendChart({ data }: MonthlyTrendChartProps) {
                 {/* Tooltip */}
                 {isActive && (
                   <div className="absolute -top-1 z-10 rounded-lg border border-border/60 bg-card px-2.5 py-1.5 shadow-lg -translate-y-full">
-                    <p className="text-[11px] font-semibold tabular-nums whitespace-nowrap">{fmtEur(gross)}</p>
-                    <p className="text-[10px] text-muted-foreground tabular-nums">{d.order_count} ordini</p>
+                    <p className="text-[11px] font-semibold tabular-nums whitespace-nowrap">{formatCurrency(gross)}</p>
+                    <p className="text-[11px] text-muted-foreground tabular-nums">{d.order_count} ordini</p>
                   </div>
                 )}
                 <div
@@ -85,7 +75,7 @@ export function MonthlyTrendChart({ data }: MonthlyTrendChartProps) {
           <div
             key={d.month}
             className={cn(
-              "text-center text-[10px] font-medium transition-colors",
+              "text-center text-[11px] font-medium transition-colors",
               hovered === i ? "text-foreground" : "text-muted-foreground",
             )}
             style={{ width: `${Math.min(100 / data.length, 12)}%`, minWidth: 12, maxWidth: 48 }}
@@ -102,7 +92,7 @@ export function MonthlyTrendChart({ data }: MonthlyTrendChartProps) {
           <span className="text-[11px] text-muted-foreground">Fatturato mensile</span>
         </div>
         <span className="text-[11px] font-medium tabular-nums text-muted-foreground">
-          Max: {fmtEurShort(maxGross)}
+          Max: {formatCurrencyCompact(maxGross)}
         </span>
       </div>
     </div>

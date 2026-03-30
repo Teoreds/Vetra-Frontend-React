@@ -175,7 +175,7 @@ export function OrderSearchSelect({ value, onChange, disabled }: OrderSearchSele
       )}
 
       {open && (
-        <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-56 overflow-y-auto rounded-xl border border-border bg-popover shadow-[0_8px_30px_rgba(0,0,0,0.08)]">
+        <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-56 overflow-y-auto rounded-xl border border-border/60 bg-popover shadow-lg">
           {orders.length === 0 && !isLoading && (
             <p className="px-3 py-4 text-center text-[13px] text-muted-foreground">
               {search.trim().length >= 1
@@ -202,7 +202,7 @@ export function OrderSearchSelect({ value, onChange, disabled }: OrderSearchSele
                   <span className="text-[13px] font-semibold text-primary">
                     #{order.guid.slice(0, 8).toUpperCase()}
                   </span>
-                  <span className="text-[12px] text-muted-foreground">
+                  <span className="text-[11px] text-muted-foreground">
                     {formatDate(order.order_date)}
                   </span>
                   <StatusBadge

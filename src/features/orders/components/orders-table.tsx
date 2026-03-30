@@ -5,10 +5,11 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { DataTable, type Column } from "@/shared/ui/data-table";
 import { StatusBadge } from "@/shared/ui/status-badge";
 import { getStatusVariant } from "@/shared/ui/status-variants";
-import { formatDate } from "@/shared/lib/utils";
+import { formatDate, formatCurrency } from "@/shared/lib/utils";
 import { useParties } from "@/features/parties/hooks/use-parties";
 import { useOrderStatuses } from "@/shared/hooks/use-lookups";
 import { useLocationsMap } from "@/features/parties/hooks/use-locations-map";
+import { PartyAvatar } from "@/features/parties/components/party-avatar";
 import type { OrderOut } from "../types/order.types";
 
 interface OrdersTableProps {
@@ -16,31 +17,6 @@ interface OrdersTableProps {
   isLoading?: boolean;
 }
 
-const AVATAR_COLORS = [
-  { bg: "bg-primary/12", text: "text-primary" },
-  { bg: "bg-emerald-500/12", text: "text-emerald-600" },
-  { bg: "bg-violet-500/12", text: "text-violet-600" },
-  { bg: "bg-amber-500/12", text: "text-amber-600" },
-  { bg: "bg-rose-500/12", text: "text-rose-600" },
-  { bg: "bg-cyan-500/12", text: "text-cyan-600" },
-  { bg: "bg-indigo-500/12", text: "text-indigo-600" },
-  { bg: "bg-orange-500/12", text: "text-orange-600" },
-];
-
-function getAvatarColor(name: string) {
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
-}
-
-function fmt(n: number) {
-  return new Intl.NumberFormat("it-IT", {
-    style: "currency",
-    currency: "EUR",
-  }).format(n);
-}
 
 export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
   const navigate = useNavigate();
@@ -54,10 +30,10 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
   const { data: locationsMap } = useLocationsMap(shippingGuids);
 
   const partyMap = useMemo(() => {
-    const map = new Map<string, string>();
+    const map = new Map<string, { name: string; guid: string; imagePath?: string | null }>();
     if (partiesData?.items) {
       for (const p of partiesData.items) {
-        map.set(p.guid, p.description ?? p.guid.slice(0, 8));
+        map.set(p.guid, { name: p.description ?? p.guid.slice(0, 8), guid: p.guid, imagePath: p.image_path });
       }
     }
     return map;
@@ -65,12 +41,12 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
 
   const columns: Column<OrderOut>[] = [
     {
-      key: "guid",
+      key: "code",
       header: "ID Ordine",
       className: "w-32",
       render: (row) => (
         <span className="text-[13px] font-semibold text-primary">
-          #{row.guid.slice(0, 8).toUpperCase()}
+          #{row.code.replace(/^ORD-/i, "")}
         </span>
       ),
     },
@@ -78,17 +54,17 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
       key: "party_guid",
       header: "Cliente",
       render: (row) => {
-        const name = partyMap.get(row.party_guid);
-        if (name) {
-          const color = getAvatarColor(name);
+        const party = partyMap.get(row.party_guid);
+        if (party) {
           return (
             <div className="flex items-center gap-2.5">
-              <span
-                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold ${color.bg} ${color.text}`}
-              >
-                {name.charAt(0).toUpperCase()}
-              </span>
-              <span className="text-[13px] font-medium">{name}</span>
+              <PartyAvatar
+                partyGuid={party.guid}
+                name={party.name}
+                imagePath={party.imagePath}
+                className="h-7 w-7 text-[11px]"
+              />
+              <span className="text-[13px] font-medium">{party.name}</span>
             </div>
           );
         }
@@ -139,7 +115,7 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
         const total = net + vat;
         return (
           <span className="text-[13px] font-medium tabular-nums">
-            {fmt(total)}
+            {formatCurrency(total)}
           </span>
         );
       },
@@ -174,7 +150,7 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
               <DropdownMenu.Content
                 align="end"
                 sideOffset={4}
-                className="z-50 min-w-[160px] rounded-lg border border-border/60 bg-popover p-1 shadow-lg animate-in fade-in-0 zoom-in-95"
+                className="z-50 min-w-[160px] rounded-xl border border-border/60 bg-popover p-1 shadow-lg animate-in fade-in-0 zoom-in-95"
                 onClick={(e) => e.stopPropagation()}
               >
                 <DropdownMenu.Item

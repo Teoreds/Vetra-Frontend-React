@@ -210,7 +210,7 @@ export function OrderWizardPage() {
   if (mode === "edit" && (isLoadingOrder || isLoadingArticles)) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        <Loader2 className="h-6 w-6 animate-spin text-primary/40" />
       </div>
     );
   }
@@ -225,7 +225,7 @@ export function OrderWizardPage() {
       : "Completa i passaggi per creare un nuovo ordine.";
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto max-w-4xl space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3">
         <Button
@@ -242,7 +242,7 @@ export function OrderWizardPage() {
         </div>
       </div>
 
-      {/* Stepper — full width, no card */}
+      {/* Stepper */}
       <div className="py-2">
         <NewOrderStepper steps={STEPS} currentStep={currentStep} />
       </div>
@@ -261,31 +261,27 @@ export function OrderWizardPage() {
       )}
 
       {currentStep === 2 && effectiveStep1 && effectiveOrderGuid && (
-        <div className="mx-auto max-w-4xl">
-          <NewOrderStepItems
-            orderGuid={effectiveOrderGuid}
-            vatRate={vatRate}
-            onVatRateChange={setVatRate}
-            initialAvailableRows={effectiveAvailable}
-            initialCommitmentRows={effectiveCommitment}
-            onNext={handleStep2Next}
-            onBack={handleBack}
-            mode={mode}
-            originalRowGuids={originalRowGuids}
-          />
-        </div>
+        <NewOrderStepItems
+          orderGuid={effectiveOrderGuid}
+          vatRate={vatRate}
+          onVatRateChange={setVatRate}
+          initialAvailableRows={effectiveAvailable}
+          initialCommitmentRows={effectiveCommitment}
+          onNext={handleStep2Next}
+          onBack={handleBack}
+          mode={mode}
+          originalRowGuids={originalRowGuids}
+        />
       )}
 
       {currentStep === 3 && effectiveStep1 && effectiveOrderGuid && (
-        <div className="mx-auto max-w-4xl">
-          <NewOrderStepReview
-            orderGuid={effectiveOrderGuid}
-            step1Data={effectiveStep1}
-            availableRows={availableRows}
-            commitmentRows={commitmentRows}
-            onBack={handleBack}
-          />
-        </div>
+        <NewOrderStepReview
+          orderGuid={effectiveOrderGuid}
+          step1Data={effectiveStep1}
+          availableRows={availableRows}
+          commitmentRows={commitmentRows}
+          onBack={handleBack}
+        />
       )}
     </div>
   );

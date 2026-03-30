@@ -23,10 +23,24 @@ export function formatDateTime(date: string | Date): string {
   }).format(new Date(date));
 }
 
-export function formatCurrency(amount: number | string): string {
+export function formatCurrency(
+  amount: number | string,
+  opts?: { maximumFractionDigits?: number; currency?: string },
+): string {
   const num = typeof amount === "string" ? parseFloat(amount) : amount;
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("it-IT", {
     style: "currency",
-    currency: "USD",
+    currency: opts?.currency ?? "EUR",
+    maximumFractionDigits: opts?.maximumFractionDigits ?? 2,
   }).format(num);
+}
+
+export function formatCurrencyCompact(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1000) return `${(n / 1000).toFixed(0)}k`;
+  return n.toFixed(0);
+}
+
+export function formatNumber(n: number): string {
+  return new Intl.NumberFormat("it-IT").format(n);
 }

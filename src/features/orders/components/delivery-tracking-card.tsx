@@ -37,7 +37,7 @@ export function DeliveryTrackingCard({
             <p className="mt-2 text-[13px] font-medium text-muted-foreground">
               Nessuna nota di consegna
             </p>
-            <p className="mt-0.5 text-[12px] text-muted-foreground/70">
+            <p className="mt-0.5 text-[11px] text-muted-foreground/70">
               Le note di consegna verranno create dalle note di prelievo completate.
             </p>
           </div>

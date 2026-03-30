@@ -76,6 +76,7 @@ export function NewPartyStepReview({
 
   const isCustomer = identity.type_code === "CUSTOMER";
   const isSupplier = identity.type_code === "SUPPLIER";
+  const isCarrier = identity.type_code === "CARRIER";
 
   return (
     <div className="space-y-5">
@@ -127,7 +128,7 @@ export function NewPartyStepReview({
                   key={i}
                   className="flex items-center gap-3 rounded-lg border border-border/40 bg-muted/20 px-3 py-2"
                 >
-                  <span className="text-[12px] font-medium text-muted-foreground w-24 shrink-0">
+                  <span className="text-[13px] font-medium text-muted-foreground w-24 shrink-0">
                     {contactTypeMap.get(c.type_code) ?? c.type_code}
                   </span>
                   <span className="text-[13px] flex-1">{c.content}</span>
@@ -198,7 +199,7 @@ export function NewPartyStepReview({
           <div className="border-t border-border/40 pt-3">
             <div className="flex items-center gap-2 mb-2">
               <Building2 className="h-3.5 w-3.5 text-muted-foreground" />
-              <span className="text-[12px] font-semibold text-muted-foreground uppercase tracking-wide">Banca</span>
+              <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Banca</span>
             </div>
             <div className="grid grid-cols-3 gap-x-6 gap-y-3">
               <Field label="Nome" value={commercial.bank_name} />
@@ -207,16 +208,18 @@ export function NewPartyStepReview({
             </div>
           </div>
 
-          <div className="border-t border-border/40 pt-3">
-            <div className="flex items-center gap-2 mb-2">
-              <Truck className="h-3.5 w-3.5 text-muted-foreground" />
-              <span className="text-[12px] font-semibold text-muted-foreground uppercase tracking-wide">Spedizione</span>
+          {!isCarrier && (
+            <div className="border-t border-border/40 pt-3">
+              <div className="flex items-center gap-2 mb-2">
+                <Truck className="h-3.5 w-3.5 text-muted-foreground" />
+                <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Spedizione</span>
+              </div>
+              <div className="grid grid-cols-2 gap-x-6">
+                <Field label="Vettore" value={carrierMap.get(commercial.courier_guid)} />
+                <Field label="Modalità" value={commercial.shipping_mode === "ASSEGNATO" ? "Assegnato" : "Franco"} />
+              </div>
             </div>
-            <div className="grid grid-cols-2 gap-x-6">
-              <Field label="Vettore" value={carrierMap.get(commercial.courier_guid)} />
-              <Field label="Modalità" value={commercial.shipping_mode === "ASSEGNATO" ? "Assegnato" : "Franco"} />
-            </div>
-          </div>
+          )}
         </CardContent>
       </Card>
 
@@ -265,10 +268,10 @@ export function NewPartyStepReview({
                 >
                   <span className="text-[13px] flex-1 truncate">{a.article_guid.slice(0, 8)}</span>
                   {a.supplier_code && (
-                    <span className="text-[12px] text-muted-foreground">{a.supplier_code}</span>
+                    <span className="text-[11px] text-muted-foreground">{a.supplier_code}</span>
                   )}
                   {a.purchase_price && (
-                    <span className="text-[12px] font-semibold tabular-nums">{a.purchase_price}</span>
+                    <span className="text-[13px] font-semibold tabular-nums">{a.purchase_price}</span>
                   )}
                   {a.is_preferred && (
                     <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-600">

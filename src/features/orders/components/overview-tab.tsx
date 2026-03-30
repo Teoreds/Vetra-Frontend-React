@@ -1,7 +1,5 @@
-import { Building2, MapPin, Plus, Package, CreditCard } from "lucide-react";
+import { Building2, MapPin, Package, CreditCard } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
-import { Separator } from "@/shared/ui/separator";
-import { Badge } from "@/shared/ui/badge";
 import {
   Table,
   TableBody,
@@ -10,21 +8,25 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/ui/table";
-import { useParties } from "@/features/parties/hooks/use-parties";
+import { useParty } from "@/features/parties/hooks/use-party";
 import { usePartyLocations } from "@/features/parties/hooks/use-party-locations";
 import { useArticles } from "@/features/articles/hooks/use-articles";
+import { useUnitOfMeasures } from "@/features/articles/hooks/use-article-lookups";
 import { usePaymentMethods, usePaymentTerms } from "@/shared/hooks/use-lookups";
+import { formatCurrency } from "@/shared/lib/utils";
 import type { OrderOut } from "../types/order.types";
 
 interface OverviewTabProps {
   order: OrderOut;
 }
 
-function fmt(n: number) {
-  return new Intl.NumberFormat("it-IT", {
-    style: "currency",
-    currency: "EUR",
-  }).format(n);
+function Field({ label, value }: { label: string; value?: string | null }) {
+  return (
+    <div className="space-y-0.5">
+      <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">{label}</p>
+      <p className="text-[13px]">{value || <span className="text-muted-foreground/50">—</span>}</p>
+    </div>
+  );
 }
 
 function fmtAddress(loc: {
@@ -38,14 +40,15 @@ function fmtAddress(loc: {
     [loc.post_code, loc.city].filter(Boolean).join(" "),
     loc.province,
   ].filter(Boolean);
-  return parts.join(", ") || "\u2014";
+  return parts.join(", ") || null;
 }
 
 export function OverviewTab({ order }: OverviewTabProps) {
-  const { data: partiesData } = useParties({ limit: 200 });
-  const party = partiesData?.items.find((p) => p.guid === order.party_guid);
+  const { data: party } = useParty(order.party_guid);
   const { data: locations = [] } = usePartyLocations(order.party_guid);
   const { data: articlesData } = useArticles({ limit: 200 });
+  const { data: unitOfMeasures = [] } = useUnitOfMeasures();
+  const uomMap = new Map(unitOfMeasures.map((u) => [u.code, u.description]));
   const { map: paymentMethodMap } = usePaymentMethods();
   const { map: paymentTermMap } = usePaymentTerms();
 
@@ -54,15 +57,11 @@ export function OverviewTab({ order }: OverviewTabProps) {
   );
 
   const billingLoc = order.billing_location_guid
-    ? locations.find(
-        (l) => l.location_guid === order.billing_location_guid,
-      )
+    ? locations.find((l) => l.location_guid === order.billing_location_guid)
     : locations.find((l) => l.type_code === "BILLING" && l.is_primary);
 
   const shippingLoc = order.shipping_location_guid
-    ? locations.find(
-        (l) => l.location_guid === order.shipping_location_guid,
-      )
+    ? locations.find((l) => l.location_guid === order.shipping_location_guid)
     : locations.find((l) => l.type_code === "SHIPPING" && l.is_primary);
 
   const totalGross = Number(order.total_gross ?? 0);
@@ -72,24 +71,24 @@ export function OverviewTab({ order }: OverviewTabProps) {
 
   const rows = order.rows ?? [];
 
+  const hasPayment = order.payment_method_guid || order.payment_term_guid;
+
   return (
     <div className="flex gap-5">
-      {/* ── Colonna principale: tabella articoli + totali sotto ── */}
+      {/* Colonna principale */}
       <div className="min-w-0 flex-1 space-y-5">
-        {/* Tabella articoli */}
+        {/* Articoli */}
         <Card>
-          <CardHeader className="pb-3">
+          <CardHeader>
             <div className="flex items-center gap-2">
               <Package className="h-4 w-4 text-muted-foreground" />
-              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                Articoli
-              </h3>
-              <Badge variant="secondary" className="text-[10px]">
+              <h2 className="text-[15px] font-semibold">Articoli</h2>
+              <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-semibold text-muted-foreground">
                 {rows.length}
-              </Badge>
+              </span>
             </div>
           </CardHeader>
-          <CardContent className="pt-0">
+          <CardContent>
             {rows.length === 0 ? (
               <p className="py-6 text-center text-[13px] text-muted-foreground">
                 Nessun articolo in questo ordine.
@@ -117,32 +116,30 @@ export function OverviewTab({ order }: OverviewTabProps) {
                       <TableRow key={row.guid}>
                         <TableCell className="px-2 py-2.5">
                           <div>
-                            <p className="text-[12px] font-medium leading-tight">
+                            <p className="text-[13px] font-medium leading-tight">
                               {article?.description ?? row.article_guid.slice(0, 8)}
                             </p>
                             {article && (
-                              <p className="text-[11px] text-muted-foreground">
-                                {article.code}
-                              </p>
+                              <p className="text-[11px] text-muted-foreground">{article.code}</p>
                             )}
                           </div>
                         </TableCell>
-                        <TableCell className="px-2 py-2.5 text-right text-[12px] tabular-nums">
+                        <TableCell className="px-2 py-2.5 text-right text-[13px] tabular-nums">
                           {qty}
                           {row.unit_of_measure_code && (
                             <span className="ml-1 text-[10px] text-muted-foreground">
-                              {row.unit_of_measure_code}
+                              {(uomMap.get(row.unit_of_measure_code) ?? row.unit_of_measure_code).toUpperCase()}
                             </span>
                           )}
                         </TableCell>
-                        <TableCell className="px-2 py-2.5 text-right text-[12px] tabular-nums">
-                          {fmt(price)}
+                        <TableCell className="px-2 py-2.5 text-right text-[13px] tabular-nums">
+                          {formatCurrency(price)}
                         </TableCell>
-                        <TableCell className="px-2 py-2.5 text-right text-[12px] tabular-nums">
-                          {discount > 0 ? `${discount}%` : "\u2014"}
+                        <TableCell className="px-2 py-2.5 text-right text-[13px] tabular-nums">
+                          {discount > 0 ? `${discount}%` : "—"}
                         </TableCell>
-                        <TableCell className="px-2 py-2.5 text-right text-[12px] font-medium tabular-nums">
-                          {fmt(lineTotal)}
+                        <TableCell className="px-2 py-2.5 text-right text-[13px] font-medium tabular-nums">
+                          {formatCurrency(lineTotal)}
                         </TableCell>
                       </TableRow>
                     );
@@ -160,124 +157,83 @@ export function OverviewTab({ order }: OverviewTabProps) {
               <div className="flex items-center gap-6">
                 <div>
                   <p className="text-[11px] font-medium text-muted-foreground">Imponibile</p>
-                  <p className="text-[14px] font-semibold tabular-nums">{fmt(totalNet)}</p>
+                  <p className="text-sm font-semibold tabular-nums">{formatCurrency(totalNet)}</p>
                 </div>
                 <div className="h-8 w-px bg-border/60" />
                 <div>
                   <p className="text-[11px] font-medium text-muted-foreground">Sconto</p>
-                  <p className="text-[14px] font-semibold tabular-nums text-destructive">
-                    {totalDiscount > 0 ? `\u2212${fmt(totalDiscount)}` : "\u2014"}
+                  <p className="text-sm font-semibold tabular-nums text-destructive">
+                    {totalDiscount > 0 ? `−${formatCurrency(totalDiscount)}` : "—"}
                   </p>
                 </div>
                 <div className="h-8 w-px bg-border/60" />
                 <div>
                   <p className="text-[11px] font-medium text-muted-foreground">IVA</p>
-                  <p className="text-[14px] font-semibold tabular-nums">{fmt(totalVat)}</p>
+                  <p className="text-sm font-semibold tabular-nums">{formatCurrency(totalVat)}</p>
                 </div>
               </div>
               <div className="text-right">
                 <p className="text-[11px] font-medium text-muted-foreground">Totale</p>
-                <p className="text-[18px] font-bold tabular-nums text-primary">{fmt(totalGross)}</p>
+                <p className="text-lg font-bold tabular-nums text-primary">{formatCurrency(totalGross)}</p>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* ── Sidebar destra: cliente + indirizzi + logistica + note ── */}
+      {/* Sidebar */}
       <div className="w-72 shrink-0 space-y-4">
+        {/* Cliente */}
         <Card>
-          <CardContent className="space-y-4 pt-5">
-            {/* Cliente */}
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-2">
-                <Building2 className="h-3.5 w-3.5 text-muted-foreground" />
-                <h4 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                  Cliente
-                </h4>
-              </div>
-              <div className="space-y-0.5 pl-[22px]">
-                <p className="text-[13px] font-medium">
-                  {party?.description ?? "\u2014"}
-                </p>
-                <p className="text-[12px] text-muted-foreground">
-                  P.IVA {party?.vat_number ?? "\u2014"}
-                </p>
-              </div>
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <Building2 className="h-4 w-4 text-muted-foreground" />
+              <h2 className="text-[15px] font-semibold">Cliente</h2>
             </div>
-
-            <Separator />
-
-            {/* Fatturazione */}
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-2">
-                <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
-                <h4 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                  Fatturazione
-                </h4>
-              </div>
-              <p className="pl-[22px] text-[13px]">
-                {billingLoc ? fmtAddress(billingLoc) : "Non specificato"}
-              </p>
-            </div>
-
-            <Separator />
-
-            {/* Spedizione */}
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-2">
-                <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
-                <h4 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                  Spedizione
-                </h4>
-              </div>
-              <p className="pl-[22px] text-[13px]">
-                {shippingLoc ? fmtAddress(shippingLoc) : "Non specificato"}
-              </p>
-            </div>
-
-            <Separator />
-
-            {/* Pagamento */}
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-2">
-                <CreditCard className="h-3.5 w-3.5 text-muted-foreground" />
-                <h4 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                  Pagamento
-                </h4>
-              </div>
-              <dl className="space-y-1 pl-[22px]">
-                <div className="flex justify-between gap-2">
-                  <dt className="text-[12px] text-muted-foreground">Metodo</dt>
-                  <dd className="text-[12px] font-medium text-right">
-                    {order.payment_method_guid
-                      ? paymentMethodMap.get(order.payment_method_guid) ?? "\u2014"
-                      : "Non specificato"}
-                  </dd>
-                </div>
-                <div className="flex justify-between gap-2">
-                  <dt className="text-[12px] text-muted-foreground">Condizioni</dt>
-                  <dd className="text-[12px] font-medium text-right">
-                    {order.payment_term_guid
-                      ? paymentTermMap.get(order.payment_term_guid) ?? "\u2014"
-                      : "Non specificato"}
-                  </dd>
-                </div>
-              </dl>
-            </div>
-
-            <Separator />
-
-            {/* Nota — link discreto */}
-            <button
-              type="button"
-              className="flex items-center gap-1.5 text-[12px] text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              Aggiungi nota
-            </button>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Field label="Ragione Sociale" value={party?.description} />
+            {party?.vat_number && <Field label="Partita IVA" value={party.vat_number} />}
           </CardContent>
         </Card>
+
+        {/* Indirizzi */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <MapPin className="h-4 w-4 text-muted-foreground" />
+              <h2 className="text-[15px] font-semibold">Indirizzi</h2>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Field label="Spedizione" value={shippingLoc ? fmtAddress(shippingLoc) : null} />
+            <div className="border-t border-border/40 pt-3">
+              <Field label="Fatturazione" value={billingLoc ? fmtAddress(billingLoc) : null} />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Pagamento */}
+        {hasPayment && (
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <CreditCard className="h-4 w-4 text-muted-foreground" />
+                <h2 className="text-[15px] font-semibold">Pagamento</h2>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Field
+                label="Metodo"
+                value={order.payment_method_guid ? paymentMethodMap.get(order.payment_method_guid) : null}
+              />
+              <Field
+                label="Condizioni"
+                value={order.payment_term_guid ? paymentTermMap.get(order.payment_term_guid) : null}
+              />
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );

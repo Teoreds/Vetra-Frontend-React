@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/shared/ui/button";
+import { Card } from "@/shared/ui/card";
 import { PaginationControls } from "@/shared/ui/pagination-controls";
 import { useOrders } from "../hooks/use-orders";
 import { OrdersTable } from "../components/orders-table";
@@ -35,7 +36,7 @@ export function OrderListPage() {
         </p>
       </div>
 
-      <div className="rounded-xl border border-border/60 bg-card shadow-[0_1px_3px_0_rgba(0,0,0,0.04)]">
+      <Card>
         {/* Toolbar: filtri + azioni sulla stessa riga */}
         <div className="flex items-center justify-between border-b border-border/50 px-4 py-3">
           <OrderFiltersBar
@@ -45,7 +46,7 @@ export function OrderListPage() {
             }
             onReset={() => setFilters({ offset: 0, limit: DEFAULT_LIMIT })}
           />
-          <Button onClick={() => navigate("/orders/new")} size="sm">
+          <Button onClick={() => navigate("/orders/new")} size="sm" className="shrink-0">
             <Plus className="mr-1 h-3.5 w-3.5" />
             Nuovo Ordine
           </Button>
@@ -60,7 +61,7 @@ export function OrderListPage() {
             onPageChange={(offset) => setFilters((f) => ({ ...f, offset }))}
           />
         )}
-      </div>
+      </Card>
     </div>
   );
 }

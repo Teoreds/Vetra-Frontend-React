@@ -85,7 +85,7 @@ export function PickNotesTable({ pickNotes, isLoading }: PickNotesTableProps) {
           {row.status_code !== "CLOSED" && row.status_code !== "CHECKED" && (
             <button
               type="button"
-              className="flex items-center gap-1.5 rounded-md px-2 py-1 text-[12px] font-medium text-primary transition-colors hover:bg-primary/8"
+              className="flex items-center gap-1.5 rounded-md px-2 py-1 text-[13px] font-medium text-primary transition-colors hover:bg-primary/8"
               onClick={(e) => {
                 e.stopPropagation();
                 setCheckingGuid(row.guid);
@@ -109,7 +109,7 @@ export function PickNotesTable({ pickNotes, isLoading }: PickNotesTableProps) {
               <DropdownMenu.Content
                 align="end"
                 sideOffset={4}
-                className="z-50 min-w-[160px] rounded-lg border border-border/60 bg-popover p-1 shadow-lg animate-in fade-in-0 zoom-in-95"
+                className="z-50 min-w-[160px] rounded-xl border border-border/60 bg-popover p-1 shadow-lg animate-in fade-in-0 zoom-in-95"
                 onClick={(e) => e.stopPropagation()}
               >
                 <DropdownMenu.Item

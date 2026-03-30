@@ -82,7 +82,7 @@ export function LoginForm() {
           placeholder="Inserisci il tuo username"
         />
         {validationErrors.username && (
-          <p className="text-[12px] text-destructive">{validationErrors.username}</p>
+          <p className="text-[11px] text-destructive">{validationErrors.username}</p>
         )}
       </div>
 
@@ -98,7 +98,7 @@ export function LoginForm() {
           placeholder="Inserisci la tua password"
         />
         {validationErrors.password && (
-          <p className="text-[12px] text-destructive">{validationErrors.password}</p>
+          <p className="text-[11px] text-destructive">{validationErrors.password}</p>
         )}
       </div>
 

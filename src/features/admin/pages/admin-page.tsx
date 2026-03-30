@@ -114,7 +114,7 @@ export function AdminPage() {
         <Card className="min-w-0 flex-1">
           <CardHeader>
             <h2 className="text-[15px] font-semibold">{title}</h2>
-            <p className="text-[12px] text-muted-foreground">{subtitle}</p>
+            <p className="text-[11px] text-muted-foreground">{subtitle}</p>
           </CardHeader>
           <CardContent>
             {renderContent()}

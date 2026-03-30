@@ -83,7 +83,7 @@ function InlineCheckbox({ checked, onCheckedChange, label }: { checked: boolean;
   return (
     <label className="flex items-center gap-2 cursor-pointer">
       <Checkbox checked={checked} onCheckedChange={(v) => onCheckedChange(!!v)} />
-      <span className="text-[12px] font-medium">{label}</span>
+      <span className="text-[13px] font-medium">{label}</span>
     </label>
   );
 }
@@ -103,6 +103,7 @@ interface Props {
 export function NewPartyStepCommercial({ typeCode, defaultValues, onNext, onBack, error }: Props) {
   const isCustomer = typeCode === "CUSTOMER";
   const isSupplier = typeCode === "SUPPLIER";
+  const isCarrier = typeCode === "CARRIER";
 
   const { data: paymentMethods } = usePaymentMethods();
   const { data: paymentTerms } = usePaymentTerms();
@@ -248,8 +249,8 @@ export function NewPartyStepCommercial({ typeCode, defaultValues, onNext, onBack
         </CardContent>
       </Card>
 
-      {/* ── Spedizione ───────────────────────────────── */}
-      <Card>
+      {/* ── Spedizione (non pertinente per corrieri) ── */}
+      {!isCarrier && <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
             <Truck className="h-4 w-4 text-muted-foreground" />
@@ -307,7 +308,7 @@ export function NewPartyStepCommercial({ typeCode, defaultValues, onNext, onBack
             </div>
           </div>
         </CardContent>
-      </Card>
+      </Card>}
 
       {/* ── Sconti (CUSTOMER only) ───────────────────── */}
       {isCustomer && (
@@ -346,7 +347,7 @@ export function NewPartyStepCommercial({ typeCode, defaultValues, onNext, onBack
                 className="flex items-end gap-3 rounded-lg border border-border/60 bg-muted/20 p-3"
               >
                 <div className="flex-1 flex flex-col gap-1">
-                  <label className="text-[12px] font-medium">Tipo Articolo</label>
+                  <label className="text-[13px] font-medium">Tipo Articolo</label>
                   <Controller
                     control={control}
                     name={`discounts.${index}.article_type_code`}
@@ -367,7 +368,7 @@ export function NewPartyStepCommercial({ typeCode, defaultValues, onNext, onBack
                   />
                 </div>
                 <div className="w-36 flex flex-col gap-1">
-                  <label className="text-[12px] font-medium">Sconto % *</label>
+                  <label className="text-[13px] font-medium">Sconto % *</label>
                   <Input
                     type="number"
                     step="0.01"
@@ -429,7 +430,7 @@ export function NewPartyStepCommercial({ typeCode, defaultValues, onNext, onBack
                 className="flex items-end gap-3 rounded-lg border border-border/60 bg-muted/20 p-3"
               >
                 <div className="flex-1 flex flex-col gap-1">
-                  <label className="text-[12px] font-medium">Articolo *</label>
+                  <label className="text-[13px] font-medium">Articolo *</label>
                   <Controller
                     control={control}
                     name={`supplier_articles.${index}.article_guid`}
@@ -450,14 +451,14 @@ export function NewPartyStepCommercial({ typeCode, defaultValues, onNext, onBack
                   />
                 </div>
                 <div className="w-32 flex flex-col gap-1">
-                  <label className="text-[12px] font-medium">Cod. Fornitore</label>
+                  <label className="text-[13px] font-medium">Cod. Fornitore</label>
                   <Input
                     {...register(`supplier_articles.${index}.supplier_code`)}
                     placeholder="ABC-123"
                   />
                 </div>
                 <div className="w-28 flex flex-col gap-1">
-                  <label className="text-[12px] font-medium">Pr. Acquisto</label>
+                  <label className="text-[13px] font-medium">Pr. Acquisto</label>
                   <Input
                     type="number"
                     step="0.01"

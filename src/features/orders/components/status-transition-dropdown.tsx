@@ -34,7 +34,7 @@ export function StatusTransitionDropdown({
         <DropdownMenu.Content
           align="end"
           sideOffset={6}
-          className="z-50 min-w-[180px] rounded-xl border border-border/60 bg-popover p-1.5 shadow-[0_8px_30px_-6px_rgba(0,0,0,0.15)]"
+          className="z-50 min-w-[180px] rounded-xl border border-border/60 bg-popover p-1.5 shadow-lg"
         >
           {validTransitions.map((status) => (
             <DropdownMenu.Item

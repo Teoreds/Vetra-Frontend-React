@@ -1,9 +1,7 @@
-import { useState } from "react";
-import * as Popover from "@radix-ui/react-popover";
-import { ChevronDown } from "lucide-react";
-import { CheckboxDisplay } from "@/shared/ui/checkbox";
 import { cn } from "@/shared/lib/utils";
 import { useOrderStatuses } from "@/shared/hooks/use-lookups";
+import { getStatusVariant } from "@/shared/ui/status-variants";
+import { statusBadgeVariants } from "@/shared/ui/status-badge";
 
 interface StatusMultiSelectProps {
   value: string[];
@@ -11,7 +9,6 @@ interface StatusMultiSelectProps {
 }
 
 export function StatusMultiSelect({ value, onChange }: StatusMultiSelectProps) {
-  const [open, setOpen] = useState(false);
   const { data: orderStatuses } = useOrderStatuses();
 
   function toggle(status: string) {
@@ -23,45 +20,26 @@ export function StatusMultiSelect({ value, onChange }: StatusMultiSelectProps) {
   }
 
   return (
-    <Popover.Root open={open} onOpenChange={setOpen}>
-      <Popover.Trigger asChild>
-        <button
-          type="button"
-          className={cn(
-            "flex h-9 items-center gap-2 rounded-lg border border-border/60 bg-background px-3 text-[13px] outline-none transition-all whitespace-nowrap",
-            "hover:border-border focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20 data-[state=open]:border-primary/40 data-[state=open]:ring-2 data-[state=open]:ring-ring/20",
-            value.length === 0 && "text-muted-foreground/70",
-          )}
-        >
-          <span>
-            {value.length === 0
-              ? "Tutti gli stati"
-              : `Stato (${value.length})`}
-          </span>
-          <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-        </button>
-      </Popover.Trigger>
-
-      <Popover.Portal>
-        <Popover.Content
-          align="start"
-          sideOffset={4}
-          className="z-50 min-w-[180px] rounded-xl border border-border bg-popover p-1.5 shadow-[0_8px_30px_rgba(0,0,0,0.10)] outline-none animate-in fade-in-0 zoom-in-95"
-        >
-          {orderStatuses.map((s) => (
-            <div
-              key={s.code}
-              role="option"
-              aria-selected={value.includes(s.code)}
-              className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] transition-colors hover:bg-muted/60"
-              onClick={() => toggle(s.code)}
-            >
-              <CheckboxDisplay checked={value.includes(s.code)} />
-              {s.description}
-            </div>
-          ))}
-        </Popover.Content>
-      </Popover.Portal>
-    </Popover.Root>
+    <div className="flex flex-wrap items-center gap-1.5">
+      {orderStatuses.map((s) => {
+        const active = value.includes(s.code);
+        const variant = getStatusVariant(s.code);
+        return (
+          <button
+            key={s.code}
+            type="button"
+            onClick={() => toggle(s.code)}
+            className={cn(
+              "inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold leading-none tracking-wide transition-all cursor-pointer",
+              active
+                ? statusBadgeVariants({ variant })
+                : "border border-border/50 bg-transparent text-muted-foreground hover:border-border hover:text-foreground",
+            )}
+          >
+            {s.description}
+          </button>
+        );
+      })}
+    </div>
   );
 }

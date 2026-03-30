@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus } from "lucide-react";
 import { Button } from "@/shared/ui/button";
+import { Card } from "@/shared/ui/card";
 import { PaginationControls } from "@/shared/ui/pagination-controls";
 import { useArticles } from "../hooks/use-articles";
 import { ArticlesTable } from "../components/articles-table";
@@ -35,7 +36,7 @@ export function ArticlesListPage() {
         </p>
       </div>
 
-      <div className="rounded-xl border border-border/60 bg-card shadow-[0_1px_3px_0_rgba(0,0,0,0.04)]">
+      <Card>
         <div className="flex items-center justify-between border-b border-border/50 px-4 py-3">
           <ArticlesFiltersBar
             filters={filters}
@@ -59,7 +60,7 @@ export function ArticlesListPage() {
             onPageChange={(offset) => setFilters((f) => ({ ...f, offset }))}
           />
         )}
-      </div>
+      </Card>
     </div>
   );
 }

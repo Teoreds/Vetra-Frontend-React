@@ -1,16 +1,10 @@
 import { DataTable, type Column } from "@/shared/ui/data-table";
+import { formatCurrency } from "@/shared/lib/utils";
 import { useOrder } from "../hooks/use-order";
 import type { OrderRowOut } from "../types/order.types";
 
 interface OrderRowsTableProps {
   orderGuid: string;
-}
-
-function fmt(n: number) {
-  return new Intl.NumberFormat("it-IT", {
-    style: "currency",
-    currency: "EUR",
-  }).format(n);
 }
 
 export function OrderRowsTable({ orderGuid }: OrderRowsTableProps) {
@@ -37,14 +31,14 @@ export function OrderRowsTable({ orderGuid }: OrderRowsTableProps) {
     {
       key: "unit_price",
       header: "Prezzo Unitario",
-      render: (row) => <span>{fmt(parseFloat(row.unit_price))}</span>,
+      render: (row) => <span>{formatCurrency(parseFloat(row.unit_price))}</span>,
     },
     {
       key: "total",
       header: "Totale",
       render: (row) => (
         <span className="font-medium">
-          {fmt(parseFloat(row.quantity) * parseFloat(row.unit_price))}
+          {formatCurrency(parseFloat(row.quantity) * parseFloat(row.unit_price))}
         </span>
       ),
     },

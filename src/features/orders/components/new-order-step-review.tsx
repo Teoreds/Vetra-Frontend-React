@@ -21,6 +21,7 @@ import { usePartyLocations } from "@/features/parties/hooks/use-party-locations"
 import { useWarehouseWorkers } from "@/features/warehouses/hooks/use-warehouse-workers";
 import { CalendarDays, User, MapPin } from "lucide-react";
 import type { Step1Data } from "./new-order-step-details";
+import { formatCurrency } from "@/shared/lib/utils";
 import type { OrderRowDraft } from "./new-order-step-items";
 
 interface NewOrderStepReviewProps {
@@ -29,10 +30,6 @@ interface NewOrderStepReviewProps {
   availableRows: OrderRowDraft[];
   commitmentRows: OrderRowDraft[];
   onBack: () => void;
-}
-
-function fmt(n: number) {
-  return new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(n);
 }
 
 function ReadOnlyTable({ rows, label }: { rows: OrderRowDraft[]; label: string }) {
@@ -68,11 +65,11 @@ function ReadOnlyTable({ rows, label }: { rows: OrderRowDraft[]; label: string }
                     <span className="ml-1 text-[11px] text-muted-foreground">{row.unit_of_measure_code}</span>
                   )}
                 </TableCell>
-                <TableCell className="text-right">{fmt(Number(row.unit_price) || 0)}</TableCell>
+                <TableCell className="text-right">{formatCurrency(Number(row.unit_price) || 0)}</TableCell>
                 <TableCell className="text-right">
                   {discPct > 0 ? `${discPct}%` : "—"}
                 </TableCell>
-                <TableCell className="text-right font-medium">{fmt(subtotal)}</TableCell>
+                <TableCell className="text-right font-medium">{formatCurrency(subtotal)}</TableCell>
               </TableRow>
             );
           })}
@@ -196,7 +193,7 @@ export function NewOrderStepReview({
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
-              <h3 className="text-[14px] font-semibold">Righe Ordine</h3>
+              <h3 className="text-sm font-semibold">Righe Ordine</h3>
               <Badge variant="secondary">{availableRows.length + commitmentRows.length} righe</Badge>
             </div>
           </CardHeader>
@@ -244,7 +241,7 @@ export function NewOrderStepReview({
         {/* VAT Breakdown */}
         <Card>
           <CardHeader>
-            <h3 className="text-[14px] font-semibold">Riepilogo IVA</h3>
+            <h3 className="text-sm font-semibold">Riepilogo IVA</h3>
           </CardHeader>
           <CardContent className="space-y-3 pt-0">
             {isLoadingOrder ? (
@@ -256,17 +253,17 @@ export function NewOrderStepReview({
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-[13px] text-muted-foreground">Imponibile Lordo</span>
-                  <span className="text-[13px] font-medium">{fmt(totalGross)}</span>
+                  <span className="text-[13px] font-medium">{formatCurrency(totalGross)}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-[13px] text-muted-foreground">Sconto Totale</span>
                   <span className="text-[13px] font-medium text-destructive">
-                    {totalDiscount > 0 ? `−${fmt(totalDiscount)}` : "—"}
+                    {totalDiscount > 0 ? `−${formatCurrency(totalDiscount)}` : "—"}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-[13px] text-muted-foreground">Imponibile Netto</span>
-                  <span className="text-[13px] font-medium">{fmt(totalNet)}</span>
+                  <span className="text-[13px] font-medium">{formatCurrency(totalNet)}</span>
                 </div>
                 <Separator />
                 <div className="flex items-center justify-between">
@@ -274,13 +271,13 @@ export function NewOrderStepReview({
                     {isVatExempt ? "IVA esente (lettera d'intento)" : `IVA (${vatPctLabel})`}
                   </span>
                   <span className="text-[13px] font-medium">
-                    {isVatExempt ? "€ 0,00" : fmt(totalVat)}
+                    {isVatExempt ? "€ 0,00" : formatCurrency(totalVat)}
                   </span>
                 </div>
                 <Separator />
                 <div className="flex items-center justify-between">
-                  <span className="text-[14px] font-semibold">Totale</span>
-                  <span className="text-[16px] font-bold text-primary">{fmt(grandTotal)}</span>
+                  <span className="text-sm font-semibold">Totale</span>
+                  <span className="text-base font-bold text-primary">{formatCurrency(grandTotal)}</span>
                 </div>
               </div>
             )}
@@ -292,7 +289,7 @@ export function NewOrderStepReview({
           <CardHeader>
             <div className="flex items-center gap-2">
               <PenLine className={`h-4 w-4 ${!workerGuid ? "text-amber-500" : "text-emerald-500"}`} />
-              <h3 className="text-[14px] font-semibold">Firma Operatore</h3>
+              <h3 className="text-sm font-semibold">Firma Operatore</h3>
               {!workerGuid && (
                 <Badge variant="secondary" className="ml-auto border-amber-200 bg-amber-100 text-amber-700 dark:border-amber-900/40 dark:bg-amber-950 dark:text-amber-400">
                   Richiesta
@@ -324,7 +321,7 @@ export function NewOrderStepReview({
               </Select>
             )}
             {confirmError && (
-              <p className="mt-2 text-[12px] font-medium text-destructive">{confirmError}</p>
+              <p className="mt-2 text-[11px] font-medium text-destructive">{confirmError}</p>
             )}
           </CardContent>
         </Card>

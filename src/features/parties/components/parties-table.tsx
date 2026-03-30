@@ -2,8 +2,9 @@ import { useNavigate } from "react-router-dom";
 import { Pencil, MoreVertical } from "lucide-react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { DataTable, type Column } from "@/shared/ui/data-table";
+import { StatusBadge, type StatusBadgeVariant } from "@/shared/ui/status-badge";
 import type { PartyOut } from "../types/party.types";
-import { usePartyTypes } from "@/shared/hooks/use-lookups";
+import { usePartyTypes, usePartyCategories, usePaymentTerms } from "@/shared/hooks/use-lookups";
 import { PartyAvatar } from "./party-avatar";
 
 interface PartiesTableProps {
@@ -11,15 +12,17 @@ interface PartiesTableProps {
   isLoading?: boolean;
 }
 
-const TYPE_BADGE_STYLES: Record<string, string> = {
-  CUSTOMER: "bg-primary/8 text-primary ring-1 ring-inset ring-primary/20",
-  SUPPLIER: "bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-200",
-  CARRIER: "bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-200",
+const TYPE_BADGE_VARIANT: Record<string, StatusBadgeVariant> = {
+  CUSTOMER: "customer",
+  SUPPLIER: "supplier",
+  CARRIER: "carrier",
 };
 
 export function PartiesTable({ parties, isLoading }: PartiesTableProps) {
   const navigate = useNavigate();
   const { map: typeLabels } = usePartyTypes();
+  const { map: categoryLabels } = usePartyCategories();
+  const { map: paymentTermLabels } = usePaymentTerms();
 
   const columns: Column<PartyOut>[] = [
     {
@@ -46,13 +49,10 @@ export function PartiesTable({ parties, isLoading }: PartiesTableProps) {
       header: "Tipo",
       className: "w-36",
       render: (row) => (
-        <span
-          className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold leading-none tracking-wide ${
-            TYPE_BADGE_STYLES[row.type_code] ?? "bg-slate-100 text-slate-600"
-          }`}
-        >
-          {typeLabels.get(row.type_code) ?? row.type_code}
-        </span>
+        <StatusBadge
+          variant={TYPE_BADGE_VARIANT[row.type_code] ?? "default"}
+          label={typeLabels.get(row.type_code) ?? row.type_code}
+        />
       ),
     },
     {
@@ -62,6 +62,26 @@ export function PartiesTable({ parties, isLoading }: PartiesTableProps) {
       render: (row) => (
         <span className="text-[13px] text-muted-foreground font-mono">
           {row.vat_number ?? "—"}
+        </span>
+      ),
+    },
+    {
+      key: "category_code",
+      header: "Categoria",
+      className: "w-36",
+      render: (row) => (
+        <span className="text-[13px] text-muted-foreground">
+          {row.category_code ? (categoryLabels.get(row.category_code) ?? row.category_code) : "—"}
+        </span>
+      ),
+    },
+    {
+      key: "default_payment_term_guid",
+      header: "Cond. Pagamento",
+      className: "w-44",
+      render: (row) => (
+        <span className="text-[13px] text-muted-foreground">
+          {row.default_payment_term_guid ? (paymentTermLabels.get(row.default_payment_term_guid) ?? "—") : "—"}
         </span>
       ),
     },
@@ -85,7 +105,7 @@ export function PartiesTable({ parties, isLoading }: PartiesTableProps) {
               <DropdownMenu.Content
                 align="end"
                 sideOffset={4}
-                className="z-50 min-w-[160px] rounded-lg border border-border/60 bg-popover p-1 shadow-lg animate-in fade-in-0 zoom-in-95"
+                className="z-50 min-w-[160px] rounded-xl border border-border/60 bg-popover p-1 shadow-lg animate-in fade-in-0 zoom-in-95"
                 onClick={(e) => e.stopPropagation()}
               >
                 <DropdownMenu.Item

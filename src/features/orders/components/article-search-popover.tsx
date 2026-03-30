@@ -48,7 +48,7 @@ export function ArticleSearchPopover({ onSelect }: ArticleSearchPopoverProps) {
           side="bottom"
           align="start"
           sideOffset={6}
-          className="z-50 w-80 rounded-xl border border-border bg-popover shadow-[0_8px_30px_rgba(0,0,0,0.08)] outline-none"
+          className="z-50 w-80 rounded-xl border border-border/60 bg-popover shadow-lg outline-none"
         >
           {/* Search input */}
           <div className="flex items-center gap-2 border-b border-border/60 px-3 py-2.5">

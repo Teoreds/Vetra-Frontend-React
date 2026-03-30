@@ -6,16 +6,9 @@ import {
   ImagePlus,
   Trash2,
   Loader2,
-  Plus,
-  ChevronDown,
-  Mail,
-  MapPin,
-  Percent,
-  FileText,
-  Package,
 } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import * as Tabs from "@radix-ui/react-tabs";
 import { Button } from "@/shared/ui/button";
 import { useParty } from "../hooks/use-party";
 import { partiesApi } from "../api/parties.api";
@@ -23,7 +16,9 @@ import { partyKeys } from "../api/parties.queries";
 import { PartyOverview } from "../components/party-overview";
 import { ContactsSection } from "../components/contacts-section";
 import { LocationsSection } from "../components/locations-section";
-import { RelatedOrdersSection } from "../components/related-orders-section";
+import { DiscountsTab } from "../components/discounts-tab";
+import { OrdersTab } from "../components/orders-tab";
+import { SupplierArticlesTab } from "../components/supplier-articles-tab";
 import { PartyAvatar } from "../components/party-avatar";
 import { AuthImage } from "@/shared/ui/auth-image";
 import { usePartyTypes } from "@/shared/hooks/use-lookups";
@@ -69,15 +64,19 @@ export function PartyDetailPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        <Loader2 className="h-6 w-6 animate-spin text-primary/40" />
       </div>
     );
   }
 
   if (error || !party) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <p className="text-muted-foreground">Nessuna anagrafica trovata.</p>
+      <div className="flex flex-col items-center justify-center gap-3 py-20">
+        <p className="text-[13px] text-muted-foreground">Nessuna anagrafica trovata.</p>
+        <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
+          <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
+          Torna alle anagrafiche
+        </Button>
       </div>
     );
   }
@@ -87,12 +86,12 @@ export function PartyDetailPage() {
   const isSupplier = party.type_code === "SUPPLIER";
 
   return (
-    <div>
-      {/* Sticky header */}
+    <Tabs.Root defaultValue="anagrafica" className="flex flex-col">
+      {/* Sticky header + tab list */}
       <div className="sticky -top-6 z-30 -mx-8 -mt-6 bg-page/80 backdrop-blur-sm px-8 pt-6">
-        <div className="flex items-center justify-between">
+        <div className="mx-auto max-w-5xl flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate("/parties")}>
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate(-1)}>
               <ArrowLeft className="h-4 w-4" />
             </Button>
 
@@ -143,101 +142,62 @@ export function PartyDetailPage() {
 
             <div>
               <h1 className="text-xl font-bold tracking-tight leading-none">{party.description}</h1>
-              <span className="text-[12px] text-muted-foreground capitalize">
+              <span className="text-[11px] text-muted-foreground capitalize">
                 {typeLabels.get(party.type_code)?.toLowerCase() ?? party.type_code.toLowerCase()}
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5">
-            {/* Add dropdown */}
-            <DropdownMenu.Root>
-              <DropdownMenu.Trigger asChild>
-                <Button size="sm" variant="outline">
-                  <Plus className="mr-1 h-3.5 w-3.5" />
-                  Aggiungi
-                  <ChevronDown className="ml-1 h-3 w-3 text-muted-foreground" />
-                </Button>
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Portal>
-                <DropdownMenu.Content
-                  align="end"
-                  sideOffset={4}
-                  className="z-50 min-w-[200px] rounded-lg border border-border/60 bg-popover p-1 shadow-lg animate-in fade-in-0 zoom-in-95"
-                >
-                  <DropdownMenu.Item
-                    className="flex cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
-                    onSelect={() => setOpenDialog("contact")}
-                  >
-                    <Mail className="h-3.5 w-3.5 text-muted-foreground" />
-                    Contatto
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item
-                    className="flex cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
-                    onSelect={() => setOpenDialog("address")}
-                  >
-                    <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
-                    Indirizzo
-                  </DropdownMenu.Item>
-                  {isCustomer && (
-                    <>
-                      <DropdownMenu.Separator className="my-1 h-px bg-border/60" />
-                      <DropdownMenu.Item
-                        className="flex cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
-                        onSelect={() => setOpenDialog("discount")}
-                      >
-                        <Percent className="h-3.5 w-3.5 text-muted-foreground" />
-                        Sconto
-                      </DropdownMenu.Item>
-                      <DropdownMenu.Item
-                        className="flex cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
-                        onSelect={() => setOpenDialog("intent-letter")}
-                      >
-                        <FileText className="h-3.5 w-3.5 text-muted-foreground" />
-                        Lettera d'Intento
-                      </DropdownMenu.Item>
-                    </>
-                  )}
-                  {isSupplier && (
-                    <>
-                      <DropdownMenu.Separator className="my-1 h-px bg-border/60" />
-                      <DropdownMenu.Item
-                        className="flex cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
-                        onSelect={() => setOpenDialog("supplier-article")}
-                      >
-                        <Package className="h-3.5 w-3.5 text-muted-foreground" />
-                        Articolo Fornito
-                      </DropdownMenu.Item>
-                    </>
-                  )}
-                </DropdownMenu.Content>
-              </DropdownMenu.Portal>
-            </DropdownMenu.Root>
-
-            <Button size="sm" onClick={() => navigate(`/parties/${party.guid}/edit`)}>
-              <Pencil className="mr-1.5 h-3.5 w-3.5" />
-              Modifica
-            </Button>
-          </div>
+          <Button size="sm" onClick={() => navigate(`/parties/${party.guid}/edit`)}>
+            <Pencil className="mr-1.5 h-3.5 w-3.5" />
+            Modifica
+          </Button>
         </div>
 
-        <div className="mt-3 h-px bg-border/60" />
+        {/* Tab list */}
+        <Tabs.List className="mx-auto max-w-5xl mt-3 flex gap-0 border-b border-border/60">
+          <TabTrigger value="anagrafica">Anagrafica</TabTrigger>
+          {isCustomer && <TabTrigger value="sconti">Sconti</TabTrigger>}
+          {isCustomer && <TabTrigger value="ordini">Ordini</TabTrigger>}
+          {isSupplier && <TabTrigger value="articoli">Articoli</TabTrigger>}
+        </Tabs.List>
       </div>
 
-      {/* Content */}
-      <div className="mx-auto max-w-4xl pt-6">
-        <div className="flex gap-5">
-          <div className="min-w-0 flex-1">
-            <PartyOverview party={party} />
+      {/* Tab content — scrolls normally */}
+      <div className="mx-auto w-full max-w-5xl pt-6">
+        <Tabs.Content value="anagrafica">
+          <div className="flex gap-5">
+            <div className="min-w-0 flex-1">
+              <PartyOverview party={party} />
+            </div>
+            <div className="w-80 shrink-0 space-y-4">
+              <ContactsSection partyGuid={party.guid} onAdd={() => setOpenDialog("contact")} />
+              <LocationsSection partyGuid={party.guid} onAdd={() => setOpenDialog("address")} />
+            </div>
           </div>
-          <div className="w-72 shrink-0 space-y-4">
-            <ContactsSection partyGuid={party.guid} />
-            <LocationsSection partyGuid={party.guid} />
-          </div>
-        </div>
-        <div className="mt-6">
-          <RelatedOrdersSection partyGuid={party.guid} />
-        </div>
+        </Tabs.Content>
+
+        {isCustomer && (
+          <Tabs.Content value="sconti">
+            <DiscountsTab
+              partyGuid={party.guid}
+              onAddDiscount={() => setOpenDialog("discount")}
+              onAddIntentLetter={() => setOpenDialog("intent-letter")}
+            />
+          </Tabs.Content>
+        )}
+
+        {isCustomer && (
+          <Tabs.Content value="ordini">
+            <OrdersTab partyGuid={party.guid} />
+          </Tabs.Content>
+        )}
+
+        {isSupplier && (
+          <Tabs.Content value="articoli">
+            <SupplierArticlesTab onAddArticle={() => setOpenDialog("supplier-article")} />
+          </Tabs.Content>
+        )}
       </div>
 
       {/* Dialogs */}
@@ -272,6 +232,17 @@ export function PartyDetailPage() {
           partyGuid={party.guid}
         />
       )}
-    </div>
+    </Tabs.Root>
+  );
+}
+
+function TabTrigger({ value, children }: { value: string; children: React.ReactNode }) {
+  return (
+    <Tabs.Trigger
+      value={value}
+      className="relative px-4 py-2.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground data-[state=active]:text-foreground after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:rounded-full after:bg-primary after:opacity-0 after:transition-opacity data-[state=active]:after:opacity-100"
+    >
+      {children}
+    </Tabs.Trigger>
   );
 }

@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback, forwardRef, useImperativeHand
 import { Search, Loader2 } from "lucide-react";
 import { useArticles } from "@/features/articles/hooks/use-articles";
 import type { ArticleOut } from "@/features/articles/types/article.types";
+import { AuthImage } from "@/shared/ui/auth-image";
 import { cn } from "@/shared/lib/utils";
 
 export interface ArticleInlineSearchHandle {
@@ -126,7 +127,7 @@ export const ArticleInlineSearch = forwardRef<ArticleInlineSearchHandle, Article
 
       {/* Dropdown */}
       {open && (
-        <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-56 overflow-y-auto rounded-xl border border-border bg-popover shadow-[0_8px_30px_rgba(0,0,0,0.08)]">
+        <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-56 overflow-y-auto rounded-xl border border-border/60 bg-popover shadow-lg">
           {articles.length === 0 && !isLoading && (
             <p className="px-3 py-4 text-center text-[13px] text-muted-foreground">
               {search.trim().length >= 1
@@ -150,8 +151,19 @@ export const ArticleInlineSearch = forwardRef<ArticleInlineSearchHandle, Article
                 index === focusedIndex ? "bg-accent" : "hover:bg-accent/60",
               )}
             >
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary/8 text-[10px] font-bold text-primary">
-                {article.code.slice(0, 2).toUpperCase()}
+              <div className="h-7 w-7 shrink-0 overflow-hidden rounded-md bg-primary/8">
+                {article.image_path ? (
+                  <AuthImage
+                    src={`/articles/${article.guid}/image`}
+                    alt={article.description}
+                    className="h-full w-full object-cover"
+                    fallbackClassName="h-full w-full"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-[10px] font-bold text-primary">
+                    {article.code.slice(0, 2).toUpperCase()}
+                  </div>
+                )}
               </div>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[13px] font-medium">{article.description}</p>

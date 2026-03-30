@@ -158,12 +158,10 @@ export function NewOrderStepItems({
     setIsSaving(true);
     setSaveError(null);
 
-    const allRows = [...values.available_rows, ...values.commitment_rows];
-
     if (mode === "edit") {
       // Collect current _serverGuids still present
       const currentServerGuids = new Set(
-        allRows.map((r) => r._serverGuid).filter(Boolean) as string[],
+        [...values.available_rows, ...values.commitment_rows].map((r) => r._serverGuid).filter(Boolean) as string[],
       );
 
       // Delete removed rows from the server
@@ -181,42 +179,61 @@ export function NewOrderStepItems({
       }
 
       // Update existing rows or create new ones
-      for (const row of allRows) {
+      for (let i = 0; i < values.available_rows.length; i++) {
+        const row = values.available_rows[i];
         if (row._serverGuid) {
           const { error } = await ordersApi.updateRow(row._serverGuid, {
             quantity: row.quantity,
             unit_price: row.unit_price,
+            availability_status_code: "AVAILABLE",
           });
-          if (error) {
-            setSaveError("Errore nel salvataggio delle righe. Riprova.");
-            setIsSaving(false);
-            return;
-          }
+          if (error) { setSaveError("Errore nel salvataggio delle righe. Riprova."); setIsSaving(false); return; }
         } else {
-          const { error } = await ordersApi.createRow(orderGuid, {
+          const { data, error } = await ordersApi.createRow(orderGuid, {
             article_guid: row.article_guid,
             quantity: row.quantity,
             unit_price: row.unit_price,
             discount_percent: row.discount_percent,
-            availability_status_code: "UNKNOWN",
+            availability_status_code: "AVAILABLE",
             unit_of_measure_code: row.unit_of_measure_code || null,
           });
-          if (error) {
-            setSaveError("Errore nel salvataggio delle righe. Riprova.");
-            setIsSaving(false);
-            return;
-          }
+          if (error) { setSaveError("Errore nel salvataggio delle righe. Riprova."); setIsSaving(false); return; }
+          if (data) setValue(`available_rows.${i}._serverGuid`, data.guid);
+        }
+      }
+      for (let i = 0; i < values.commitment_rows.length; i++) {
+        const row = values.commitment_rows[i];
+        if (row._serverGuid) {
+          const { error } = await ordersApi.updateRow(row._serverGuid, {
+            quantity: row.quantity,
+            unit_price: row.unit_price,
+            availability_status_code: "COMMITMENT",
+          });
+          if (error) { setSaveError("Errore nel salvataggio delle righe. Riprova."); setIsSaving(false); return; }
+        } else {
+          const { data, error } = await ordersApi.createRow(orderGuid, {
+            article_guid: row.article_guid,
+            quantity: row.quantity,
+            unit_price: row.unit_price,
+            discount_percent: row.discount_percent,
+            availability_status_code: "COMMITMENT",
+            unit_of_measure_code: row.unit_of_measure_code || null,
+          });
+          if (error) { setSaveError("Errore nel salvataggio delle righe. Riprova."); setIsSaving(false); return; }
+          if (data) setValue(`commitment_rows.${i}._serverGuid`, data.guid);
         }
       }
     } else {
-      // Create mode — POST each row
-      for (const row of allRows) {
-        const { error } = await ordersApi.createRow(orderGuid, {
+      // Create mode — POST each row, skip already-saved ones (_serverGuid set)
+      for (let i = 0; i < values.available_rows.length; i++) {
+        const row = values.available_rows[i];
+        if (row._serverGuid) continue;
+        const { data, error } = await ordersApi.createRow(orderGuid, {
           article_guid: row.article_guid,
           quantity: row.quantity,
           unit_price: row.unit_price,
           discount_percent: row.discount_percent,
-          availability_status_code: "UNKNOWN",
+          availability_status_code: "AVAILABLE",
           unit_of_measure_code: row.unit_of_measure_code || null,
         });
         if (error) {
@@ -224,6 +241,25 @@ export function NewOrderStepItems({
           setIsSaving(false);
           return;
         }
+        if (data) setValue(`available_rows.${i}._serverGuid`, data.guid);
+      }
+      for (let i = 0; i < values.commitment_rows.length; i++) {
+        const row = values.commitment_rows[i];
+        if (row._serverGuid) continue;
+        const { data, error } = await ordersApi.createRow(orderGuid, {
+          article_guid: row.article_guid,
+          quantity: row.quantity,
+          unit_price: row.unit_price,
+          discount_percent: row.discount_percent,
+          availability_status_code: "COMMITMENT",
+          unit_of_measure_code: row.unit_of_measure_code || null,
+        });
+        if (error) {
+          setSaveError("Errore nel salvataggio delle righe. Riprova.");
+          setIsSaving(false);
+          return;
+        }
+        if (data) setValue(`commitment_rows.${i}._serverGuid`, data.guid);
       }
     }
 
@@ -242,7 +278,7 @@ export function NewOrderStepItems({
   }
 
   const inputCls =
-    "h-7 w-full rounded-md border border-border/60 bg-background px-2 text-[12px] outline-none transition-all focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20";
+    "h-7 w-full rounded-md border border-border/60 bg-background px-2 text-[13px] outline-none transition-all focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20";
   const th = "px-2 h-7";
   const td = "px-2 py-1";
 
@@ -273,7 +309,7 @@ export function NewOrderStepItems({
               <TableRow key={field.id}>
                 <TableCell className={td}>
                   <div>
-                    <p className="text-[12px] font-medium leading-tight">
+                    <p className="text-[13px] font-medium leading-tight">
                       {watchedRows[index]?.article_description}
                     </p>
                     <p className="text-[11px] text-muted-foreground">
@@ -309,7 +345,7 @@ export function NewOrderStepItems({
                 </TableCell>
                 <TableCell className={td}>
                   <div className="group/price relative">
-                    <span className="flex h-7 items-center px-2 text-[12px] group-focus-within/price:invisible">
+                    <span className="flex h-7 items-center px-2 text-[13px] group-focus-within/price:invisible">
                       {rates
                         ? fromEur(watchedRows[index]?.unit_price ?? 0, rates, currency).toFixed(2)
                         : (watchedRows[index]?.unit_price ?? 0).toFixed(2)}
@@ -320,13 +356,13 @@ export function NewOrderStepItems({
                       min="0"
                       {...register(`${prefix}.${index}.unit_price`, { valueAsNumber: true })}
                       onKeyDown={handleTableInputKeyDown}
-                      className="absolute inset-0 h-full w-full rounded-md border border-border/60 bg-background px-2 text-[12px] opacity-0 outline-none transition-all focus:opacity-100 focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      className="absolute inset-0 h-full w-full rounded-md border border-border/60 bg-background px-2 text-[13px] opacity-0 outline-none transition-all focus:opacity-100 focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                     />
                   </div>
                 </TableCell>
                 <TableCell className={td}>
                   <div className="group/disc relative">
-                    <span className="flex h-7 items-center px-2 text-[12px] group-focus-within/disc:invisible">
+                    <span className="flex h-7 items-center px-2 text-[13px] group-focus-within/disc:invisible">
                       {(watchedRows[index]?.discount_percent ?? 0).toFixed(2)}%
                     </span>
                     <input
@@ -336,7 +372,7 @@ export function NewOrderStepItems({
                       max="100"
                       {...register(`${prefix}.${index}.discount_percent`, { valueAsNumber: true })}
                       onKeyDown={handleTableInputKeyDown}
-                      className="absolute inset-0 h-full w-full rounded-md border border-border/60 bg-background px-2 text-[12px] opacity-0 outline-none transition-all focus:opacity-100 focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      className="absolute inset-0 h-full w-full rounded-md border border-border/60 bg-background px-2 text-[13px] opacity-0 outline-none transition-all focus:opacity-100 focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                     />
                   </div>
                 </TableCell>
@@ -396,7 +432,7 @@ export function NewOrderStepItems({
               <CurrencySelector value={currency} onChange={setCurrency} />
             </div>
             {errors.commitment_rows && (
-              <p className="text-[12px] text-destructive">
+              <p className="text-[11px] text-destructive">
                 {errors.commitment_rows.message ?? errors.commitment_rows.root?.message}
               </p>
             )}
@@ -406,10 +442,10 @@ export function NewOrderStepItems({
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
-                <h3 className="text-[14px] font-semibold">Articoli Disponibili</h3>
+                <h3 className="text-sm font-semibold">Articoli Disponibili</h3>
                 <Badge variant="success">{available.fields.length}</Badge>
               </div>
-              <p className="text-[12px] text-muted-foreground">
+              <p className="text-[11px] text-muted-foreground">
                 Articoli presenti in magazzino, pronti per la spedizione.
               </p>
             </CardHeader>
@@ -438,10 +474,10 @@ export function NewOrderStepItems({
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
-                <h3 className="text-[14px] font-semibold">Impegno Cliente</h3>
+                <h3 className="text-sm font-semibold">Impegno Cliente</h3>
                 <Badge variant="default">{commitment.fields.length}</Badge>
               </div>
-              <p className="text-[12px] text-muted-foreground">
+              <p className="text-[11px] text-muted-foreground">
                 Articoli da ordinare dal fornitore.
               </p>
             </CardHeader>

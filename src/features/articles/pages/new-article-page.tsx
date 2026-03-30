@@ -157,12 +157,12 @@ export function NewArticlePage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-3">
+      <div className="mx-auto max-w-2xl flex items-center gap-3">
         <Button
           variant="ghost"
           size="icon"
           className="h-8 w-8"
-          onClick={() => navigate("/articles")}
+          onClick={() => navigate(-1)}
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
@@ -206,6 +206,7 @@ export function NewArticlePage() {
               <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageSelect} />
               <button
                 type="button"
+                tabIndex={-1}
                 onClick={() => imageInputRef.current?.click()}
                 className="group/avatar relative h-[88px] w-[88px] shrink-0 overflow-hidden rounded-xl border border-border/60 bg-muted/50 transition-colors hover:border-primary/40"
               >
@@ -232,7 +233,7 @@ export function NewArticlePage() {
                       error={!!errors.code}
                     />
                     {errors.code && (
-                      <p className="text-[12px] text-destructive">{errors.code.message}</p>
+                      <p className="text-[11px] text-destructive">{errors.code.message}</p>
                     )}
                   </div>
                   <div className="space-y-1.5">
@@ -243,13 +244,14 @@ export function NewArticlePage() {
                       error={!!errors.description}
                     />
                     {errors.description && (
-                      <p className="text-[12px] text-destructive">{errors.description.message}</p>
+                      <p className="text-[11px] text-destructive">{errors.description.message}</p>
                     )}
                   </div>
                 </div>
                 {imagePreview && (
                   <button
                     type="button"
+                    tabIndex={-1}
                     onClick={clearImage}
                     className="self-start text-[11px] text-muted-foreground hover:text-destructive"
                   >
@@ -282,7 +284,7 @@ export function NewArticlePage() {
                   )}
                 />
                 {errors.unit_of_measure_code && (
-                  <p className="text-[12px] text-destructive">
+                  <p className="text-[11px] text-destructive">
                     {errors.unit_of_measure_code.message}
                   </p>
                 )}
@@ -464,7 +466,7 @@ export function NewArticlePage() {
           <Button
             type="button"
             variant="outline"
-            onClick={() => { store.clear(); navigate("/articles"); }}
+            onClick={() => { store.clear(); navigate(-1); }}
           >
             Annulla
           </Button>

@@ -35,13 +35,13 @@ export function PickNoteHeader({ pickNote }: PickNoteHeaderProps) {
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between">
+      <div className="mx-auto max-w-4xl flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Button
             variant="ghost"
             size="icon"
             className="h-8 w-8"
-            onClick={() => navigate("/pick-notes")}
+            onClick={() => navigate(-1)}
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
@@ -49,7 +49,7 @@ export function PickNoteHeader({ pickNote }: PickNoteHeaderProps) {
             <h1 className="text-xl font-bold tracking-tight leading-none">
               Nota #{pickNote.guid.slice(0, 8).toUpperCase()}
             </h1>
-            <span className="text-[12px] text-muted-foreground">
+            <span className="text-[11px] text-muted-foreground">
               {new Date(pickNote.created_at).toLocaleDateString("it-IT", {
                 day: "2-digit",
                 month: "short",
@@ -87,7 +87,7 @@ export function PickNoteHeader({ pickNote }: PickNoteHeaderProps) {
         />
       </div>
 
-      <div className="h-px bg-border/60" />
+      <div className="mx-auto max-w-4xl h-px bg-border/60" />
     </div>
   );
 }

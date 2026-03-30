@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/shared/ui/button";
+import { Card } from "@/shared/ui/card";
 import { PaginationControls } from "@/shared/ui/pagination-controls";
 import { usePickNotes, type PickNoteListParams } from "../hooks/use-pick-notes";
 import { PickNotesTable } from "../components/pick-notes-table";
@@ -34,7 +35,7 @@ export function PickNoteListPage() {
         </p>
       </div>
 
-      <div className="rounded-xl border border-border/60 bg-card shadow-[0_1px_3px_0_rgba(0,0,0,0.04)]">
+      <Card>
         <div className="flex items-center justify-between border-b border-border/50 px-4 py-3">
           <PickNoteFiltersBar
             filters={filters}
@@ -58,7 +59,7 @@ export function PickNoteListPage() {
             onPageChange={(offset) => setFilters((f) => ({ ...f, offset }))}
           />
         )}
-      </div>
+      </Card>
     </div>
   );
 }

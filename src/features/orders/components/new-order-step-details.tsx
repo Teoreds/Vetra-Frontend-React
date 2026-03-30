@@ -123,7 +123,7 @@ export function NewOrderStepDetails({ defaultValues, onNext, isPending, error, r
                 )}
               />
               {errors.party_guid && (
-                <p className="text-[12px] text-destructive">{errors.party_guid.message}</p>
+                <p className="text-[11px] text-destructive">{errors.party_guid.message}</p>
               )}
             </div>
 
@@ -142,7 +142,7 @@ export function NewOrderStepDetails({ defaultValues, onNext, isPending, error, r
                 )}
               />
               {errors.order_date && (
-                <p className="text-[12px] text-destructive">{errors.order_date.message}</p>
+                <p className="text-[11px] text-destructive">{errors.order_date.message}</p>
               )}
             </div>
           </div>
@@ -242,7 +242,7 @@ export function NewOrderStepDetails({ defaultValues, onNext, isPending, error, r
                           {shippingLocations.map((loc) => (
                             <SelectItem key={loc.guid} value={loc.location_guid}>
                               {formatAddress(loc)}
-                              {loc.is_primary ? " (Primario)" : ""}
+                              {loc.is_primary && <span className="ml-1.5 inline-block h-1.5 w-1.5 rounded-full bg-foreground/25 align-middle" />}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -283,7 +283,7 @@ export function NewOrderStepDetails({ defaultValues, onNext, isPending, error, r
                           {billingLocations.map((loc) => (
                             <SelectItem key={loc.guid} value={loc.location_guid}>
                               {formatAddress(loc)}
-                              {loc.is_primary ? " (Primario)" : ""}
+                              {loc.is_primary && <span className="ml-1.5 inline-block h-1.5 w-1.5 rounded-full bg-foreground/25 align-middle" />}
                             </SelectItem>
                           ))}
                         </SelectContent>

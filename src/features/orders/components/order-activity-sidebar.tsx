@@ -3,6 +3,7 @@ import {
   ArrowRightCircle,
   PlusCircle,
   AlertCircle,
+  Loader2,
 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
 import { formatDateTime } from "@/shared/lib/utils";
@@ -60,13 +61,13 @@ export function OrderActivitySidebar({ orderGuid }: OrderActivitySidebarProps) {
     <Card className="sticky top-4">
       <CardHeader className="pb-3">
         <h3 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Attivit&agrave; Ordine
+          Attività Ordine
         </h3>
       </CardHeader>
       <CardContent className="pt-0">
         {isLoading ? (
           <div className="flex justify-center py-6">
-            <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+            <Loader2 className="h-5 w-5 animate-spin text-primary/40" />
           </div>
         ) : logs.length === 0 ? (
           <p className="py-4 text-center text-[13px] text-muted-foreground">
@@ -88,7 +89,7 @@ export function OrderActivitySidebar({ orderGuid }: OrderActivitySidebarProps) {
 
                 {/* Contenuto voce */}
                 <div className="flex-1 pb-4 pt-0.5">
-                  <p className="text-[12px] font-semibold leading-snug">
+                  <p className="text-[13px] font-semibold leading-snug">
                     {buildLogTitle(
                       log.action_code,
                       log.old_status_code,

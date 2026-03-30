@@ -212,7 +212,7 @@ export function NewPartyPage() {
   /* ── Render ────────────────────────────────────────── */
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto max-w-3xl space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3">
         <Button
@@ -252,14 +252,13 @@ export function NewPartyPage() {
 
       {/* Step 2 — Contacts & Addresses */}
       {store.currentStep === 2 && store.step1Data && (
-        <div className="mx-auto max-w-3xl">
-          <NewPartyStepContacts
-            defaultValues={store.step2Data ?? undefined}
-            onNext={handleStep2Next}
-            onBack={handleStep2Back}
-            error={error}
-          />
-        </div>
+        <NewPartyStepContacts
+          typeCode={store.step1Data.type_code}
+          defaultValues={store.step2Data ?? undefined}
+          onNext={handleStep2Next}
+          onBack={handleStep2Back}
+          error={error}
+        />
       )}
 
       {/* Step 3 — Commercial */}

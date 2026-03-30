@@ -2,14 +2,10 @@ import { useNavigate } from "react-router-dom";
 import { StatusBadge } from "@/shared/ui/status-badge";
 import { getStatusVariant } from "@/shared/ui/status-variants";
 import { useOrderStatuses } from "@/shared/hooks/use-lookups";
-import { formatDate } from "@/shared/lib/utils";
+import { formatDate, formatCurrency } from "@/shared/lib/utils";
 import type { components } from "@/shared/api/schema";
 
 type RecentOrder = components["schemas"]["RecentOrder"];
-
-function fmtEur(n: number) {
-  return new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(n);
-}
 
 export function LatestOrdersTable({ orders }: { orders: RecentOrder[] }) {
   const navigate = useNavigate();
@@ -32,8 +28,8 @@ export function LatestOrdersTable({ orders }: { orders: RecentOrder[] }) {
           onClick={() => navigate(`/orders/${o.guid}`)}
           className="group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-muted/60"
         >
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/6 text-[12px] font-semibold text-primary ring-1 ring-primary/10">
-            {o.party_description.charAt(0).toUpperCase()}
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/6 text-[13px] font-semibold text-primary ring-1 ring-primary/10">
+            {(o.party_description ?? "?").charAt(0).toUpperCase()}
           </span>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
@@ -49,7 +45,7 @@ export function LatestOrdersTable({ orders }: { orders: RecentOrder[] }) {
             <p className="text-[11px] text-muted-foreground">
               {formatDate(o.order_date)}
               {o.total_gross != null && (
-                <span className="ml-1.5 font-medium text-foreground/60">{fmtEur(Number(o.total_gross))}</span>
+                <span className="ml-1.5 font-medium text-foreground/60">{formatCurrency(Number(o.total_gross))}</span>
               )}
             </p>
           </div>

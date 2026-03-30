@@ -1,17 +1,13 @@
 import { useNavigate } from "react-router-dom";
-import { cn } from "@/shared/lib/utils";
+import { cn, formatCurrency, formatNumber } from "@/shared/lib/utils";
 import type { components } from "@/shared/api/schema";
 
 type TopParty = components["schemas"]["TopParty"];
 type TopArticle = components["schemas"]["TopArticle"];
 
-function fmtEur(n: number) {
-  return new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(n);
-}
-
 const RANK_STYLES = [
   "bg-amber-500/12 text-amber-600 ring-1 ring-amber-500/20",
-  "bg-slate-400/12 text-slate-500 ring-1 ring-slate-400/20",
+  "bg-muted-foreground/12 text-muted-foreground ring-1 ring-muted-foreground/20",
   "bg-orange-400/12 text-orange-500 ring-1 ring-orange-400/20",
 ];
 
@@ -46,8 +42,8 @@ export function TopPartiesList({ data }: { data: TopParty[] }) {
             <div className="min-w-0 flex-1">
               <div className="flex items-center justify-between gap-2">
                 <p className="truncate text-[13px] font-medium group-hover:text-primary transition-colors">{p.description}</p>
-                <span className="shrink-0 text-[12px] font-semibold tabular-nums">
-                  {fmtEur(gross)}
+                <span className="shrink-0 text-[13px] font-semibold tabular-nums">
+                  {formatCurrency(gross)}
                 </span>
               </div>
               <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-muted/80">
@@ -90,11 +86,11 @@ export function TopArticlesList({ data }: { data: TopArticle[] }) {
           <div className="min-w-0 flex-1">
             <p className="truncate text-[13px] font-medium group-hover:text-primary transition-colors">{a.description}</p>
             <p className="text-[11px] text-muted-foreground">
-              {a.code} — Qtà: {new Intl.NumberFormat("it-IT").format(Number(a.total_quantity))}
+              {a.code} — Qtà: {formatNumber(Number(a.total_quantity))}
             </p>
           </div>
-          <span className="shrink-0 text-[12px] font-semibold tabular-nums text-muted-foreground">
-            {fmtEur(Number(a.total_value))}
+          <span className="shrink-0 text-[13px] font-semibold tabular-nums text-muted-foreground">
+            {formatCurrency(Number(a.total_value))}
           </span>
         </button>
       ))}

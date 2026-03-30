@@ -1,24 +1,31 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { Loader2, ArrowLeft } from "lucide-react";
+import { Button } from "@/shared/ui/button";
 import { usePickNote } from "../hooks/use-pick-note";
 import { PickNoteHeader } from "../components/pick-note-header";
 import { PickNoteContent } from "../components/pick-note-content";
 
 export function PickNoteDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { data: pickNote, isLoading, error } = usePickNote(id!);
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        <Loader2 className="h-6 w-6 animate-spin text-primary/40" />
       </div>
     );
   }
 
   if (error || !pickNote) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <p className="text-muted-foreground">Nota di prelievo non trovata.</p>
+      <div className="flex flex-col items-center justify-center gap-3 py-20">
+        <p className="text-[13px] text-muted-foreground">Nota di prelievo non trovata.</p>
+        <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
+          <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
+          Torna alle note
+        </Button>
       </div>
     );
   }

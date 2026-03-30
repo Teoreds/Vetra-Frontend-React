@@ -82,7 +82,7 @@ export function CreateOrderModal({ open, onOpenChange }: CreateOrderModalProps) 
             )}
           />
           {errors.party_guid && (
-            <p className="text-[12px] text-destructive">{errors.party_guid.message}</p>
+            <p className="text-[11px] text-destructive">{errors.party_guid.message}</p>
           )}
         </div>
 
@@ -96,7 +96,7 @@ export function CreateOrderModal({ open, onOpenChange }: CreateOrderModalProps) 
             )}
           />
           {errors.order_date && (
-            <p className="text-[12px] text-destructive">{errors.order_date.message}</p>
+            <p className="text-[11px] text-destructive">{errors.order_date.message}</p>
           )}
         </div>
 

@@ -1,5 +1,5 @@
 import { useOrderStatuses } from "@/shared/hooks/use-lookups";
-import { cn } from "@/shared/lib/utils";
+import { cn, formatCurrency } from "@/shared/lib/utils";
 import type { components } from "@/shared/api/schema";
 
 type StatusBreakdown = components["schemas"]["StatusBreakdown"];
@@ -8,12 +8,8 @@ interface StatusPipelineProps {
   data: StatusBreakdown[];
 }
 
-function fmtEur(n: number) {
-  return new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(n);
-}
-
 const STATUS_COLORS: Record<string, { bar: string; dot: string }> = {
-  DRAFT:     { bar: "bg-slate-400",    dot: "bg-slate-400" },
+  DRAFT:     { bar: "bg-muted-foreground/60",  dot: "bg-muted-foreground/60" },
   CONFIRMED: { bar: "bg-blue-500",     dot: "bg-blue-500" },
   PARTIAL:   { bar: "bg-indigo-500",   dot: "bg-indigo-500" },
   FULFILLED: { bar: "bg-emerald-500",  dot: "bg-emerald-500" },
@@ -46,7 +42,7 @@ export function StatusPipeline({ data }: StatusPipelineProps) {
           return (
             <div
               key={d.status_code}
-              className={cn("transition-all first:rounded-l-full last:rounded-r-full", colors?.bar ?? "bg-slate-300")}
+              className={cn("transition-all first:rounded-l-full last:rounded-r-full", colors?.bar ?? "bg-muted-foreground/40")}
               style={{ width: `${pct}%` }}
               title={`${statusLabels.get(d.status_code) ?? d.status_code}: ${d.count}`}
             />
@@ -62,14 +58,14 @@ export function StatusPipeline({ data }: StatusPipelineProps) {
           return (
             <div key={d.status_code} className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2 min-w-0">
-                <div className={cn("h-2.5 w-2.5 shrink-0 rounded-full", colors?.dot ?? "bg-slate-300")} />
-                <span className="truncate text-[12px] text-muted-foreground">
+                <div className={cn("h-2.5 w-2.5 shrink-0 rounded-full", colors?.dot ?? "bg-muted-foreground/40")} />
+                <span className="truncate text-[11px] text-muted-foreground">
                   {statusLabels.get(d.status_code) ?? d.status_code}
                 </span>
               </div>
               <div className="flex items-center gap-1.5 shrink-0">
-                <span className="text-[12px] font-semibold tabular-nums">{d.count}</span>
-                <span className="text-[10px] text-muted-foreground/50 tabular-nums">({pct}%)</span>
+                <span className="text-[13px] font-semibold tabular-nums">{d.count}</span>
+                <span className="text-[11px] text-muted-foreground/50 tabular-nums">({pct}%)</span>
               </div>
             </div>
           );
@@ -78,11 +74,11 @@ export function StatusPipeline({ data }: StatusPipelineProps) {
 
       {/* Total footer */}
       <div className="flex items-center justify-between border-t border-border/40 pt-2.5">
-        <span className="text-[12px] font-medium text-muted-foreground">Totale</span>
+        <span className="text-[13px] font-medium text-muted-foreground">Totale</span>
         <div className="flex items-center gap-3">
-          <span className="text-[12px] font-semibold tabular-nums">{totalCount} ordini</span>
-          <span className="text-[12px] font-semibold tabular-nums text-muted-foreground">
-            {fmtEur(data.reduce((acc, d) => acc + Number(d.total), 0))}
+          <span className="text-[13px] font-semibold tabular-nums">{totalCount} ordini</span>
+          <span className="text-[13px] font-semibold tabular-nums text-muted-foreground">
+            {formatCurrency(data.reduce((acc, d) => acc + Number(d.total), 0), { maximumFractionDigits: 0 })}
           </span>
         </div>
       </div>

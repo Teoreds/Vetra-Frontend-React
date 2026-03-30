@@ -93,7 +93,7 @@ export function AddContactDialog({ open, onOpenChange, partyGuid }: Props) {
               )}
             />
             {errors.type_code && (
-              <p className="text-[12px] text-destructive">{errors.type_code.message}</p>
+              <p className="text-[11px] text-destructive">{errors.type_code.message}</p>
             )}
           </div>
           <div className="space-y-1.5">
@@ -106,7 +106,7 @@ export function AddContactDialog({ open, onOpenChange, partyGuid }: Props) {
           <label className="text-[13px] font-medium">Valore *</label>
           <Input {...register("content")} placeholder="es. info@azienda.it" error={!!errors.content} />
           {errors.content && (
-            <p className="text-[12px] text-destructive">{errors.content.message}</p>
+            <p className="text-[11px] text-destructive">{errors.content.message}</p>
           )}
         </div>
 

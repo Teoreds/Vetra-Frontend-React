@@ -46,6 +46,8 @@ export function PartiesFiltersBar({
         />
       </div>
 
+      <div className="h-4 w-px bg-border/50" />
+
       <TypeMultiSelect
         value={typeValues}
         onChange={(selected) =>

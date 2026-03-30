@@ -1,4 +1,5 @@
 import { CheckCircle } from "lucide-react";
+import { Card } from "@/shared/ui/card";
 import { Timeline, type TimelineItem } from "@/shared/ui/timeline";
 
 // Placeholder items: in production, derive from a dedicated activity endpoint or aggregate
@@ -14,13 +15,13 @@ const PLACEHOLDER_ITEMS: TimelineItem[] = [
 
 export function RecentActivity() {
   return (
-    <div className="rounded-xl border border-border/60 bg-card shadow-[0_1px_3px_0_rgba(0,0,0,0.04)]">
+    <Card>
       <div className="px-5 pt-5 pb-1">
         <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">Attività Recente</h2>
       </div>
       <div className="p-5 pt-3">
         <Timeline items={PLACEHOLDER_ITEMS} />
       </div>
-    </div>
+    </Card>
   );
 }

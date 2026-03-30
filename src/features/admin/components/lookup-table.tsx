@@ -219,7 +219,7 @@ export function LookupTable({ lookupKey, path }: LookupTableProps) {
                       isEditing && "bg-primary/[0.03]",
                     )}
                   >
-                    <td className="px-4 py-2.5 font-mono text-[12px] text-muted-foreground">
+                    <td className="px-4 py-2.5 font-mono text-[11px] text-muted-foreground">
                       {item.code}
                     </td>
                     <td className="px-4 py-2.5">

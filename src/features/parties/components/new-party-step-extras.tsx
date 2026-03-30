@@ -58,8 +58,8 @@ const addressSchema = z.object({
   is_primary: z.boolean().default(false),
 });
 
-const step2Schema = z
-  .object({
+function buildStep2Schema(typeCode: string) {
+  const base = z.object({
     contacts: z.array(
       z.object({
         type_code: z.string().min(1, "Seleziona tipo"),
@@ -83,15 +83,22 @@ const step2Schema = z
         is_preferred: z.boolean().default(false),
       }),
     ),
-  })
-  .refine(
-    (d) => d.addresses.some((a) => a.type_code === "SHIPPING"),
-    { message: "Serve almeno un indirizzo di Spedizione", path: ["addresses"] },
-  )
-  .refine(
-    (d) => d.addresses.some((a) => a.type_code === "BILLING"),
-    { message: "Serve almeno un indirizzo di Fatturazione", path: ["addresses"] },
-  );
+  });
+
+  if (typeCode === "CARRIER") {
+    return base;
+  }
+
+  return base
+    .refine(
+      (d) => d.addresses.some((a) => a.type_code === "SHIPPING"),
+      { message: "Serve almeno un indirizzo di Spedizione", path: ["addresses"] },
+    )
+    .refine(
+      (d) => d.addresses.some((a) => a.type_code === "BILLING"),
+      { message: "Serve almeno un indirizzo di Fatturazione", path: ["addresses"] },
+    );
+}
 
 /* ── Form values ──────────────────────────────────────── */
 
@@ -167,7 +174,7 @@ function InlineCheckbox({
       onClick={() => onCheckedChange(!checked)}
     >
       <CheckboxDisplay checked={checked} />
-      <span className="text-[12px] font-medium">{label}</span>
+      <span className="text-[13px] font-medium">{label}</span>
     </div>
   );
 }
@@ -198,7 +205,7 @@ export function NewPartyStepExtras({
     getValues,
     formState: { errors },
   } = useForm<FormValues>({
-    resolver: zodResolver(step2Schema),
+    resolver: zodResolver(buildStep2Schema(typeCode)),
     defaultValues: {
       contacts: defaultValues?.contacts ?? [],
       addresses: defaultValues?.addresses?.length ? defaultValues.addresses : [EMPTY_ADDRESS],
@@ -255,7 +262,7 @@ export function NewPartyStepExtras({
               className="flex items-end gap-3 rounded-lg border border-border/60 bg-muted/20 p-3"
             >
               <div className="w-36 space-y-1">
-                <label className="text-[12px] font-medium">Tipo *</label>
+                <label className="text-[13px] font-medium">Tipo *</label>
                 <Controller
                   control={control}
                   name={`contacts.${index}.type_code`}
@@ -277,7 +284,7 @@ export function NewPartyStepExtras({
               </div>
 
               <div className="flex-1 space-y-1">
-                <label className="text-[12px] font-medium">Valore *</label>
+                <label className="text-[13px] font-medium">Valore *</label>
                 <Input
                   {...register(`contacts.${index}.content`)}
                   placeholder="es. info@azienda.it"
@@ -285,7 +292,7 @@ export function NewPartyStepExtras({
               </div>
 
               <div className="w-32 space-y-1">
-                <label className="text-[12px] font-medium">Etichetta</label>
+                <label className="text-[13px] font-medium">Etichetta</label>
                 <Input
                   {...register(`contacts.${index}.label`)}
                   placeholder="Ufficio"
@@ -372,25 +379,25 @@ export function NewPartyStepExtras({
 
               <div className="grid grid-cols-4 gap-3">
                 <div className="col-span-2 space-y-1">
-                  <label className="text-[12px] font-medium">Indirizzo *</label>
+                  <label className="text-[13px] font-medium">Indirizzo *</label>
                   <Input
                     {...register(`addresses.${index}.address_line`)}
                     placeholder="Via Roma 1"
                     error={!!errors.addresses?.[index]?.address_line}
                   />
                   {errors.addresses?.[index]?.address_line && (
-                    <p className="text-[12px] text-destructive">{errors.addresses[index].address_line.message}</p>
+                    <p className="text-[11px] text-destructive">{errors.addresses[index].address_line.message}</p>
                   )}
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[12px] font-medium">Città</label>
+                  <label className="text-[13px] font-medium">Città</label>
                   <Input
                     {...register(`addresses.${index}.city`)}
                     placeholder="Milano"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[12px] font-medium">Provincia</label>
+                  <label className="text-[13px] font-medium">Provincia</label>
                   <Input
                     {...register(`addresses.${index}.province`)}
                     placeholder="MI"
@@ -400,14 +407,14 @@ export function NewPartyStepExtras({
 
               <div className="grid grid-cols-4 gap-3">
                 <div className="space-y-1">
-                  <label className="text-[12px] font-medium">CAP</label>
+                  <label className="text-[13px] font-medium">CAP</label>
                   <Input
                     {...register(`addresses.${index}.post_code`)}
                     placeholder="20100"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[12px] font-medium">Tipo *</label>
+                  <label className="text-[13px] font-medium">Tipo *</label>
                   <Controller
                     control={control}
                     name={`addresses.${index}.type_code`}
@@ -427,7 +434,7 @@ export function NewPartyStepExtras({
                     )}
                   />
                   {errors.addresses?.[index]?.type_code && (
-                    <p className="text-[12px] text-destructive">{errors.addresses[index].type_code.message}</p>
+                    <p className="text-[11px] text-destructive">{errors.addresses[index].type_code.message}</p>
                   )}
                 </div>
                 <div className="flex items-end pb-1">
@@ -448,7 +455,7 @@ export function NewPartyStepExtras({
           ))}
 
           {addressRootError && (
-            <p className="text-[12px] text-destructive">{addressRootError}</p>
+            <p className="text-[11px] text-destructive">{addressRootError}</p>
           )}
         </CardContent>
       </Card>
@@ -482,7 +489,7 @@ export function NewPartyStepExtras({
                 className="flex items-end gap-3 rounded-lg border border-border/60 bg-muted/20 p-3"
               >
                 <div className="flex-1 space-y-1">
-                  <label className="text-[12px] font-medium">Tipo Articolo</label>
+                  <label className="text-[13px] font-medium">Tipo Articolo</label>
                   <Controller
                     control={control}
                     name={`discounts.${index}.article_type_code`}
@@ -504,7 +511,7 @@ export function NewPartyStepExtras({
                 </div>
 
                 <div className="w-36 space-y-1">
-                  <label className="text-[12px] font-medium">Sconto % *</label>
+                  <label className="text-[13px] font-medium">Sconto % *</label>
                   <Input
                     type="number"
                     step="0.01"
@@ -565,7 +572,7 @@ export function NewPartyStepExtras({
                 className="flex items-end gap-3 rounded-lg border border-border/60 bg-muted/20 p-3"
               >
                 <div className="flex-1 space-y-1">
-                  <label className="text-[12px] font-medium">Articolo *</label>
+                  <label className="text-[13px] font-medium">Articolo *</label>
                   <Controller
                     control={control}
                     name={`supplier_articles.${index}.article_guid`}
@@ -587,7 +594,7 @@ export function NewPartyStepExtras({
                 </div>
 
                 <div className="w-32 space-y-1">
-                  <label className="text-[12px] font-medium">Cod. Fornitore</label>
+                  <label className="text-[13px] font-medium">Cod. Fornitore</label>
                   <Input
                     {...register(`supplier_articles.${index}.supplier_code`)}
                     placeholder="ABC-123"
@@ -595,7 +602,7 @@ export function NewPartyStepExtras({
                 </div>
 
                 <div className="w-28 space-y-1">
-                  <label className="text-[12px] font-medium">Pr. Acquisto</label>
+                  <label className="text-[13px] font-medium">Pr. Acquisto</label>
                   <Input
                     type="number"
                     step="0.01"

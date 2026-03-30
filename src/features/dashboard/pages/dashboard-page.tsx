@@ -12,6 +12,7 @@ import {
   Package,
 } from "lucide-react";
 import { apiClient } from "@/shared/api/client";
+import { Card } from "@/shared/ui/card";
 import { KpiCard } from "../components/kpi-card";
 import { StatusPipeline } from "../components/status-pipeline";
 import { MonthlyTrendChart } from "../components/monthly-trend-chart";
@@ -52,17 +53,17 @@ function SectionCard({
   className?: string;
 }) {
   return (
-    <div className={`rounded-xl border border-border/60 bg-card shadow-[0_1px_3px_0_rgba(0,0,0,0.04)] ${className ?? ""}`}>
+    <Card className={className}>
       <div className="flex items-center justify-between px-5 pt-5 pb-1">
         <div className="flex items-center gap-2">
           {icon && <span className="text-muted-foreground/40">{icon}</span>}
-          <h2 className="text-[12px] font-semibold uppercase tracking-wider text-muted-foreground">{title}</h2>
+          <h2 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{title}</h2>
         </div>
         {action && (
           <button
             type="button"
             onClick={action.onClick}
-            className="flex items-center gap-1 text-[12px] font-medium text-primary/70 transition-colors hover:text-primary"
+            className="flex items-center gap-1 text-[11px] font-medium text-primary/70 transition-colors hover:text-primary"
           >
             {action.label}
             <ArrowRight className="h-3 w-3" />
@@ -70,7 +71,7 @@ function SectionCard({
         )}
       </div>
       <div className="p-4">{children}</div>
-    </div>
+    </Card>
   );
 }
 
@@ -102,7 +103,7 @@ export function DashboardPage() {
       </div>
 
       {/* KPIs */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <KpiCard
           title="Ordini"
           value={kpis.orders_count}

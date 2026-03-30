@@ -34,7 +34,7 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
                       "bg-primary text-primary-foreground",
                     !isCompleted &&
                       !isActive &&
-                      "bg-slate-200/70 text-slate-500",
+                      "bg-muted text-muted-foreground",
                   )}
                 >
                   {isCompleted ? (
@@ -48,7 +48,7 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
                     "text-[11px] font-medium whitespace-nowrap",
                     isActive && "text-primary font-semibold",
                     isCompleted && "text-primary/70",
-                    !isCompleted && !isActive && "text-slate-400",
+                    !isCompleted && !isActive && "text-muted-foreground/60",
                   )}
                 >
                   {step.label}
@@ -58,13 +58,12 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
               {/* Connettore */}
               {!isLast && (
                 <div
-                  className="mx-2.5 h-px w-8 shrink-0 transition-colors duration-300"
-                  style={{
-                    background:
-                      stepNumber < currentStep
-                        ? "rgba(37,99,235,0.25)"
-                        : "rgba(226,232,240,0.8)",
-                  }}
+                  className={cn(
+                    "mx-2.5 h-px w-8 shrink-0 transition-colors duration-300",
+                    stepNumber < currentStep
+                      ? "bg-primary/25"
+                      : "bg-border",
+                  )}
                 />
               )}
             </li>

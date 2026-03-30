@@ -163,7 +163,7 @@ export function CreateDdtPanel({
                   <p className="text-[13px] font-semibold text-primary">
                     #{pickNote.guid.slice(0, 8).toUpperCase()}
                   </p>
-                  <p className="text-[12px] text-muted-foreground">
+                  <p className="text-[11px] text-muted-foreground">
                     {pickNote.rows?.length ?? 0} righe &middot;{" "}
                     {pickNote.weight ? `${pickNote.weight} kg` : "Peso n/d"} &middot;{" "}
                     {pickNote.packages ? `${pickNote.packages} colli` : "Colli n/d"}
@@ -282,7 +282,7 @@ export function CreateDdtPanel({
           {/* Footer */}
           <div className="border-t border-border/60 px-6 py-4 space-y-3">
             {submitError && (
-              <p className="text-[12px] font-medium text-destructive">{submitError}</p>
+              <p className="text-[11px] font-medium text-destructive">{submitError}</p>
             )}
             <div className="flex gap-2">
               <Button

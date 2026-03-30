@@ -3,14 +3,10 @@ import { AlertTriangle } from "lucide-react";
 import { StatusBadge } from "@/shared/ui/status-badge";
 import { getStatusVariant } from "@/shared/ui/status-variants";
 import { useOrderStatuses } from "@/shared/hooks/use-lookups";
-import { formatDate } from "@/shared/lib/utils";
+import { formatDate, formatCurrency } from "@/shared/lib/utils";
 import type { components } from "@/shared/api/schema";
 
 type OverdueOrder = components["schemas"]["OverdueOrder"];
-
-function fmtEur(n: number) {
-  return new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(n);
-}
 
 export function OverdueOrdersTable({ orders }: { orders: OverdueOrder[] }) {
   const navigate = useNavigate();
@@ -51,7 +47,7 @@ export function OverdueOrdersTable({ orders }: { orders: OverdueOrder[] }) {
               />
             </div>
             <p className="text-[11px] text-muted-foreground">
-              {formatDate(o.order_date)} — {fmtEur(Number(o.total_gross ?? 0))}
+              {formatDate(o.order_date)} — {formatCurrency(Number(o.total_gross ?? 0))}
             </p>
           </div>
           <span className="shrink-0 rounded-full bg-red-500/10 px-2.5 py-0.5 text-[11px] font-bold text-red-600 tabular-nums">

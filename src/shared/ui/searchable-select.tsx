@@ -154,7 +154,7 @@ export function SearchableSelect({
       )}
 
       {open && (
-        <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-56 overflow-y-auto rounded-xl border border-border bg-popover shadow-[0_8px_30px_rgba(0,0,0,0.08)]">
+        <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-56 overflow-y-auto rounded-xl border border-border/60 bg-popover shadow-lg">
           {filtered.length === 0 && (
             <p className="px-3 py-4 text-center text-[13px] text-muted-foreground">
               Nessun risultato.

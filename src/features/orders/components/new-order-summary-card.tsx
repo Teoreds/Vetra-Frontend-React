@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
 import { Separator } from "@/shared/ui/separator";
+import { formatCurrency } from "@/shared/lib/utils";
 import type { OrderRowDraft } from "./new-order-step-items";
 
 interface NewOrderSummaryCardProps {
@@ -27,9 +28,6 @@ function computeTotals(rows: OrderRowDraft[]) {
   return { totalGross, totalDiscount };
 }
 
-function fmt(n: number, currency = "EUR") {
-  return new Intl.NumberFormat("it-IT", { style: "currency", currency }).format(n);
-}
 
 export function NewOrderSummaryCard({ availableRows, commitmentRows, vatRate, currency = "EUR", currencyRate = 1 }: NewOrderSummaryCardProps) {
   const allRows = [...availableRows, ...commitmentRows];
@@ -46,21 +44,21 @@ export function NewOrderSummaryCard({ availableRows, commitmentRows, vatRate, cu
   return (
     <Card className="sticky top-4">
       <CardHeader>
-        <h3 className="text-[14px] font-semibold">Riepilogo</h3>
+        <h3 className="text-sm font-semibold">Riepilogo</h3>
       </CardHeader>
       <CardContent className="space-y-4 pt-0">
         {/* Breakdown by box */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[12px] text-muted-foreground">Disponibili</span>
-            <span className="text-[12px] font-medium">
-              {fmt(currencyRate * (availableTotals.totalGross - availableTotals.totalDiscount), currency)}
+            <span className="text-[11px] text-muted-foreground">Disponibili</span>
+            <span className="text-[13px] font-medium">
+              {formatCurrency(currencyRate * (availableTotals.totalGross - availableTotals.totalDiscount), { currency })}
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-[12px] text-muted-foreground">Impegno</span>
-            <span className="text-[12px] font-medium">
-              {fmt(currencyRate * (commitmentTotals.totalGross - commitmentTotals.totalDiscount), currency)}
+            <span className="text-[11px] text-muted-foreground">Impegno</span>
+            <span className="text-[13px] font-medium">
+              {formatCurrency(currencyRate * (commitmentTotals.totalGross - commitmentTotals.totalDiscount), { currency })}
             </span>
           </div>
         </div>
@@ -71,22 +69,22 @@ export function NewOrderSummaryCard({ availableRows, commitmentRows, vatRate, cu
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[13px] text-muted-foreground">Imponibile Lordo</span>
-            <span className="text-[13px] font-medium">{fmt(currencyRate * totalGross, currency)}</span>
+            <span className="text-[13px] font-medium">{formatCurrency(currencyRate * totalGross, { currency })}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-[13px] text-muted-foreground">Sconto Totale</span>
             <span className="text-[13px] font-medium text-destructive">
-              {totalDiscount > 0 ? `−${fmt(currencyRate * totalDiscount, currency)}` : "—"}
+              {totalDiscount > 0 ? `−${formatCurrency(currencyRate * totalDiscount, { currency })}` : "—"}
             </span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-[13px] text-muted-foreground">Imponibile Netto</span>
-            <span className="text-[13px] font-medium">{fmt(currencyRate * totalNet, currency)}</span>
+            <span className="text-[13px] font-medium">{formatCurrency(currencyRate * totalNet, { currency })}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-[13px] text-muted-foreground">IVA ({vatPctLabel})</span>
             <span className="text-[13px] font-medium">
-              {totalVat > 0 ? fmt(currencyRate * totalVat, currency) : "—"}
+              {totalVat > 0 ? formatCurrency(currencyRate * totalVat, { currency }) : "—"}
             </span>
           </div>
         </div>
@@ -94,8 +92,8 @@ export function NewOrderSummaryCard({ availableRows, commitmentRows, vatRate, cu
         <Separator />
 
         <div className="flex items-center justify-between">
-          <span className="text-[14px] font-semibold">Totale</span>
-          <span className="text-[16px] font-bold text-primary">{fmt(currencyRate * grandTotal, currency)}</span>
+          <span className="text-sm font-semibold">Totale</span>
+          <span className="text-base font-bold text-primary">{formatCurrency(currencyRate * grandTotal, { currency })}</span>
         </div>
 
         {/* Row counts */}

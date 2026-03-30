@@ -42,13 +42,14 @@ export function OrderHeader({ order }: OrderHeaderProps) {
   return (
     <div className="space-y-3">
       {/* Riga: titolo + stepper + azioni */}
-      <div className="flex items-center justify-between">
+      <div className="mx-auto max-w-4xl flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Button
             variant="ghost"
             size="icon"
             className="h-8 w-8"
-            onClick={() => navigate("/orders")}
+            aria-label="Torna agli ordini"
+            onClick={() => navigate(-1)}
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
@@ -56,7 +57,7 @@ export function OrderHeader({ order }: OrderHeaderProps) {
             <h1 className="text-xl font-bold tracking-tight leading-none">
               Ordine #{order.guid.slice(0, 8).toUpperCase()}
             </h1>
-            <span className="text-[12px] text-muted-foreground">
+            <span className="text-[11px] text-muted-foreground">
               {new Date(order.created_at).toLocaleDateString("it-IT", {
                 day: "2-digit",
                 month: "short",
@@ -77,7 +78,7 @@ export function OrderHeader({ order }: OrderHeaderProps) {
             variant="ghost"
             size="icon"
             className="h-8 w-8 text-muted-foreground"
-            title="Stampa"
+            aria-label="Stampa"
           >
             <Printer className="h-4 w-4" />
           </Button>
@@ -86,7 +87,7 @@ export function OrderHeader({ order }: OrderHeaderProps) {
               variant="ghost"
               size="icon"
               className="h-8 w-8 text-muted-foreground"
-              title="Crea Nota di Prelievo"
+              aria-label="Crea Nota di Prelievo"
             >
               <ClipboardList className="h-4 w-4" />
             </Button>
@@ -113,7 +114,7 @@ export function OrderHeader({ order }: OrderHeaderProps) {
       </div>
 
       {/* Separatore sottile */}
-      <div className="h-px bg-border/60" />
+      <div className="mx-auto max-w-4xl h-px bg-border/60" />
     </div>
   );
 }

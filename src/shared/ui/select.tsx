@@ -38,7 +38,7 @@ export function SelectTrigger({
       )}
       {...props}
     >
-      <span className="min-w-0 flex-1 truncate">{children}</span>
+      <span className="min-w-0 flex-1 truncate text-left">{children}</span>
       <RadixSelect.Icon asChild>
         <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
       </RadixSelect.Icon>
@@ -58,7 +58,7 @@ export function SelectContent({
         position={position}
         sideOffset={4}
         className={cn(
-          "z-50 min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-xl border border-border bg-popover shadow-[0_8px_30px_rgba(0,0,0,0.08)]",
+          "z-50 min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-xl border border-border/60 bg-popover shadow-lg",
           "animate-in fade-in-0 zoom-in-95",
           className,
         )}

@@ -198,7 +198,7 @@ export function PickNoteCheckPanel({
                     })}
                   </div>
                   {checkedRows.size > 0 && (
-                    <p className="text-[12px] text-emerald-600">
+                    <p className="text-[13px] text-emerald-600">
                       {checkedRows.size}/{pickNote.rows.length} righe confermate
                     </p>
                   )}
@@ -291,7 +291,7 @@ export function PickNoteCheckPanel({
           {/* Footer */}
           <div className="border-t border-border/60 px-6 py-4 space-y-3">
             {submitError && (
-              <p className="text-[12px] font-medium text-destructive">{submitError}</p>
+              <p className="text-[11px] font-medium text-destructive">{submitError}</p>
             )}
             <div className="flex gap-2">
               <Button

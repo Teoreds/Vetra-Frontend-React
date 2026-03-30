@@ -52,7 +52,7 @@ export function PickNoteFiltersBar({
             <Select.Content
               position="popper"
               sideOffset={4}
-              className="z-50 max-h-60 min-w-[180px] overflow-auto rounded-lg border border-border/60 bg-popover p-1 shadow-lg animate-in fade-in-0 zoom-in-95"
+              className="z-50 max-h-60 min-w-[180px] overflow-auto rounded-xl border border-border/60 bg-popover p-1 shadow-lg animate-in fade-in-0 zoom-in-95"
             >
               <Select.Viewport>
                 {warehouses.map((w) => (

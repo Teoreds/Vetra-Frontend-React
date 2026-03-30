@@ -63,7 +63,7 @@ export function DataTable<T>({
               <th
                 key={col.key}
                 className={cn(
-                  "h-11 px-4 text-left align-middle text-[11px] font-semibold uppercase tracking-wider text-slate-600",
+                  "h-11 px-4 text-left align-middle text-[11px] font-semibold uppercase tracking-wider text-muted-foreground",
                   col.className,
                 )}
               >
@@ -82,8 +82,8 @@ export function DataTable<T>({
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
                 className={cn(
                   "group/row border-b border-border/50 last:border-0 transition-colors duration-100",
-                  "hover:bg-slate-50/80",
-                  idx % 2 === 1 && "bg-slate-50/50",
+                  "hover:bg-muted/80",
+                  idx % 2 === 1 && "bg-muted/50",
                   onRowClick && "cursor-pointer",
                 )}
               >

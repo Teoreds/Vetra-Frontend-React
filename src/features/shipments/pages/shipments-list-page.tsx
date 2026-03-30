@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Card } from "@/shared/ui/card";
 import { PaginationControls } from "@/shared/ui/pagination-controls";
 import { useShippingPickNotes, type ShippingPickNoteListParams } from "../hooks/use-shipping-pick-notes";
 import { ShipmentsTable } from "../components/shipments-table";
@@ -30,7 +31,7 @@ export function ShipmentsListPage() {
         </p>
       </div>
 
-      <div className="rounded-xl border border-border/60 bg-card shadow-[0_1px_3px_0_rgba(0,0,0,0.04)]">
+      <Card>
         <div className="flex items-center justify-between border-b border-border/50 px-4 py-3">
           <ShipmentFiltersBar
             filters={filters}
@@ -50,7 +51,7 @@ export function ShipmentsListPage() {
             onPageChange={(offset) => setFilters((f) => ({ ...f, offset }))}
           />
         )}
-      </div>
+      </Card>
     </div>
   );
 }

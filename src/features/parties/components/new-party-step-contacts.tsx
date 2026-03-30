@@ -34,19 +34,27 @@ const addressSchema = z.object({
   is_primary: z.boolean().default(false),
 });
 
-const step2Schema = z
-  .object({
+function buildStep2Schema(typeCode: string) {
+  const base = z.object({
     contacts: z.array(contactSchema),
     addresses: z.array(addressSchema).min(1, "Aggiungi almeno un indirizzo"),
-  })
-  .refine(
-    (d) => d.addresses.some((a) => a.type_code === "SHIPPING"),
-    { message: "Serve almeno un indirizzo di Spedizione", path: ["addresses"] },
-  )
-  .refine(
-    (d) => d.addresses.some((a) => a.type_code === "BILLING"),
-    { message: "Serve almeno un indirizzo di Fatturazione", path: ["addresses"] },
-  );
+  });
+
+  if (typeCode === "CARRIER") {
+    // I corrieri non necessitano di indirizzi di spedizione/fatturazione
+    return base;
+  }
+
+  return base
+    .refine(
+      (d) => d.addresses.some((a) => a.type_code === "SHIPPING"),
+      { message: "Serve almeno un indirizzo di Spedizione", path: ["addresses"] },
+    )
+    .refine(
+      (d) => d.addresses.some((a) => a.type_code === "BILLING"),
+      { message: "Serve almeno un indirizzo di Fatturazione", path: ["addresses"] },
+    );
+}
 
 /* ── Empty rows ───────────────────────────────────────── */
 
@@ -59,7 +67,7 @@ function InlineCheckbox({ checked, onCheckedChange, label }: { checked: boolean;
   return (
     <label className="flex items-center gap-2 cursor-pointer">
       <Checkbox checked={checked} onCheckedChange={(v) => onCheckedChange(!!v)} />
-      <span className="text-[12px] font-medium">{label}</span>
+      <span className="text-[13px] font-medium">{label}</span>
     </label>
   );
 }
@@ -67,6 +75,7 @@ function InlineCheckbox({ checked, onCheckedChange, label }: { checked: boolean;
 /* ── Props ────────────────────────────────────────────── */
 
 interface Props {
+  typeCode: string;
   defaultValues?: Partial<PartyContactsData>;
   onNext: (data: PartyContactsData) => void;
   onBack: (draft: PartyContactsData) => void;
@@ -75,7 +84,7 @@ interface Props {
 
 /* ── Component ────────────────────────────────────────── */
 
-export function NewPartyStepContacts({ defaultValues, onNext, onBack, error }: Props) {
+export function NewPartyStepContacts({ typeCode, defaultValues, onNext, onBack, error }: Props) {
   const { data: contactTypes } = useContactTypes();
   const { data: locationTypes } = useLocationTypes();
 
@@ -86,7 +95,7 @@ export function NewPartyStepContacts({ defaultValues, onNext, onBack, error }: P
     getValues,
     formState: { errors },
   } = useForm<PartyContactsData>({
-    resolver: zodResolver(step2Schema),
+    resolver: zodResolver(buildStep2Schema(typeCode)),
     defaultValues: {
       contacts: defaultValues?.contacts ?? [],
       addresses: defaultValues?.addresses?.length ? defaultValues.addresses : [EMPTY_ADDRESS],
@@ -145,7 +154,7 @@ export function NewPartyStepContacts({ defaultValues, onNext, onBack, error }: P
               className="flex items-end gap-3 rounded-lg border border-border/60 bg-muted/20 p-3"
             >
               <div className="w-36 flex flex-col gap-1">
-                <label className="text-[12px] font-medium">Tipo *</label>
+                <label className="text-[13px] font-medium">Tipo *</label>
                 <Controller
                   control={control}
                   name={`contacts.${index}.type_code`}
@@ -166,14 +175,14 @@ export function NewPartyStepContacts({ defaultValues, onNext, onBack, error }: P
                 />
               </div>
               <div className="flex-1 flex flex-col gap-1">
-                <label className="text-[12px] font-medium">Valore *</label>
+                <label className="text-[13px] font-medium">Valore *</label>
                 <Input
                   {...register(`contacts.${index}.content`)}
                   placeholder="es. info@azienda.it"
                 />
               </div>
               <div className="w-32 flex flex-col gap-1">
-                <label className="text-[12px] font-medium">Etichetta</label>
+                <label className="text-[13px] font-medium">Etichetta</label>
                 <Input
                   {...register(`contacts.${index}.label`)}
                   placeholder="Ufficio"
@@ -251,33 +260,33 @@ export function NewPartyStepContacts({ defaultValues, onNext, onBack, error }: P
 
               <div className="grid grid-cols-4 gap-3">
                 <div className="col-span-2 space-y-1">
-                  <label className="text-[12px] font-medium">Indirizzo *</label>
+                  <label className="text-[13px] font-medium">Indirizzo *</label>
                   <Input
                     {...register(`addresses.${index}.address_line`)}
                     placeholder="Via Roma 1"
                     error={!!errors.addresses?.[index]?.address_line}
                   />
                   {errors.addresses?.[index]?.address_line && (
-                    <p className="text-[12px] text-destructive">{errors.addresses[index].address_line.message}</p>
+                    <p className="text-[11px] text-destructive">{errors.addresses[index].address_line.message}</p>
                   )}
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[12px] font-medium">Città</label>
+                  <label className="text-[13px] font-medium">Città</label>
                   <Input {...register(`addresses.${index}.city`)} placeholder="Milano" />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[12px] font-medium">Provincia</label>
+                  <label className="text-[13px] font-medium">Provincia</label>
                   <Input {...register(`addresses.${index}.province`)} placeholder="MI" />
                 </div>
               </div>
 
               <div className="grid grid-cols-4 gap-3">
                 <div className="space-y-1">
-                  <label className="text-[12px] font-medium">CAP</label>
+                  <label className="text-[13px] font-medium">CAP</label>
                   <Input {...register(`addresses.${index}.post_code`)} placeholder="20100" />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[12px] font-medium">Tipo *</label>
+                  <label className="text-[13px] font-medium">Tipo *</label>
                   <Controller
                     control={control}
                     name={`addresses.${index}.type_code`}
@@ -297,7 +306,7 @@ export function NewPartyStepContacts({ defaultValues, onNext, onBack, error }: P
                     )}
                   />
                   {errors.addresses?.[index]?.type_code && (
-                    <p className="text-[12px] text-destructive">{errors.addresses[index].type_code.message}</p>
+                    <p className="text-[11px] text-destructive">{errors.addresses[index].type_code.message}</p>
                   )}
                 </div>
                 <div className="flex items-end pb-1">
@@ -314,7 +323,7 @@ export function NewPartyStepContacts({ defaultValues, onNext, onBack, error }: P
           ))}
 
           {addressRootError && (
-            <p className="text-[12px] text-destructive">{addressRootError}</p>
+            <p className="text-[11px] text-destructive">{addressRootError}</p>
           )}
         </CardContent>
       </Card>

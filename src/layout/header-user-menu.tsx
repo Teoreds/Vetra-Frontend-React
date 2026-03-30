@@ -57,7 +57,7 @@ export function HeaderUserMenu() {
             <DropdownMenu.Content
               align="end"
               sideOffset={8}
-              className="z-50 min-w-[180px] rounded-xl border border-border/60 bg-popover p-1.5 shadow-[0_8px_30px_-6px_rgba(0,0,0,0.15)]"
+              className="z-50 min-w-[180px] rounded-xl border border-border/60 bg-popover p-1.5 shadow-lg"
             >
               <DropdownMenu.Item className="cursor-pointer rounded-lg px-3 py-2 text-[13px] outline-none transition-colors hover:bg-accent">
                 Profilo

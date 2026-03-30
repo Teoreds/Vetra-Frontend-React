@@ -120,7 +120,7 @@ export function CreateArticleDialog({ open, onOpenChange, onCreated }: Props) {
               error={!!errors.code}
             />
             {errors.code && (
-              <p className="text-[12px] text-destructive">{errors.code.message}</p>
+              <p className="text-[11px] text-destructive">{errors.code.message}</p>
             )}
           </div>
           <div className="space-y-1.5">
@@ -131,7 +131,7 @@ export function CreateArticleDialog({ open, onOpenChange, onCreated }: Props) {
               error={!!errors.description}
             />
             {errors.description && (
-              <p className="text-[12px] text-destructive">{errors.description.message}</p>
+              <p className="text-[11px] text-destructive">{errors.description.message}</p>
             )}
           </div>
         </div>
@@ -159,7 +159,7 @@ export function CreateArticleDialog({ open, onOpenChange, onCreated }: Props) {
               )}
             />
             {errors.unit_of_measure_code && (
-              <p className="text-[12px] text-destructive">
+              <p className="text-[11px] text-destructive">
                 {errors.unit_of_measure_code.message}
               </p>
             )}
