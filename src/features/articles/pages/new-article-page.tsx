@@ -3,7 +3,9 @@ import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod/v4";
-import { ArrowLeft, Loader2, Plus, Trash2, ImagePlus, Package } from "lucide-react";
+import { Loader2, Plus, Trash2, ImagePlus, Package } from "lucide-react";
+import { BackButton } from "@/shared/ui/back-button";
+import { useBack } from "@/shared/hooks/use-back";
 import { Checkbox } from "@/shared/ui/checkbox";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
@@ -53,6 +55,7 @@ type NewArticleForm = z.infer<typeof newArticleSchema>;
 
 export function NewArticlePage() {
   const navigate = useNavigate();
+  const back = useBack();
   const createArticle = useCreateArticle();
   const { data: unitOfMeasures = [] } = useUnitOfMeasures();
   const { data: articleTypes = [] } = useArticleTypes();
@@ -158,14 +161,7 @@ export function NewArticlePage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="mx-auto max-w-2xl flex items-center gap-3">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8"
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
+        <BackButton fallback="/articles" />
         <div>
           <h1 className="text-xl font-semibold">Nuovo Articolo</h1>
           <p className="text-[13px] text-muted-foreground">
@@ -466,7 +462,7 @@ export function NewArticlePage() {
           <Button
             type="button"
             variant="outline"
-            onClick={() => { store.clear(); navigate(-1); }}
+            onClick={() => { store.clear(); back("/articles"); }}
           >
             Annulla
           </Button>

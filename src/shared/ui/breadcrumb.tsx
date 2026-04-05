@@ -2,11 +2,12 @@ import { Link, useLocation } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 
 const SEGMENT_LABELS: Record<string, string> = {
-  dashboard: "Dashboard",
+  dashboard: "Cruscotto",
   orders: "Ordini",
   "pick-notes": "Note di Prelievo",
   new: "Nuovo",
-  parties: "Anagrafica",
+  edit: "Modifica",
+  parties: "Anagrafiche",
   articles: "Articoli",
   warehouses: "Magazzino",
   settings: "Impostazioni",

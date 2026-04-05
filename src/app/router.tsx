@@ -14,7 +14,7 @@ const DashboardPage = lazy(() => import("@/features/dashboard/pages/dashboard-pa
 const OrderListPage = lazy(() => import("@/features/orders/pages/order-list-page").then((m) => ({ default: m.OrderListPage })));
 const OrderDetailPage = lazy(() => import("@/features/orders/pages/order-detail-page").then((m) => ({ default: m.OrderDetailPage })));
 const NewOrderPage = lazy(() => import("@/features/orders/pages/new-order-page").then((m) => ({ default: m.NewOrderPage })));
-const OrderEditPage = lazy(() => import("@/features/orders/pages/order-edit-page").then((m) => ({ default: m.OrderEditPage })));
+const OrderWizardPage = lazy(() => import("@/features/orders/pages/order-wizard-page").then((m) => ({ default: m.OrderWizardPage })));
 const PartiesListPage = lazy(() => import("@/features/parties/pages/parties-list-page").then((m) => ({ default: m.PartiesListPage })));
 const PartyDetailPage = lazy(() => import("@/features/parties/pages/party-detail-page").then((m) => ({ default: m.PartyDetailPage })));
 const NewPartyPage = lazy(() => import("@/features/parties/pages/new-party-page").then((m) => ({ default: m.NewPartyPage })));
@@ -56,7 +56,7 @@ export const router = createBrowserRouter([
           { path: "/orders", element: lz(OrderListPage) },
           { path: "/orders/new", element: lz(NewOrderPage) },
           { path: "/orders/:id", element: lz(OrderDetailPage) },
-          { path: "/orders/:id/edit", element: lz(OrderEditPage) },
+          { path: "/orders/:id/edit", element: lz(OrderWizardPage) },
           { path: "/parties", element: lz(PartiesListPage) },
           { path: "/parties/new", element: lz(NewPartyPage) },
           { path: "/parties/:id", element: lz(PartyDetailPage) },

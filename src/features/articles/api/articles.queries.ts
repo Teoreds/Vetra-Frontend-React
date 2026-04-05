@@ -10,4 +10,6 @@ export const articleKeys = {
   unitOfMeasures: () => [...articleKeys.all, "unit-of-measures"] as const,
   articleTypes: () => [...articleKeys.all, "article-types"] as const,
   suppliers: (id: string) => [...articleKeys.all, "suppliers", id] as const,
+  orders: (id: string, params?: { offset?: number; limit?: number }) =>
+    [...articleKeys.all, "orders", id, params] as const,
 };

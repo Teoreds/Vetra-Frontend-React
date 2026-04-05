@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus } from "lucide-react";
+import { Plus, RefreshCw } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Card } from "@/shared/ui/card";
 import { PaginationControls } from "@/shared/ui/pagination-controls";
@@ -20,7 +20,7 @@ export function PartiesListPage() {
     limit: DEFAULT_LIMIT,
   });
 
-  const { data, isLoading } = useParties(filters);
+  const { data, isLoading, refetch, isRefetching } = useParties(filters);
 
   return (
     <div className="space-y-6">
@@ -47,17 +47,24 @@ export function PartiesListPage() {
             }
             onReset={() => setFilters({ offset: 0, limit: DEFAULT_LIMIT })}
           />
-          <Button
-            onClick={() => {
-              clearPartyDraft();
-              navigate("/parties/new");
-            }}
-            size="sm"
-            className="shrink-0"
-          >
-            <Plus className="mr-1 h-3.5 w-3.5" />
-            Nuova Anagrafica
-          </Button>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => refetch()}
+              disabled={isRefetching}
+              className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
+              title="Aggiorna"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${isRefetching ? "animate-spin" : ""}`} />
+            </button>
+            <Button
+              onClick={() => { clearPartyDraft(); navigate("/parties/new"); }}
+              size="sm"
+            >
+              <Plus className="mr-1 h-3.5 w-3.5" />
+              Nuova Anagrafica
+            </Button>
+          </div>
         </div>
 
         <PartiesTable parties={data?.items ?? []} isLoading={isLoading} />

@@ -41,8 +41,14 @@ function buildStep2Schema(typeCode: string) {
   });
 
   if (typeCode === "CARRIER") {
-    // I corrieri non necessitano di indirizzi di spedizione/fatturazione
     return base;
+  }
+
+  if (typeCode === "SUPPLIER") {
+    return base.refine(
+      (d) => d.addresses.some((a) => a.type_code === "BILLING"),
+      { message: "Serve almeno un indirizzo di Fatturazione", path: ["addresses"] },
+    );
   }
 
   return base

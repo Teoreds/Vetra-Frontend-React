@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, RefreshCw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/shared/ui/button";
 import { Card } from "@/shared/ui/card";
@@ -17,7 +17,7 @@ export function PickNoteListPage() {
     limit: DEFAULT_LIMIT,
   });
 
-  const { data, isLoading } = usePickNotes(filters);
+  const { data, isLoading, refetch, isRefetching } = usePickNotes(filters);
 
   return (
     <div className="space-y-6">
@@ -44,10 +44,21 @@ export function PickNoteListPage() {
             }
             onReset={() => setFilters({ offset: 0, limit: DEFAULT_LIMIT })}
           />
-          <Button onClick={() => navigate("/pick-notes/new")} size="sm">
-            <Plus className="mr-1 h-3.5 w-3.5" />
-            Nuova Nota di Prelievo
-          </Button>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => refetch()}
+              disabled={isRefetching}
+              className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
+              title="Aggiorna"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${isRefetching ? "animate-spin" : ""}`} />
+            </button>
+            <Button onClick={() => navigate("/pick-notes/new")} size="sm">
+              <Plus className="mr-1 h-3.5 w-3.5" />
+              Nuova Nota di Prelievo
+            </Button>
+          </div>
         </div>
 
         <PickNotesTable pickNotes={data?.items ?? []} isLoading={isLoading} />

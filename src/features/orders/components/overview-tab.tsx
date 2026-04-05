@@ -1,5 +1,8 @@
-import { Building2, MapPin, Package, CreditCard } from "lucide-react";
+import { Fragment } from "react";
+import { MapPin, Package, CreditCard, Check } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
+import { PartyAvatar } from "@/features/parties/components/party-avatar";
 import {
   Table,
   TableBody,
@@ -12,9 +15,89 @@ import { useParty } from "@/features/parties/hooks/use-party";
 import { usePartyLocations } from "@/features/parties/hooks/use-party-locations";
 import { useArticles } from "@/features/articles/hooks/use-articles";
 import { useUnitOfMeasures } from "@/features/articles/hooks/use-article-lookups";
-import { usePaymentMethods, usePaymentTerms } from "@/shared/hooks/use-lookups";
+import { usePaymentMethods, usePaymentTerms, useOrderStatuses } from "@/shared/hooks/use-lookups";
 import { formatCurrency } from "@/shared/lib/utils";
+import { cn } from "@/shared/lib/utils";
+import { AddressBox } from "@/shared/ui/address-box";
 import type { OrderOut } from "../types/order.types";
+
+const PIPELINE = [
+  { code: "DRAFT" },
+  { code: "CONFIRMED" },
+  { code: "PARTIAL" },
+  { code: "FULFILLED" },
+  { code: "COMPLETED" },
+] as const;
+
+type PipelineCode = typeof PIPELINE[number]["code"];
+
+const STEP_INDEX: Record<string, number> = Object.fromEntries(
+  PIPELINE.map((s, i) => [s.code, i]),
+);
+
+function StatusPipelineCard({ statusCode }: { statusCode: string }) {
+  const { map: statusLabels } = useOrderStatuses();
+  const currentIndex = STEP_INDEX[statusCode.toUpperCase()] ?? -1;
+  const isCancelled = statusCode.toUpperCase() === "CANCELLED";
+
+  return (
+    <Card>
+      <CardContent className="py-4">
+        <ol className="flex items-center">
+          {PIPELINE.map((step, index) => {
+            const isCompleted = index < currentIndex;
+            const isActive = index === currentIndex;
+            const isLast = index === PIPELINE.length - 1;
+
+            return (
+              <Fragment key={step.code}>
+                <li className="flex shrink-0 flex-col items-center gap-1.5">
+                  <div
+                    className={cn(
+                      "flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-semibold transition-all",
+                      isCompleted && "bg-primary/15 text-primary",
+                      isActive && "bg-primary text-primary-foreground shadow-sm",
+                      !isCompleted && !isActive && "bg-muted text-muted-foreground/50",
+                    )}
+                  >
+                    {isCompleted ? (
+                      <Check className="h-3.5 w-3.5 stroke-[2.5]" />
+                    ) : (
+                      <span>{index + 1}</span>
+                    )}
+                  </div>
+                  <span
+                    className={cn(
+                      "text-[11px] font-medium whitespace-nowrap",
+                      isActive && "text-primary font-semibold",
+                      isCompleted && "text-primary/70",
+                      !isCompleted && !isActive && "text-muted-foreground/40",
+                    )}
+                  >
+                    {statusLabels.get(step.code) ?? step.code}
+                  </span>
+                </li>
+                {!isLast && (
+                  <div
+                    className={cn(
+                      "mb-5 h-px flex-1 mx-2 transition-colors",
+                      index < currentIndex ? "bg-primary/25" : "bg-border",
+                    )}
+                  />
+                )}
+              </Fragment>
+            );
+          })}
+        </ol>
+        {isCancelled && (
+          <p className="mt-2 text-center text-[12px] font-medium text-destructive">
+            Ordine annullato
+          </p>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
 
 interface OverviewTabProps {
   order: OrderOut;
@@ -44,6 +127,7 @@ function fmtAddress(loc: {
 }
 
 export function OverviewTab({ order }: OverviewTabProps) {
+  const navigate = useNavigate();
   const { data: party } = useParty(order.party_guid);
   const { data: locations = [] } = usePartyLocations(order.party_guid);
   const { data: articlesData } = useArticles({ limit: 200 });
@@ -74,6 +158,8 @@ export function OverviewTab({ order }: OverviewTabProps) {
   const hasPayment = order.payment_method_guid || order.payment_term_guid;
 
   return (
+    <div className="space-y-5">
+    <StatusPipelineCard statusCode={order.status_code} />
     <div className="flex gap-5">
       {/* Colonna principale */}
       <div className="min-w-0 flex-1 space-y-5">
@@ -185,15 +271,30 @@ export function OverviewTab({ order }: OverviewTabProps) {
       <div className="w-72 shrink-0 space-y-4">
         {/* Cliente */}
         <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Building2 className="h-4 w-4 text-muted-foreground" />
-              <h2 className="text-[15px] font-semibold">Cliente</h2>
+          <CardContent className="pb-4 pt-5">
+            <div className="flex flex-col items-center gap-3 text-center">
+              <PartyAvatar
+                partyGuid={order.party_guid}
+                name={party?.description ?? "?"}
+                imagePath={party?.image_path}
+                className="h-14 w-14 text-[20px]"
+              />
+              <div className="space-y-0.5">
+                <p className="text-[14px] font-semibold leading-tight">
+                  {party?.description ?? <span className="text-muted-foreground">—</span>}
+                </p>
+                {party?.vat_number && (
+                  <p className="text-[12px] text-muted-foreground">P.IVA {party.vat_number}</p>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => navigate(`/parties/${order.party_guid}`)}
+                className="text-[12px] text-primary/60 transition-colors hover:text-primary"
+              >
+                Apri anagrafica →
+              </button>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Field label="Ragione Sociale" value={party?.description} />
-            {party?.vat_number && <Field label="Partita IVA" value={party.vat_number} />}
           </CardContent>
         </Card>
 
@@ -205,11 +306,21 @@ export function OverviewTab({ order }: OverviewTabProps) {
               <h2 className="text-[15px] font-semibold">Indirizzi</h2>
             </div>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <Field label="Spedizione" value={shippingLoc ? fmtAddress(shippingLoc) : null} />
-            <div className="border-t border-border/40 pt-3">
-              <Field label="Fatturazione" value={billingLoc ? fmtAddress(billingLoc) : null} />
-            </div>
+          <CardContent className="space-y-4">
+            <AddressBox
+              label="Spedizione"
+              typeCode="SHIPPING"
+              addressLine={shippingLoc?.address_line}
+              secondaryLine={[shippingLoc?.post_code, shippingLoc?.city, shippingLoc?.province].filter(Boolean).join(", ") || null}
+              onEdit={() => navigate(`/orders/${order.guid}/edit`)}
+            />
+            <AddressBox
+              label="Fatturazione"
+              typeCode="BILLING"
+              addressLine={billingLoc?.address_line}
+              secondaryLine={[billingLoc?.post_code, billingLoc?.city, billingLoc?.province].filter(Boolean).join(", ") || null}
+              onEdit={() => navigate(`/orders/${order.guid}/edit`)}
+            />
           </CardContent>
         </Card>
 
@@ -222,7 +333,7 @@ export function OverviewTab({ order }: OverviewTabProps) {
                 <h2 className="text-[15px] font-semibold">Pagamento</h2>
               </div>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-4">
               <Field
                 label="Metodo"
                 value={order.payment_method_guid ? paymentMethodMap.get(order.payment_method_guid) : null}
@@ -235,6 +346,7 @@ export function OverviewTab({ order }: OverviewTabProps) {
           </Card>
         )}
       </div>
+    </div>
     </div>
   );
 }

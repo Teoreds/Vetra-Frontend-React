@@ -448,6 +448,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/orders/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search orders by customer name or article code */
+        get: operations["search_orders_orders_search_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/orders/{order_guid}": {
         parameters: {
             query?: never;
@@ -2525,8 +2542,6 @@ export interface components {
              * Format: uuid
              */
             guid: string;
-            /** Code */
-            code: string | null;
             /**
              * Master Data Guid
              * Format: uuid
@@ -2648,8 +2663,6 @@ export interface components {
              * Format: uuid
              */
             guid: string;
-            /** Code */
-            code: string | null;
             /**
              * Master Data Guid
              * Format: uuid
@@ -4990,7 +5003,6 @@ export interface operations {
     list_orders_orders_get: {
         parameters: {
             query?: {
-                search?: string | null;
                 party_guid?: string | null;
                 status_code?: string | null;
                 date_from?: string | null;
@@ -5044,6 +5056,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OrderOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    search_orders_orders_search_get: {
+        parameters: {
+            query: {
+                q: string;
+                offset?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_OrderOut_"];
                 };
             };
             /** @description Validation Error */

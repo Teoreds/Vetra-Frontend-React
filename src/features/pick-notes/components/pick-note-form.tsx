@@ -30,6 +30,7 @@ import {
 } from "@/features/parties/hooks/use-party-locations";
 import { useWarehouses } from "@/features/warehouses/hooks/use-warehouses";
 import { useWarehouseWorkers } from "@/features/warehouses/hooks/use-warehouse-workers";
+import { useUnitOfMeasures } from "@/features/articles/hooks/use-article-lookups";
 import { pickNotesApi } from "../api/pick-notes.api";
 import { pickNoteKeys } from "../api/pick-notes.queries";
 import { orderKeys } from "@/features/orders/api/orders.queries";
@@ -130,6 +131,11 @@ export function PickNoteForm({ defaultOrderGuid }: PickNoteFormProps) {
     usePartyLocations(order?.party_guid || undefined);
   const { data: workersData } = useWarehouseWorkers();
   const workers = workersData?.items ?? [];
+  const { data: unitOfMeasures = [] } = useUnitOfMeasures();
+  const uomMap = useMemo(
+    () => new Map(unitOfMeasures.map((u) => [u.code, u.description])),
+    [unitOfMeasures],
+  );
 
   const articleMap = useMemo(() => {
     const map = new Map<string, { code: string; description: string }>();
@@ -398,7 +404,7 @@ export function PickNoteForm({ defaultOrderGuid }: PickNoteFormProps) {
                   <TableRow>
                     <TableHead className="w-10" />
                     <TableHead>Articolo</TableHead>
-                    <TableHead className="w-20 text-right">U.M.</TableHead>
+                    <TableHead className="w-20 text-right">UdM</TableHead>
                     <TableHead className="w-24 text-right">Ordinato</TableHead>
                     <TableHead className="w-24 text-right">Prelevato</TableHead>
                     <TableHead className="w-28 text-right">
@@ -443,7 +449,9 @@ export function PickNoteForm({ defaultOrderGuid }: PickNoteFormProps) {
                           </div>
                         </TableCell>
                         <TableCell className="text-right text-[13px] text-muted-foreground">
-                          {row.unit_of_measure_code || "—"}
+                          {row.unit_of_measure_code
+                            ? (uomMap.get(row.unit_of_measure_code) ?? row.unit_of_measure_code).toUpperCase()
+                            : "—"}
                         </TableCell>
                         <TableCell className="text-right text-[13px] tabular-nums">
                           {row.order_quantity}

@@ -2,7 +2,9 @@ import { useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { useParams, useNavigate } from "react-router-dom";
 import { z } from "zod/v4";
-import { ArrowLeft, Loader2, Building2, Truck, FileText, Tag, ImagePlus, Trash2, CreditCard } from "lucide-react";
+import { Loader2, Building2, Truck, FileText, Tag, ImagePlus, Trash2, CreditCard } from "lucide-react";
+import { BackButton } from "@/shared/ui/back-button";
+import { useBack } from "@/shared/hooks/use-back";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
@@ -49,6 +51,7 @@ type EditForm = z.infer<typeof editSchema>;
 export function PartyEditPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const back = useBack();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { data: party, isLoading } = useParty(id!);
@@ -147,9 +150,7 @@ export function PartyEditPage() {
   return (
     <div className="space-y-6">
       <div className="mx-auto max-w-xl flex items-center gap-3">
-        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate(-1)}>
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
+        <BackButton fallback={`/parties/${id}`} />
 
         {/* Avatar with upload */}
         <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
@@ -462,7 +463,7 @@ export function PartyEditPage() {
         )}
 
         <div className="flex justify-end gap-3">
-          <Button type="button" variant="outline" onClick={() => navigate(-1)}>
+          <Button type="button" variant="outline" onClick={() => back(`/parties/${id}`)}>
             Annulla
           </Button>
           <Button type="submit" disabled={updateParty.isPending}>

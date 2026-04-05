@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { RefreshCw } from "lucide-react";
 import { Card } from "@/shared/ui/card";
 import { PaginationControls } from "@/shared/ui/pagination-controls";
 import { useShippingPickNotes, type ShippingPickNoteListParams } from "../hooks/use-shipping-pick-notes";
@@ -13,7 +14,7 @@ export function ShipmentsListPage() {
     limit: DEFAULT_LIMIT,
   });
 
-  const { data, isLoading } = useShippingPickNotes(filters);
+  const { data, isLoading, refetch, isRefetching } = useShippingPickNotes(filters);
 
   return (
     <div className="space-y-6">
@@ -40,6 +41,15 @@ export function ShipmentsListPage() {
             }
             onReset={() => setFilters({ offset: 0, limit: DEFAULT_LIMIT })}
           />
+          <button
+            type="button"
+            onClick={() => refetch()}
+            disabled={isRefetching}
+            className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
+            title="Aggiorna"
+          >
+            <RefreshCw className={`h-3.5 w-3.5 ${isRefetching ? "animate-spin" : ""}`} />
+          </button>
         </div>
 
         <ShipmentsTable pickNotes={data?.items ?? []} isLoading={isLoading} />

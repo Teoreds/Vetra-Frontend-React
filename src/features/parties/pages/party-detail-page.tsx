@@ -1,12 +1,13 @@
 import { useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
-  ArrowLeft,
   Pencil,
   ImagePlus,
   Trash2,
   Loader2,
 } from "lucide-react";
+import { BackButton } from "@/shared/ui/back-button";
+import { useBack } from "@/shared/hooks/use-back";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as Tabs from "@radix-ui/react-tabs";
 import { Button } from "@/shared/ui/button";
@@ -33,6 +34,7 @@ type DialogType = "contact" | "address" | "discount" | "intent-letter" | "suppli
 export function PartyDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const back = useBack();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { data: party, isLoading, error } = useParty(id!);
@@ -73,8 +75,7 @@ export function PartyDetailPage() {
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-20">
         <p className="text-[13px] text-muted-foreground">Nessuna anagrafica trovata.</p>
-        <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
-          <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
+        <Button variant="ghost" size="sm" onClick={() => back("/parties")}>
           Torna alle anagrafiche
         </Button>
       </div>
@@ -91,9 +92,7 @@ export function PartyDetailPage() {
       <div className="sticky -top-6 z-30 -mx-8 -mt-6 bg-page/80 backdrop-blur-sm px-8 pt-6">
         <div className="mx-auto max-w-5xl flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate(-1)}>
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
+            <BackButton fallback="/parties" />
 
             {/* Avatar with upload */}
             <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />

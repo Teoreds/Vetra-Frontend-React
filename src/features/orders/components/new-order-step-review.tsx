@@ -19,6 +19,7 @@ import { orderKeys } from "../api/orders.queries";
 import { useParties } from "@/features/parties/hooks/use-parties";
 import { usePartyLocations } from "@/features/parties/hooks/use-party-locations";
 import { useWarehouseWorkers } from "@/features/warehouses/hooks/use-warehouse-workers";
+import { useUnitOfMeasures } from "@/features/articles/hooks/use-article-lookups";
 import { CalendarDays, User, MapPin } from "lucide-react";
 import type { Step1Data } from "./new-order-step-details";
 import { formatCurrency } from "@/shared/lib/utils";
@@ -30,9 +31,18 @@ interface NewOrderStepReviewProps {
   availableRows: OrderRowDraft[];
   commitmentRows: OrderRowDraft[];
   onBack: () => void;
+  mode?: "create" | "edit";
 }
 
-function ReadOnlyTable({ rows, label }: { rows: OrderRowDraft[]; label: string }) {
+function ReadOnlyTable({
+  rows,
+  label,
+  uomMap,
+}: {
+  rows: OrderRowDraft[];
+  label: string;
+  uomMap: Map<string, string>;
+}) {
   if (rows.length === 0) return null;
   return (
     <div className="space-y-2">
@@ -40,10 +50,11 @@ function ReadOnlyTable({ rows, label }: { rows: OrderRowDraft[]; label: string }
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Articolo</TableHead>
-            <TableHead className="w-20 text-right">Qtà</TableHead>
-            <TableHead className="w-28 text-right">Prezzo</TableHead>
-            <TableHead className="w-20 text-right whitespace-nowrap pl-4">Sconto %</TableHead>
+            <TableHead className="min-w-[180px]">Articolo</TableHead>
+            <TableHead className="w-16">Qtà</TableHead>
+            <TableHead className="w-14 pl-4">UdM</TableHead>
+            <TableHead className="w-28 pl-4 text-right whitespace-nowrap">Prezzo</TableHead>
+            <TableHead className="w-20 pl-4 text-right whitespace-nowrap">Sconto %</TableHead>
             <TableHead className="w-28 text-right">Subtotale</TableHead>
           </TableRow>
         </TableHeader>
@@ -52,24 +63,25 @@ function ReadOnlyTable({ rows, label }: { rows: OrderRowDraft[]; label: string }
             const qty = Number(row.quantity) || 0;
             const price = Number(row.unit_price) || 0;
             const discPct = Number(row.discount_percent) || 0;
-            const subtotal = Number((qty * price * (1 - discPct / 100)).toFixed(2));
+            const subtotal = qty * price * (1 - discPct / 100);
+            const uomLabel = row.unit_of_measure_code
+              ? (uomMap.get(row.unit_of_measure_code) ?? row.unit_of_measure_code)
+              : "—";
             return (
               <TableRow key={i}>
                 <TableCell>
-                  <p className="font-medium">{row.article_description}</p>
+                  <p className="text-[13px] font-medium leading-tight">{row.article_description}</p>
                   <p className="text-[11px] text-muted-foreground">{row.article_code}</p>
                 </TableCell>
-                <TableCell className="text-right">
-                  {row.quantity}
-                  {row.unit_of_measure_code && (
-                    <span className="ml-1 text-[11px] text-muted-foreground">{row.unit_of_measure_code}</span>
-                  )}
-                </TableCell>
-                <TableCell className="text-right">{formatCurrency(Number(row.unit_price) || 0)}</TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-[13px]">{qty}</TableCell>
+                <TableCell className="pl-4 text-[11px] text-muted-foreground uppercase">{uomLabel}</TableCell>
+                <TableCell className="pl-4 text-right text-[13px] tabular-nums">{formatCurrency(price)}</TableCell>
+                <TableCell className="pl-4 text-right text-[13px] tabular-nums">
                   {discPct > 0 ? `${discPct}%` : "—"}
                 </TableCell>
-                <TableCell className="text-right font-medium">{formatCurrency(subtotal)}</TableCell>
+                <TableCell className="text-right text-[13px] font-medium tabular-nums">
+                  {formatCurrency(subtotal)}
+                </TableCell>
               </TableRow>
             );
           })}
@@ -85,6 +97,7 @@ export function NewOrderStepReview({
   availableRows,
   commitmentRows,
   onBack,
+  mode = "create",
 }: NewOrderStepReviewProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -101,6 +114,8 @@ export function NewOrderStepReview({
 
   const { data: workersData, isLoading: isLoadingWorkers } = useWarehouseWorkers();
   const workers = workersData?.items ?? [];
+  const { data: uomList = [] } = useUnitOfMeasures();
+  const uomMap = new Map(uomList.map((u) => [u.code, u.description]));
 
   // Fetch official totals from backend
   const { data: orderData, isLoading: isLoadingOrder } = useQuery({
@@ -129,10 +144,28 @@ export function NewOrderStepReview({
     setConfirmError(null);
     setIsConfirming(true);
     try {
-      const { error } = await ordersApi.confirm(orderGuid);
-      if (error) {
-        setConfirmError("Impossibile confermare l'ordine. Riprova.");
-        return;
+      if (mode === "edit") {
+        const { error: updateError } = await ordersApi.update(orderGuid, {
+          warehouse_worker_guid: workerGuid || null,
+        });
+        if (updateError) {
+          setConfirmError("Impossibile salvare le modifiche. Riprova.");
+          return;
+        }
+      } else {
+        const { error: updateError } = await ordersApi.update(orderGuid, {
+          status_code: (order?.status_code as string) ?? "DRAFT",
+          warehouse_worker_guid: workerGuid,
+        });
+        if (updateError) {
+          setConfirmError("Impossibile salvare l'operatore. Riprova.");
+          return;
+        }
+        const { error } = await ordersApi.confirm(orderGuid);
+        if (error) {
+          setConfirmError("Impossibile confermare l'ordine. Riprova.");
+          return;
+        }
       }
       queryClient.invalidateQueries({ queryKey: orderKeys.detail(orderGuid) });
       queryClient.invalidateQueries({ queryKey: orderKeys.lists() });
@@ -151,9 +184,13 @@ export function NewOrderStepReview({
         {/* Order info */}
         <Card>
           <CardHeader>
-            <h2 className="text-[15px] font-semibold">Riepilogo Ordine</h2>
+            <h2 className="text-[15px] font-semibold">
+              {mode === "edit" ? "Riepilogo Modifiche" : "Riepilogo Ordine"}
+            </h2>
             <p className="text-[13px] text-muted-foreground">
-              Verifica i dati e conferma l'ordine.
+              {mode === "edit"
+                ? "Verifica le modifiche e salva l'ordine."
+                : "Verifica i dati e conferma l'ordine."}
             </p>
           </CardHeader>
           <CardContent className="pt-0">
@@ -201,11 +238,13 @@ export function NewOrderStepReview({
             <ReadOnlyTable
               rows={availableRows}
               label={`Articoli Disponibili (${availableRows.length})`}
+              uomMap={uomMap}
             />
             {availableRows.length > 0 && commitmentRows.length > 0 && <Separator />}
             <ReadOnlyTable
               rows={commitmentRows}
               label={`Impegno Cliente (${commitmentRows.length})`}
+              uomMap={uomMap}
             />
             {availableRows.length === 0 && commitmentRows.length === 0 && (
               <p className="py-4 text-center text-[13px] text-muted-foreground">
@@ -230,13 +269,13 @@ export function NewOrderStepReview({
             ) : (
               <ExternalLink className="mr-1.5 h-4 w-4" />
             )}
-            Conferma Ordine
+            {mode === "edit" ? "Salva Modifiche" : "Conferma Ordine"}
           </Button>
         </div>
       </div>
 
       {/* Sidebar */}
-      <div className="w-80 shrink-0">
+      <div className="w-72 shrink-0">
         <div className="sticky top-4 space-y-4">
         {/* VAT Breakdown */}
         <Card>
@@ -297,7 +336,9 @@ export function NewOrderStepReview({
               )}
             </div>
             <p className="text-[13px] text-muted-foreground">
-              Seleziona il tuo nome per confermare la presa in carico.
+              {mode === "edit"
+                ? "Seleziona l'operatore responsabile della modifica."
+                : "Seleziona il tuo nome per confermare la presa in carico."}
             </p>
           </CardHeader>
           <CardContent className="pt-0">

@@ -91,4 +91,17 @@ export const articlesApi = {
     apiClient.DELETE("/articles/{article_guid}/image", {
       params: { path: { article_guid: articleGuid } },
     }),
+
+  listOrders: async (articleGuid: string, params?: { offset?: number; limit?: number }) => {
+    const token = useAuthStore.getState().accessToken;
+    const query = new URLSearchParams();
+    if (params?.offset !== undefined) query.set("offset", String(params.offset));
+    if (params?.limit !== undefined) query.set("limit", String(params.limit));
+    const qs = query.toString();
+    const res = await fetch(`${env.API_BASE_URL}/articles/${articleGuid}/orders${qs ? `?${qs}` : ""}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+    if (!res.ok) throw new Error("Failed to fetch article orders");
+    return (await res.json()) as components["schemas"]["Page_OrderOut_"];
+  },
 };

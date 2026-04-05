@@ -4,12 +4,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod/v4";
 import {
-  ArrowLeft,
   Loader2,
   Plus,
   Trash2,
   ImagePlus,
 } from "lucide-react";
+import { BackButton } from "@/shared/ui/back-button";
+import { useBack } from "@/shared/hooks/use-back";
 import { Checkbox } from "@/shared/ui/checkbox";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
@@ -60,6 +61,7 @@ type EditForm = z.infer<typeof editSchema>;
 export function ArticleEditPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const back = useBack();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [currency, setCurrency] = useState<Currency>("EUR");
@@ -231,9 +233,7 @@ export function ArticleEditPage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="mx-auto max-w-2xl flex items-center gap-3">
-        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate(-1)}>
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
+        <BackButton fallback={`/articles/${id}`} />
 
         {/* Avatar */}
         <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
@@ -497,7 +497,7 @@ export function ArticleEditPage() {
 
         {/* Footer */}
         <div className="flex justify-end gap-3">
-          <Button type="button" variant="outline" onClick={() => navigate(-1)}>
+          <Button type="button" variant="outline" onClick={() => back(`/articles/${id}`)}>
             Annulla
           </Button>
           <Button type="submit" disabled={saving}>

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/shared/ui/button";
+import { useBack } from "@/shared/hooks/use-back";
 import { Stepper } from "@/shared/ui/stepper";
 import { NewPartyStepDetails } from "../components/new-party-step-details";
 import { NewPartyStepContacts } from "../components/new-party-step-contacts";
@@ -27,6 +28,7 @@ const STEPS = [
 
 export function NewPartyPage() {
   const navigate = useNavigate();
+  const back = useBack();
   const queryClient = useQueryClient();
   const store = useNewPartyStore();
 
@@ -85,7 +87,7 @@ export function NewPartyPage() {
   function handleClearAndNavigate() {
     handleImageClear();
     store.clear();
-    navigate("/parties");
+    back("/parties");
   }
 
   /* ── Submit all ────────────────────────────────────── */

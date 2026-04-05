@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -46,6 +46,8 @@ export function NewPartyStepDetails({ defaultValues, onNext, error, imagePreview
     register,
     handleSubmit,
     control,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<Step1Data>({
     resolver: zodResolver(step1Schema),
@@ -60,6 +62,19 @@ export function NewPartyStepDetails({ defaultValues, onNext, error, imagePreview
     },
   });
 
+  const SDI_DEFAULTS: Record<string, string> = {
+    INTRA_CEE: "XXXXXXX",
+    EXTRA_CEE: "XXXXXXX",
+    NAZIONALE: "",
+  };
+
+  const fiscalArea = watch("fiscal_area_code");
+  useEffect(() => {
+    if (fiscalArea && fiscalArea in SDI_DEFAULTS) {
+      setValue("sdi_code", SDI_DEFAULTS[fiscalArea], { shouldValidate: false });
+    }
+  }, [fiscalArea]);
+
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (file) onImageSelect(file);
@@ -67,9 +82,7 @@ export function NewPartyStepDetails({ defaultValues, onNext, error, imagePreview
   }
 
   const onSubmit = (values: Step1Data) => {
-    const parsed = step1Schema.safeParse(values);
-    if (!parsed.success) return;
-    onNext(parsed.data);
+    onNext(values);
   };
 
   return (

@@ -1,7 +1,8 @@
 import { useState, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/shared/ui/button";
+import { BackButton } from "@/shared/ui/back-button";
 import { NewOrderStepper, type StepConfig } from "../components/new-order-stepper";
 import { NewOrderStepDetails, type Step1Data } from "../components/new-order-step-details";
 import { NewOrderStepItems, type OrderRowDraft } from "../components/new-order-step-items";
@@ -90,12 +91,14 @@ export function OrderWizardPage() {
     return {
       party_guid: order.party_guid,
       order_date: order.order_date,
+      payment_method_guid: order.payment_method_guid ?? undefined,
+      payment_term_guid: order.payment_term_guid ?? undefined,
       shipping_location_guid: order.shipping_location_guid ?? undefined,
       billing_location_guid: order.billing_location_guid ?? undefined,
     };
   }, [order, mode]);
 
-  const [currentStep, setCurrentStep] = useState(mode === "edit" ? 2 : 1);
+  const [currentStep, setCurrentStep] = useState(1);
   const [step1Data, setStep1Data] = useState<Step1Data | null>(null);
   const [orderGuid, setOrderGuid] = useState<string | null>(mode === "edit" ? id ?? null : null);
   const [availableRows, setAvailableRows] = useState<OrderRowDraft[]>([]);
@@ -115,21 +118,25 @@ export function OrderWizardPage() {
       setStep1Data(data);
       setStep1Error(null);
 
-      // Check if addresses changed compared to the original order
-      const shippingChanged =
-        (data.shipping_location_guid ?? null) !== (order?.shipping_location_guid ?? null);
-      const billingChanged =
-        (data.billing_location_guid ?? null) !== (order?.billing_location_guid ?? null);
+      // Collect changed fields
+      const patch: Record<string, unknown> = {};
+      if (data.order_date !== order?.order_date) patch.order_date = data.order_date;
+      if ((data.shipping_location_guid ?? null) !== (order?.shipping_location_guid ?? null))
+        patch.shipping_location_guid = data.shipping_location_guid || null;
+      if ((data.billing_location_guid ?? null) !== (order?.billing_location_guid ?? null))
+        patch.billing_location_guid = data.billing_location_guid || null;
+      if ((data.payment_method_guid ?? null) !== (order?.payment_method_guid ?? null))
+        patch.payment_method_guid = data.payment_method_guid || null;
+      if ((data.payment_term_guid ?? null) !== (order?.payment_term_guid ?? null))
+        patch.payment_term_guid = data.payment_term_guid || null;
 
-      if (shippingChanged || billingChanged) {
+      if (Object.keys(patch).length > 0) {
         setStep1Pending(true);
         try {
-          const { error } = await ordersApi.update(id, {
-            shipping_location_guid: data.shipping_location_guid || null,
-            billing_location_guid: data.billing_location_guid || null,
-          });
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const { error } = await ordersApi.update(id, patch as any);
           if (error) {
-            setStep1Error("Impossibile aggiornare gli indirizzi. Riprova.");
+            setStep1Error("Impossibile aggiornare i dati. Riprova.");
             setStep1Pending(false);
             return;
           }
@@ -192,13 +199,6 @@ export function OrderWizardPage() {
   function handleStep2Next(data: { availableRows: OrderRowDraft[]; commitmentRows: OrderRowDraft[] }) {
     setAvailableRows(data.availableRows);
     setCommitmentRows(data.commitmentRows);
-
-    if (mode === "edit") {
-      // Skip step 3 — navigate back to order detail
-      navigate(`/orders/${effectiveOrderGuid}`);
-      return;
-    }
-
     setCurrentStep(3);
   }
 
@@ -215,30 +215,20 @@ export function OrderWizardPage() {
     );
   }
 
-  const headerTitle =
-    mode === "edit"
-      ? `Modifica Ordine #${order?.guid.slice(0, 8).toUpperCase() ?? ""}`
-      : "Nuovo Ordine";
-  const headerDescription =
-    mode === "edit"
-      ? "Modifica le righe dell'ordine."
-      : "Completa i passaggi per creare un nuovo ordine.";
-
   return (
     <div className="mx-auto max-w-4xl space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8"
-          onClick={() => navigate(mode === "edit" ? `/orders/${id}` : "/orders")}
-        >
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
+        <BackButton fallback={mode === "edit" ? `/orders/${id}` : "/orders"} />
         <div>
-          <h1 className="text-xl font-semibold">{headerTitle}</h1>
-          <p className="text-[13px] text-muted-foreground">{headerDescription}</p>
+          <h1 className="text-xl font-semibold">
+            {mode === "edit" ? "Modifica Ordine" : "Nuovo Ordine"}
+          </h1>
+          <p className="text-[13px] text-muted-foreground">
+            {mode === "edit"
+              ? `#${order?.code.replace(/^ORD-/i, "") ?? ""}`
+              : "Completa i passaggi per creare un nuovo ordine."}
+          </p>
         </div>
       </div>
 
@@ -249,15 +239,12 @@ export function OrderWizardPage() {
 
       {/* Step content */}
       {currentStep === 1 && (
-        <div className="mx-auto max-w-xl">
-          <NewOrderStepDetails
-            defaultValues={effectiveStep1 ?? undefined}
-            onNext={handleStep1Next}
-            isPending={step1Pending}
-            error={step1Error}
-            readOnly={mode === "edit"}
-          />
-        </div>
+        <NewOrderStepDetails
+          defaultValues={effectiveStep1 ?? undefined}
+          onNext={handleStep1Next}
+          isPending={step1Pending}
+          error={step1Error}
+        />
       )}
 
       {currentStep === 2 && effectiveStep1 && effectiveOrderGuid && (
@@ -281,6 +268,7 @@ export function OrderWizardPage() {
           availableRows={availableRows}
           commitmentRows={commitmentRows}
           onBack={handleBack}
+          mode={mode}
         />
       )}
     </div>

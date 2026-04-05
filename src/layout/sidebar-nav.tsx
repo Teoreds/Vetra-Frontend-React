@@ -14,11 +14,11 @@ import { cn } from "@/shared/lib/utils";
 import { env } from "@/config/env";
 
 const navItems = [
-  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/dashboard", label: "Cruscotto", icon: LayoutDashboard },
   { to: "/orders", label: "Ordini", icon: ShoppingCart },
   { to: "/pick-notes", label: "Note Prelievo", icon: ClipboardList },
   { to: "/shipments", label: "Spedizioni", icon: Truck },
-  { to: "/parties", label: "Anagrafica", icon: Users },
+  { to: "/parties", label: "Anagrafiche", icon: Users },
   { to: "/articles", label: "Articoli", icon: Package },
 ] as const;
 
