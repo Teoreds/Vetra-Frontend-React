@@ -14,6 +14,10 @@ const STATUS_VARIANT_MAP: Record<string, StatusBadgeVariant> = {
   CANCELLED: "cancelled",
   PENDING: "pending",
   DELIVERED: "delivered",
+  // Quote statuses
+  SENT: "confirmed",
+  ACCEPTED: "fulfilled",
+  REJECTED: "cancelled",
 };
 
 export function getStatusVariant(statusCode: string): StatusBadgeVariant {

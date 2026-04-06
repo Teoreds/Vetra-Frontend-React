@@ -28,6 +28,9 @@ const NewPickNotePage = lazy(() => import("@/features/pick-notes/pages/new-pick-
 const PickNoteDetailPage = lazy(() => import("@/features/pick-notes/pages/pick-note-detail-page").then((m) => ({ default: m.PickNoteDetailPage })));
 const ShipmentsListPage = lazy(() => import("@/features/shipments/pages/shipments-list-page").then((m) => ({ default: m.ShipmentsListPage })));
 const AdminPage = lazy(() => import("@/features/admin/pages/admin-page").then((m) => ({ default: m.AdminPage })));
+const QuoteListPage = lazy(() => import("@/features/quotes/pages/quote-list-page").then((m) => ({ default: m.QuoteListPage })));
+const QuoteDetailPage = lazy(() => import("@/features/quotes/pages/quote-detail-page").then((m) => ({ default: m.QuoteDetailPage })));
+const QuoteWizardPage = lazy(() => import("@/features/quotes/pages/quote-wizard-page").then((m) => ({ default: m.QuoteWizardPage })));
 
 function lz(Page: React.LazyExoticComponent<React.ComponentType>) {
   return <LazyPage><Page /></LazyPage>;
@@ -68,6 +71,10 @@ export const router = createBrowserRouter([
           { path: "/pick-notes", element: lz(PickNoteListPage) },
           { path: "/pick-notes/new", element: lz(NewPickNotePage) },
           { path: "/pick-notes/:id", element: lz(PickNoteDetailPage) },
+          { path: "/quotes", element: lz(QuoteListPage) },
+          { path: "/quotes/new", element: lz(QuoteWizardPage) },
+          { path: "/quotes/:id", element: lz(QuoteDetailPage) },
+          { path: "/quotes/:id/edit", element: lz(QuoteWizardPage) },
           { path: "/shipments", element: lz(ShipmentsListPage) },
           { path: "/admin", element: lz(AdminPage) },
           { path: "*", element: <NotFoundPage /> },

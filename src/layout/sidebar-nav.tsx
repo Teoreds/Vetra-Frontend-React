@@ -9,12 +9,14 @@ import {
   Package,
   SlidersHorizontal,
   HelpCircle,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 import { env } from "@/config/env";
 
 const navItems = [
   { to: "/dashboard", label: "Cruscotto", icon: LayoutDashboard },
+  { to: "/quotes", label: "Preventivi", icon: FileText },
   { to: "/orders", label: "Ordini", icon: ShoppingCart },
   { to: "/pick-notes", label: "Note Prelievo", icon: ClipboardList },
   { to: "/shipments", label: "Spedizioni", icon: Truck },
