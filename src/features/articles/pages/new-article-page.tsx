@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { z } from "zod/v4";
 import { Loader2, Plus, Trash2, ImagePlus, Package } from "lucide-react";
 import { BackButton } from "@/shared/ui/back-button";
+import { PageHeader } from "@/shared/ui/page-header";
 import { useBack } from "@/shared/hooks/use-back";
 import { Checkbox } from "@/shared/ui/checkbox";
 import { Button } from "@/shared/ui/button";
@@ -159,15 +160,12 @@ export function NewArticlePage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="mx-auto max-w-2xl flex items-center gap-3">
-        <BackButton fallback="/articles" />
-        <div>
-          <h1 className="text-xl font-semibold">Nuovo Articolo</h1>
-          <p className="text-[13px] text-muted-foreground">
-            Compila i campi per creare un nuovo articolo.
-          </p>
-        </div>
+      <div className="mx-auto max-w-2xl">
+        <PageHeader
+          title="Nuovo Articolo"
+          description="Compila i campi per creare un nuovo articolo."
+          leading={<BackButton fallback="/articles" />}
+        />
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="mx-auto max-w-2xl space-y-6">

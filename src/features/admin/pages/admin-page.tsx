@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { SlidersHorizontal } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
+import { PageHeader } from "@/shared/ui/page-header";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
 import { LOOKUP_CONFIGS } from "../api/admin.api";
 import { LookupTable } from "../components/lookup-table";
@@ -65,18 +66,15 @@ export function AdminPage() {
 
   return (
     <div className="space-y-5">
-      {/* Header */}
-      <div className="flex items-center gap-2.5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
-          <SlidersHorizontal className="h-4.5 w-4.5 text-primary" />
-        </div>
-        <div>
-          <h1 className="text-xl font-semibold">Centro di Controllo</h1>
-          <p className="text-[13px] text-muted-foreground">
-            Gestisci le tabelle di configurazione del sistema.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="Centro di Controllo"
+        description="Gestisci le tabelle di configurazione del sistema."
+        leading={
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
+            <SlidersHorizontal className="h-4.5 w-4.5 text-primary" />
+          </div>
+        }
+      />
 
       {/* Layout: sidebar + content */}
       <div className="flex gap-5">

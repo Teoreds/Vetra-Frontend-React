@@ -10,9 +10,11 @@ import {
   BarChart3,
   Users,
   Package,
+  AlertTriangle,
 } from "lucide-react";
 import { apiClient } from "@/shared/api/client";
 import { Card } from "@/shared/ui/card";
+import { PageHeader } from "@/shared/ui/page-header";
 import { KpiCard } from "../components/kpi-card";
 import { StatusPipeline } from "../components/status-pipeline";
 import { MonthlyTrendChart } from "../components/monthly-trend-chart";
@@ -45,25 +47,38 @@ function SectionCard({
   action,
   children,
   className,
+  variant = "default",
 }: {
   title: string;
   icon?: React.ReactNode;
   action?: { label: string; onClick: () => void };
   children: React.ReactNode;
   className?: string;
+  variant?: "default" | "warning";
 }) {
+  const isWarning = variant === "warning";
   return (
     <Card className={className}>
+      {/* Warning variant: amber top accent bar */}
+      {isWarning && (
+        <div className="h-[3px] w-full rounded-t-xl bg-gradient-to-r from-amber-400 to-orange-400" />
+      )}
       <div className="flex items-center justify-between px-5 pt-5 pb-1">
         <div className="flex items-center gap-2">
-          {icon && <span className="text-muted-foreground/40">{icon}</span>}
-          <h2 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{title}</h2>
+          {icon && (
+            <span className={isWarning ? "text-amber-500/70" : "text-muted-foreground/40"}>
+              {icon}
+            </span>
+          )}
+          <h2 className={`text-[length:var(--text-caption)] font-semibold uppercase tracking-wider ${isWarning ? "text-amber-600/80" : "text-muted-foreground"}`}>
+            {title}
+          </h2>
         </div>
         {action && (
           <button
             type="button"
             onClick={action.onClick}
-            className="flex items-center gap-1 text-[11px] font-medium text-primary/70 transition-colors hover:text-primary"
+            className="flex items-center gap-1 text-[length:var(--text-caption)] font-medium text-primary/70 transition-colors hover:text-primary"
           >
             {action.label}
             <ArrowRight className="h-3 w-3" />
@@ -94,13 +109,10 @@ export function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-xl font-semibold tracking-tight">Cruscotto</h1>
-        <p className="mt-0.5 text-[13px] text-muted-foreground">
-          Panoramica ordini e performance — aggiornato in tempo reale.
-        </p>
-      </div>
+      <PageHeader
+        title="Cruscotto"
+        description="Panoramica ordini e performance — aggiornato in tempo reale."
+      />
 
       {/* KPIs */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
@@ -165,7 +177,9 @@ export function DashboardPage() {
         </SectionCard>
         <SectionCard
           title="In Ritardo"
+          icon={<AlertTriangle className="h-3.5 w-3.5" />}
           className="col-span-2"
+          variant={data.overdue_orders.length > 0 ? "warning" : "default"}
         >
           <OverdueOrdersTable orders={data.overdue_orders} />
         </SectionCard>

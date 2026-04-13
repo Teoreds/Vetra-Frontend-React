@@ -3,12 +3,15 @@ import { ChevronRight } from "lucide-react";
 
 const SEGMENT_LABELS: Record<string, string> = {
   dashboard: "Cruscotto",
+  quotes: "Preventivi",
   orders: "Ordini",
   "pick-notes": "Note di Prelievo",
+  shipments: "Spedizioni",
   new: "Nuovo",
   edit: "Modifica",
   parties: "Anagrafiche",
   articles: "Articoli",
+  admin: "Centro di Controllo",
   warehouses: "Magazzino",
   settings: "Impostazioni",
   support: "Supporto",

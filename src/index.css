@@ -48,6 +48,14 @@
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
+
+  /* Typography scale */
+  --text-page-title: 1.25rem;       /* 20px — h1 page titles */
+  --text-section-title: 0.8125rem;  /* 13px — section headers, uppercase */
+  --text-body: 0.8125rem;           /* 13px — primary body text */
+  --text-caption: 0.6875rem;        /* 11px — labels, badges, metadata */
+  --leading-page-title: 1.75rem;    /* 28px */
+  --leading-body: 1.25rem;          /* 20px */
 }
 
 *,
@@ -131,4 +139,29 @@ input:-webkit-autofill:focus {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+/* Tabular numbers for financial/quantity data */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Auth-layout animations (extracted from inline <style>) */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes crystal-glow {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(255,255,255,0.3)); }
+  50% { filter: drop-shadow(0 0 18px rgba(255,255,255,0.6)); }
+}
+@keyframes shimmer-sweep {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }

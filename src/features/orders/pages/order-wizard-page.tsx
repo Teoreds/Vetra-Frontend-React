@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { BackButton } from "@/shared/ui/back-button";
+import { PageHeader } from "@/shared/ui/page-header";
 import { NewOrderStepper, type StepConfig } from "../components/new-order-stepper";
 import { NewOrderStepDetails, type Step1Data } from "../components/new-order-step-details";
 import { NewOrderStepItems, type OrderRowDraft } from "../components/new-order-step-items";
@@ -217,20 +218,15 @@ export function OrderWizardPage() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <BackButton fallback={mode === "edit" ? `/orders/${id}` : "/orders"} />
-        <div>
-          <h1 className="text-xl font-semibold">
-            {mode === "edit" ? "Modifica Ordine" : "Nuovo Ordine"}
-          </h1>
-          <p className="text-[13px] text-muted-foreground">
-            {mode === "edit"
-              ? `#${order?.code.replace(/^ORD-/i, "") ?? ""}`
-              : "Completa i passaggi per creare un nuovo ordine."}
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title={mode === "edit" ? "Modifica Ordine" : "Nuovo Ordine"}
+        description={
+          mode === "edit"
+            ? `#${order?.code.replace(/^ORD-/i, "") ?? ""}`
+            : "Completa i passaggi per creare un nuovo ordine."
+        }
+        leading={<BackButton fallback={mode === "edit" ? `/orders/${id}` : "/orders"} />}
+      />
 
       {/* Stepper */}
       <div className="py-2">

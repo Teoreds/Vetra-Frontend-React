@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/shared/ui/button";
+import { StickyHeader } from "@/shared/ui/sticky-header";
 import { useBack } from "@/shared/hooks/use-back";
 import { usePickNote } from "../hooks/use-pick-note";
 import { PickNoteHeader } from "../components/pick-note-header";
@@ -32,11 +33,11 @@ export function PickNoteDetailPage() {
 
   return (
     <div>
-      <div className="sticky -top-6 z-30 -mx-8 -mt-6 bg-page/80 backdrop-blur-sm px-8 pt-6">
+      <StickyHeader>
         <PickNoteHeader pickNote={pickNote} />
-      </div>
+      </StickyHeader>
 
-      <div className="mx-auto max-w-4xl space-y-6 pt-3">
+      <div className="mx-auto w-full max-w-4xl space-y-6 pt-6">
         <PickNoteContent pickNote={pickNote} />
       </div>
     </div>

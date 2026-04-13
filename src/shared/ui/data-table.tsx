@@ -57,13 +57,13 @@ export function DataTable<T>({
   return (
     <div className="w-full overflow-hidden rounded-b-xl">
       <table className="w-full caption-bottom text-sm">
-        <thead>
-          <tr className="border-b border-border">
+        <thead className="bg-muted/30">
+          <tr className="border-b border-border/60">
             {columns.map((col) => (
               <th
                 key={col.key}
                 className={cn(
-                  "h-11 px-4 text-left align-middle text-[11px] font-semibold uppercase tracking-wider text-muted-foreground",
+                  "h-10 px-4 text-left align-middle text-[length:var(--text-caption)] font-semibold uppercase tracking-wider text-muted-foreground/70",
                   col.className,
                 )}
               >
@@ -81,9 +81,8 @@ export function DataTable<T>({
                 key={keyExtractor(row)}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
                 className={cn(
-                  "group/row border-b border-border/50 last:border-0 transition-colors duration-100",
-                  "hover:bg-muted/80",
-                  idx % 2 === 1 && "bg-muted/50",
+                  "group/row border-b border-border/50 last:border-0 transition-colors duration-75",
+                  "hover:bg-accent/60",
                   onRowClick && "cursor-pointer",
                 )}
               >

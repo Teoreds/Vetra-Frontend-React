@@ -198,8 +198,8 @@ export function PartyEditPage() {
         </div>
 
         <div>
-          <h1 className="text-xl font-semibold">Modifica Anagrafica</h1>
-          <p className="text-[13px] text-muted-foreground">{party.description}</p>
+          <h1 className="text-[length:var(--text-page-title)] font-semibold">Modifica Anagrafica</h1>
+          <p className="text-[length:var(--text-body)] text-muted-foreground">{party.description}</p>
         </div>
       </div>
 

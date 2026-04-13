@@ -48,7 +48,7 @@ export function PickNoteHeader({ pickNote }: PickNoteHeaderProps) {
         <BackButton fallback="/pick-notes" className="h-8 w-8 shrink-0" />
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <h1 className="text-xl font-bold tracking-tight leading-none">
+            <h1 className="text-[length:var(--text-page-title)] font-bold tracking-tight leading-none">
               Nota #{pickNote.guid.slice(0, 8).toUpperCase()}
             </h1>
             <StatusBadge
@@ -56,7 +56,7 @@ export function PickNoteHeader({ pickNote }: PickNoteHeaderProps) {
               label={statusLabels.get(pickNote.status_code) ?? pickNote.status_code}
             />
           </div>
-          <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
+          <div className="flex items-center gap-1.5 text-[length:var(--text-caption)] text-muted-foreground">
             <span>{createdAt}</span>
             {picker && (
               <>

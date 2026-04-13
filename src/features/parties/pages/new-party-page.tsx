@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/shared/ui/button";
+import { PageHeader } from "@/shared/ui/page-header";
 import { useBack } from "@/shared/hooks/use-back";
 import { Stepper } from "@/shared/ui/stepper";
 import { NewPartyStepDetails } from "../components/new-party-step-details";
@@ -215,23 +216,20 @@ export function NewPartyPage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8"
-          onClick={handleClearAndNavigate}
-        >
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        <div>
-          <h1 className="text-xl font-semibold">Nuova Anagrafica</h1>
-          <p className="text-[13px] text-muted-foreground">
-            Completa i passaggi per creare una nuova anagrafica.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="Nuova Anagrafica"
+        description="Completa i passaggi per creare una nuova anagrafica."
+        leading={
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={handleClearAndNavigate}
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+        }
+      />
 
       {/* Stepper */}
       <div className="py-2">

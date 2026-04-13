@@ -7,6 +7,8 @@ import {
   Loader2,
 } from "lucide-react";
 import { BackButton } from "@/shared/ui/back-button";
+import { StickyHeader } from "@/shared/ui/sticky-header";
+import { TabBar, TabTrigger } from "@/shared/ui/tab-bar";
 import { useBack } from "@/shared/hooks/use-back";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as Tabs from "@radix-ui/react-tabs";
@@ -74,7 +76,7 @@ export function PartyDetailPage() {
   if (error || !party) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-20">
-        <p className="text-[13px] text-muted-foreground">Nessuna anagrafica trovata.</p>
+        <p className="text-[length:var(--text-body)] text-muted-foreground">Nessuna anagrafica trovata.</p>
         <Button variant="ghost" size="sm" onClick={() => back("/parties")}>
           Torna alle anagrafiche
         </Button>
@@ -88,8 +90,7 @@ export function PartyDetailPage() {
 
   return (
     <Tabs.Root defaultValue="anagrafica" className="flex flex-col">
-      {/* Sticky header + tab list */}
-      <div className="sticky -top-6 z-30 -mx-8 -mt-6 bg-page/80 backdrop-blur-sm px-8 pt-6">
+      <StickyHeader>
         <div className="mx-auto max-w-5xl flex items-center justify-between">
           <div className="flex items-center gap-3">
             <BackButton fallback="/parties" />
@@ -140,8 +141,8 @@ export function PartyDetailPage() {
             </div>
 
             <div>
-              <h1 className="text-xl font-bold tracking-tight leading-none">{party.description}</h1>
-              <span className="text-[11px] text-muted-foreground capitalize">
+              <h1 className="text-[length:var(--text-page-title)] font-bold tracking-tight leading-none">{party.description}</h1>
+              <span className="text-[length:var(--text-caption)] text-muted-foreground capitalize">
                 {typeLabels.get(party.type_code)?.toLowerCase() ?? party.type_code.toLowerCase()}
               </span>
             </div>
@@ -153,16 +154,15 @@ export function PartyDetailPage() {
           </Button>
         </div>
 
-        {/* Tab list */}
-        <Tabs.List className="mx-auto max-w-5xl mt-3 flex gap-0 border-b border-border/60">
+        <TabBar className="mx-auto max-w-5xl mt-3">
           <TabTrigger value="anagrafica">Anagrafica</TabTrigger>
           {isCustomer && <TabTrigger value="sconti">Sconti</TabTrigger>}
           {isCustomer && <TabTrigger value="ordini">Ordini</TabTrigger>}
           {isSupplier && <TabTrigger value="articoli">Articoli</TabTrigger>}
-        </Tabs.List>
-      </div>
+        </TabBar>
+      </StickyHeader>
 
-      {/* Tab content — scrolls normally */}
+      {/* Tab content */}
       <div className="mx-auto w-full max-w-5xl pt-6">
         <Tabs.Content value="anagrafica">
           <div className="flex gap-5">
@@ -232,16 +232,5 @@ export function PartyDetailPage() {
         />
       )}
     </Tabs.Root>
-  );
-}
-
-function TabTrigger({ value, children }: { value: string; children: React.ReactNode }) {
-  return (
-    <Tabs.Trigger
-      value={value}
-      className="relative px-4 py-2.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground data-[state=active]:text-foreground after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:rounded-full after:bg-primary after:opacity-0 after:transition-opacity data-[state=active]:after:opacity-100"
-    >
-      {children}
-    </Tabs.Trigger>
   );
 }

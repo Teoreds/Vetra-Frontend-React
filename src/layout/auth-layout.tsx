@@ -5,26 +5,7 @@ import { LogoIcon } from "@/shared/ui/logo-icon";
 export function AuthLayout() {
   return (
     <div className="flex h-screen">
-      <style>{`
-        @keyframes spin-slow {
-          from { transform: rotate(0deg) }
-          to { transform: rotate(360deg) }
-        }
-        @keyframes crystal-glow {
-          0%, 100% { filter: brightness(1) drop-shadow(0 0 0px transparent) }
-          50% { filter: brightness(1.15) drop-shadow(0 0 30px rgba(255,255,255,0.15)) }
-        }
-        @keyframes shimmer-sweep {
-          0% { transform: translateX(-100%) rotate(25deg); opacity: 0 }
-          15% { opacity: 1 }
-          85% { opacity: 1 }
-          100% { transform: translateX(100%) rotate(25deg); opacity: 0 }
-        }
-        @keyframes text-shimmer {
-          0% { background-position: -200% center }
-          100% { background-position: 200% center }
-        }
-      `}</style>
+      {/* Keyframes defined in index.css */}
       {/* ── Left — branded panel (hidden on mobile) ── */}
       <div
         className="relative hidden flex-col justify-between overflow-hidden p-12 lg:flex lg:w-1/2"

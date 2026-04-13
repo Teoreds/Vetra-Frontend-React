@@ -106,8 +106,8 @@ interface OverviewTabProps {
 function Field({ label, value }: { label: string; value?: string | null }) {
   return (
     <div className="space-y-0.5">
-      <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">{label}</p>
-      <p className="text-[13px]">{value || <span className="text-muted-foreground/50">—</span>}</p>
+      <p className="text-[length:var(--text-caption)] font-medium text-muted-foreground uppercase tracking-wide">{label}</p>
+      <p className="text-[length:var(--text-body)]">{value || <span className="text-muted-foreground/50">—</span>}</p>
     </div>
   );
 }

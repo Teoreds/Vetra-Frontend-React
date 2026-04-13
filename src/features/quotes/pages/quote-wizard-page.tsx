@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
 import { Button } from "@/shared/ui/button";
 import { BackButton } from "@/shared/ui/back-button";
+import { PageHeader } from "@/shared/ui/page-header";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
 import { DatePicker } from "@/shared/ui/date-picker";
 import { Stepper } from "@/shared/ui/stepper";
@@ -205,20 +206,15 @@ export function QuoteWizardPage() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <BackButton fallback={mode === "edit" ? `/quotes/${id}` : "/quotes"} />
-        <div>
-          <h1 className="text-xl font-semibold">
-            {mode === "edit" ? "Modifica Preventivo" : "Nuovo Preventivo"}
-          </h1>
-          <p className="text-[13px] text-muted-foreground">
-            {mode === "edit"
-              ? `#${quote?.code.replace(/^QUO-/i, "") ?? ""}`
-              : "Completa i passaggi per creare un nuovo preventivo."}
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title={mode === "edit" ? "Modifica Preventivo" : "Nuovo Preventivo"}
+        description={
+          mode === "edit"
+            ? `#${quote?.code.replace(/^QUO-/i, "") ?? ""}`
+            : "Completa i passaggi per creare un nuovo preventivo."
+        }
+        leading={<BackButton fallback={mode === "edit" ? `/quotes/${id}` : "/quotes"} />}
+      />
 
       {/* Stepper */}
       <div className="py-2">

@@ -54,7 +54,7 @@ export function QuoteHeader({ quote }: QuoteHeaderProps) {
 
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <h1 className="text-xl font-bold tracking-tight leading-none">
+            <h1 className="text-[length:var(--text-page-title)] font-bold tracking-tight leading-none">
               Preventivo #{quote.code.replace(/^QUO-/i, "")}
             </h1>
             <StatusBadge
@@ -76,17 +76,17 @@ export function QuoteHeader({ quote }: QuoteHeaderProps) {
                   imagePath={party.image_path}
                   className="h-4 w-4 text-[8px]"
                 />
-                <span className="text-[12px] text-muted-foreground font-medium">
+                <span className="text-[length:var(--text-caption)] text-muted-foreground font-medium">
                   {party.description}
                 </span>
                 <span className="text-muted-foreground/30 select-none">·</span>
               </>
             )}
-            <span className="text-[12px] text-muted-foreground">{createdAt}</span>
+            <span className="text-[length:var(--text-caption)] text-muted-foreground">{createdAt}</span>
             {quote.valid_until && (
               <>
                 <span className="text-muted-foreground/30 select-none">·</span>
-                <span className="text-[12px] text-muted-foreground">
+                <span className="text-[length:var(--text-caption)] text-muted-foreground">
                   Valido fino al{" "}
                   {new Date(quote.valid_until).toLocaleDateString("it-IT", {
                     day: "2-digit",

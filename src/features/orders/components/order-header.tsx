@@ -43,7 +43,7 @@ export function OrderHeader({ order }: OrderHeaderProps) {
         <div className="space-y-1">
           {/* Titolo + badge stato */}
           <div className="flex items-center gap-2.5">
-            <h1 className="text-xl font-bold tracking-tight leading-none">
+            <h1 className="text-[length:var(--text-page-title)] font-bold tracking-tight leading-none">
               Ordine #{order.code.replace(/^ORD-/i, "")}
             </h1>
             <StatusBadge
@@ -62,17 +62,17 @@ export function OrderHeader({ order }: OrderHeaderProps) {
                   imagePath={party.image_path}
                   className="h-4 w-4 text-[8px]"
                 />
-                <span className="text-[12px] text-muted-foreground font-medium">
+                <span className="text-[length:var(--text-caption)] text-muted-foreground font-medium">
                   {party.description}
                 </span>
                 <span className="text-muted-foreground/30 select-none">·</span>
               </>
             )}
-            <span className="text-[12px] text-muted-foreground">{createdAt}</span>
+            <span className="text-[length:var(--text-caption)] text-muted-foreground">{createdAt}</span>
             {worker && (
               <>
                 <span className="text-muted-foreground/30 select-none">·</span>
-                <span className="text-[12px] text-muted-foreground">
+                <span className="text-[length:var(--text-caption)] text-muted-foreground">
                   da {worker.name} {worker.surname}
                 </span>
               </>

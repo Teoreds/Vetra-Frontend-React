@@ -273,8 +273,8 @@ export function ArticleEditPage() {
         </div>
 
         <div>
-          <h1 className="text-xl font-semibold">Modifica Articolo</h1>
-          <p className="text-[13px] text-muted-foreground">{article.code} — {article.description}</p>
+          <h1 className="text-[length:var(--text-page-title)] font-semibold">Modifica Articolo</h1>
+          <p className="text-[length:var(--text-body)] text-muted-foreground">{article.code} — {article.description}</p>
         </div>
       </div>
 
