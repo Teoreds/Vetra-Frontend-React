@@ -412,6 +412,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/articles/{article_guid}/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List orders containing the article */
+        get: operations["list_article_orders_articles__article_guid__orders_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/warehouses": {
         parameters: {
             query?: never;
@@ -442,23 +459,6 @@ export interface paths {
         put?: never;
         /** Create order */
         post: operations["create_order_orders_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/orders/search": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Search orders by customer name or article code */
-        get: operations["search_orders_orders_search_get"];
-        put?: never;
-        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -534,95 +534,6 @@ export interface paths {
         head?: never;
         /** Update order row */
         patch: operations["update_order_row_order_rows__order_row_guid__patch"];
-        trace?: never;
-    };
-    "/quotes": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List quotes */
-        get: operations["list_quotes_quotes_get"];
-        put?: never;
-        /** Create quote */
-        post: operations["create_quote_quotes_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/quotes/{quote_guid}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get quote with rows */
-        get: operations["get_quote_quotes__quote_guid__get"];
-        put?: never;
-        post?: never;
-        /** Delete quote */
-        delete: operations["delete_quote_quotes__quote_guid__delete"];
-        options?: never;
-        head?: never;
-        /** Update quote */
-        patch: operations["update_quote_quotes__quote_guid__patch"];
-        trace?: never;
-    };
-    "/quotes/{quote_guid}/rows": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Add quote row */
-        post: operations["create_quote_row_quotes__quote_guid__rows_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/quote-rows/{quote_row_guid}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Delete quote row */
-        delete: operations["delete_quote_row_quote_rows__quote_row_guid__delete"];
-        options?: never;
-        head?: never;
-        /** Update quote row */
-        patch: operations["update_quote_row_quote_rows__quote_row_guid__patch"];
-        trace?: never;
-    };
-    "/quotes/{quote_guid}/convert-to-order": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Convert quote to order draft */
-        post: operations["convert_quote_to_order_quotes__quote_guid__convert_to_order_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
         trace?: never;
     };
     "/orders/{order_guid}/confirm": {
@@ -1344,6 +1255,112 @@ export interface paths {
         patch: operations["update_payment_term_payment_terms__guid__patch"];
         trace?: never;
     };
+    "/quotes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List quotes */
+        get: operations["list_quotes_quotes_get"];
+        put?: never;
+        /** Create quote */
+        post: operations["create_quote_quotes_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_guid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get quote with rows */
+        get: operations["get_quote_quotes__quote_guid__get"];
+        put?: never;
+        post?: never;
+        /** Delete quote */
+        delete: operations["delete_quote_quotes__quote_guid__delete"];
+        options?: never;
+        head?: never;
+        /** Update quote */
+        patch: operations["update_quote_quotes__quote_guid__patch"];
+        trace?: never;
+    };
+    "/quotes/{quote_guid}/rows": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add quote row */
+        post: operations["add_quote_row_quotes__quote_guid__rows_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quote-rows/{row_guid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete quote row */
+        delete: operations["delete_quote_row_quote_rows__row_guid__delete"];
+        options?: never;
+        head?: never;
+        /** Update quote row */
+        patch: operations["update_quote_row_quote_rows__row_guid__patch"];
+        trace?: never;
+    };
+    "/quotes/{quote_guid}/pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download quote PDF */
+        get: operations["download_quote_pdf_quotes__quote_guid__pdf_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_guid}/convert-to-order": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Convert accepted quote to order */
+        post: operations["convert_to_order_quotes__quote_guid__convert_to_order_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/stats/dashboard": {
         parameters: {
             query?: never;
@@ -1582,6 +1599,43 @@ export interface paths {
         head?: never;
         /** Aggiorna Unità di misura */
         patch: operations["update_unit_of_measure_unit_of_measures__code__patch"];
+        trace?: never;
+    };
+    "/quote-statuses": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Lista status preventivo */
+        get: operations["list_quote_statuses_quote_statuses_get"];
+        put?: never;
+        /** Crea Status preventivo */
+        post: operations["create_quote_statuse_quote_statuses_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quote-statuses/{code}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Dettaglio Status preventivo */
+        get: operations["get_quote_statuse_quote_statuses__code__get"];
+        put?: never;
+        post?: never;
+        /** Elimina Status preventivo */
+        delete: operations["delete_quote_statuse_quote_statuses__code__delete"];
+        options?: never;
+        head?: never;
+        /** Aggiorna Status preventivo */
+        patch: operations["update_quote_statuse_quote_statuses__code__patch"];
         trace?: never;
     };
     "/order-statuses": {
@@ -2558,6 +2612,8 @@ export interface components {
             bank_name?: string | null;
             /** Bank Iban */
             bank_iban?: string | null;
+            /** Primary Color */
+            primary_color?: string | null;
         };
         /** MasterDataUpdate */
         MasterDataUpdate: {
@@ -2591,6 +2647,8 @@ export interface components {
             bank_name?: string | null;
             /** Bank Iban */
             bank_iban?: string | null;
+            /** Primary Color */
+            primary_color?: string | null;
         };
         /** MonthlyTrend */
         MonthlyTrend: {
@@ -2631,6 +2689,8 @@ export interface components {
              * Format: uuid
              */
             guid: string;
+            /** Code */
+            code: string | null;
             /**
              * Master Data Guid
              * Format: uuid
@@ -2752,6 +2812,8 @@ export interface components {
              * Format: uuid
              */
             guid: string;
+            /** Code */
+            code: string | null;
             /**
              * Master Data Guid
              * Format: uuid
@@ -2903,243 +2965,11 @@ export interface components {
         /** OrderUpdate */
         OrderUpdate: {
             /** Status Code */
-            status_code: string;
+            status_code?: string | null;
+            /** Warehouse Worker Guid */
+            warehouse_worker_guid?: string | null;
             /** Note */
             note?: string | null;
-        };
-        /** QuoteCreate */
-        QuoteCreate: {
-            /**
-             * Party Guid
-             * Format: uuid
-             */
-            party_guid: string;
-            /**
-             * Quote Date
-             * Format: date
-             */
-            quote_date: string;
-            /**
-             * Valid Until
-             * Format: date
-             */
-            valid_until?: string | null;
-            /** Payment Method Guid */
-            payment_method_guid?: string | null;
-            /** Payment Term Guid */
-            payment_term_guid?: string | null;
-            /** Billing Location Guid */
-            billing_location_guid?: string | null;
-            /** Shipping Location Guid */
-            shipping_location_guid?: string | null;
-            /** Notes */
-            notes?: string | null;
-        };
-        /** QuoteUpdate */
-        QuoteUpdate: {
-            /** Status Code */
-            status_code?: string | null;
-            /**
-             * Quote Date
-             * Format: date
-             */
-            quote_date?: string | null;
-            /**
-             * Valid Until
-             * Format: date
-             */
-            valid_until?: string | null;
-            /** Payment Method Guid */
-            payment_method_guid?: string | null;
-            /** Payment Term Guid */
-            payment_term_guid?: string | null;
-            /** Billing Location Guid */
-            billing_location_guid?: string | null;
-            /** Shipping Location Guid */
-            shipping_location_guid?: string | null;
-            /** Notes */
-            notes?: string | null;
-        };
-        /** QuoteOut */
-        QuoteOut: {
-            /**
-             * Guid
-             * Format: uuid
-             */
-            guid: string;
-            /** Code */
-            code: string;
-            /**
-             * Party Guid
-             * Format: uuid
-             */
-            party_guid: string;
-            /** Status Code */
-            status_code: string;
-            /**
-             * Quote Date
-             * Format: date
-             */
-            quote_date: string;
-            /**
-             * Valid Until
-             * Format: date
-             */
-            valid_until: string | null;
-            /** Payment Method Guid */
-            payment_method_guid: string | null;
-            /** Payment Term Guid */
-            payment_term_guid: string | null;
-            /** Billing Location Guid */
-            billing_location_guid: string | null;
-            /** Shipping Location Guid */
-            shipping_location_guid: string | null;
-            /** Notes */
-            notes: string | null;
-            /** Vat Rate */
-            vat_rate: string | null;
-            /** Total Net */
-            total_net: string | null;
-            /** Total Vat */
-            total_vat: string | null;
-            /** Total Gross */
-            total_gross: string | null;
-            /** Total Discount */
-            total_discount: string | null;
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-            /** Created By User Guid */
-            created_by_user_guid: string | null;
-        };
-        /** QuoteDetailOut */
-        QuoteDetailOut: {
-            /**
-             * Guid
-             * Format: uuid
-             */
-            guid: string;
-            /** Code */
-            code: string;
-            /**
-             * Party Guid
-             * Format: uuid
-             */
-            party_guid: string;
-            /** Status Code */
-            status_code: string;
-            /**
-             * Quote Date
-             * Format: date
-             */
-            quote_date: string;
-            /**
-             * Valid Until
-             * Format: date
-             */
-            valid_until: string | null;
-            /** Payment Method Guid */
-            payment_method_guid: string | null;
-            /** Payment Term Guid */
-            payment_term_guid: string | null;
-            /** Billing Location Guid */
-            billing_location_guid: string | null;
-            /** Shipping Location Guid */
-            shipping_location_guid: string | null;
-            /** Notes */
-            notes: string | null;
-            /** Vat Rate */
-            vat_rate: string | null;
-            /** Total Net */
-            total_net: string | null;
-            /** Total Vat */
-            total_vat: string | null;
-            /** Total Gross */
-            total_gross: string | null;
-            /** Total Discount */
-            total_discount: string | null;
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-            /** Created By User Guid */
-            created_by_user_guid: string | null;
-            /**
-             * Rows
-             * @default []
-             */
-            rows: components["schemas"]["QuoteRowOut"][];
-        };
-        /** QuoteRowCreate */
-        QuoteRowCreate: {
-            /**
-             * Article Guid
-             * Format: uuid
-             */
-            article_guid: string;
-            /** Quantity */
-            quantity: number | string;
-            /** Unit Price */
-            unit_price: number | string;
-            /** Discount Percent */
-            discount_percent?: number | string | null;
-            /** Vat Code */
-            vat_code?: string | null;
-            /** Unit Of Measure Code */
-            unit_of_measure_code?: string | null;
-        };
-        /** QuoteRowUpdate */
-        QuoteRowUpdate: {
-            /** Quantity */
-            quantity?: number | string | null;
-            /** Unit Price */
-            unit_price?: number | string | null;
-            /** Discount Percent */
-            discount_percent?: number | string | null;
-        };
-        /** QuoteRowOut */
-        QuoteRowOut: {
-            /**
-             * Guid
-             * Format: uuid
-             */
-            guid: string;
-            /**
-             * Quote Guid
-             * Format: uuid
-             */
-            quote_guid: string;
-            /**
-             * Article Guid
-             * Format: uuid
-             */
-            article_guid: string;
-            /** Quantity */
-            quantity: string;
-            /** Unit Price */
-            unit_price: string;
-            /** Discount Percent */
-            discount_percent: string;
-            /** Vat Code */
-            vat_code: string | null;
-            /** Unit Of Measure Code */
-            unit_of_measure_code: string | null;
-            /** Total Net */
-            total_net: string | null;
-        };
-        /** Page[QuoteOut] */
-        Page_QuoteOut_: {
-            /** Items */
-            items: components["schemas"]["QuoteOut"][];
-            /** Total */
-            total: number;
-            /** Offset */
-            offset: number;
-            /** Limit */
-            limit: number;
         };
         /** OverdueOrder */
         OverdueOrder: {
@@ -3270,6 +3100,17 @@ export interface components {
         Page_PickNoteOut_: {
             /** Items */
             items: components["schemas"]["PickNoteOut"][];
+            /** Total */
+            total: number;
+            /** Offset */
+            offset: number;
+            /** Limit */
+            limit: number;
+        };
+        /** Page[QuoteOut] */
+        Page_QuoteOut_: {
+            /** Items */
+            items: components["schemas"]["QuoteOut"][];
             /** Total */
             total: number;
             /** Offset */
@@ -3721,6 +3562,222 @@ export interface components {
             picker_guid?: string | null;
             /** Checker Guid */
             checker_guid?: string | null;
+            /** Note */
+            note?: string | null;
+        };
+        /** QuoteCreate */
+        QuoteCreate: {
+            /**
+             * Party Guid
+             * Format: uuid
+             */
+            party_guid: string;
+            /**
+             * Quote Date
+             * Format: date
+             */
+            quote_date: string;
+            /** Valid Until */
+            valid_until?: string | null;
+            /** Payment Method Guid */
+            payment_method_guid?: string | null;
+            /** Payment Term Guid */
+            payment_term_guid?: string | null;
+            /** Billing Location Guid */
+            billing_location_guid?: string | null;
+            /** Shipping Location Guid */
+            shipping_location_guid?: string | null;
+            /** Note */
+            note?: string | null;
+        };
+        /** QuoteDetailOut */
+        QuoteDetailOut: {
+            /**
+             * Guid
+             * Format: uuid
+             */
+            guid: string;
+            /** Code */
+            code: string | null;
+            /**
+             * Master Data Guid
+             * Format: uuid
+             */
+            master_data_guid: string;
+            /**
+             * Party Guid
+             * Format: uuid
+             */
+            party_guid: string;
+            /** Status Code */
+            status_code: string;
+            /**
+             * Quote Date
+             * Format: date
+             */
+            quote_date: string;
+            /** Valid Until */
+            valid_until: string | null;
+            /** Payment Method Guid */
+            payment_method_guid: string | null;
+            /** Payment Term Guid */
+            payment_term_guid: string | null;
+            /** Billing Location Guid */
+            billing_location_guid: string | null;
+            /** Shipping Location Guid */
+            shipping_location_guid: string | null;
+            /** Total Net */
+            total_net: string | null;
+            /** Vat Rate */
+            vat_rate: string | null;
+            /** Total Vat */
+            total_vat: string | null;
+            /** Total Gross */
+            total_gross: string | null;
+            /** Total Discount */
+            total_discount: string | null;
+            /** Note */
+            note: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Created By User Guid */
+            created_by_user_guid: string | null;
+            /**
+             * Rows
+             * @default []
+             */
+            rows: components["schemas"]["QuoteRowOut"][];
+        };
+        /** QuoteOut */
+        QuoteOut: {
+            /**
+             * Guid
+             * Format: uuid
+             */
+            guid: string;
+            /** Code */
+            code: string | null;
+            /**
+             * Master Data Guid
+             * Format: uuid
+             */
+            master_data_guid: string;
+            /**
+             * Party Guid
+             * Format: uuid
+             */
+            party_guid: string;
+            /** Status Code */
+            status_code: string;
+            /**
+             * Quote Date
+             * Format: date
+             */
+            quote_date: string;
+            /** Valid Until */
+            valid_until: string | null;
+            /** Payment Method Guid */
+            payment_method_guid: string | null;
+            /** Payment Term Guid */
+            payment_term_guid: string | null;
+            /** Billing Location Guid */
+            billing_location_guid: string | null;
+            /** Shipping Location Guid */
+            shipping_location_guid: string | null;
+            /** Total Net */
+            total_net: string | null;
+            /** Vat Rate */
+            vat_rate: string | null;
+            /** Total Vat */
+            total_vat: string | null;
+            /** Total Gross */
+            total_gross: string | null;
+            /** Total Discount */
+            total_discount: string | null;
+            /** Note */
+            note: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Created By User Guid */
+            created_by_user_guid: string | null;
+        };
+        /** QuoteRowCreate */
+        QuoteRowCreate: {
+            /**
+             * Article Guid
+             * Format: uuid
+             */
+            article_guid: string;
+            /** Quantity */
+            quantity: number | string;
+            /** Unit Price */
+            unit_price: number | string;
+            /** Discount Percent */
+            discount_percent?: number | string | null;
+            /** Vat Code */
+            vat_code?: string | null;
+            /** Unit Of Measure Code */
+            unit_of_measure_code?: string | null;
+        };
+        /** QuoteRowOut */
+        QuoteRowOut: {
+            /**
+             * Guid
+             * Format: uuid
+             */
+            guid: string;
+            /**
+             * Quote Guid
+             * Format: uuid
+             */
+            quote_guid: string;
+            /**
+             * Article Guid
+             * Format: uuid
+             */
+            article_guid: string;
+            /** Quantity */
+            quantity: string;
+            /** Unit Price */
+            unit_price: string;
+            /** Discount Percent */
+            discount_percent: string;
+            /** Vat Code */
+            vat_code: string | null;
+            /** Unit Of Measure Code */
+            unit_of_measure_code: string;
+        };
+        /** QuoteRowUpdate */
+        QuoteRowUpdate: {
+            /** Quantity */
+            quantity?: number | string | null;
+            /** Unit Price */
+            unit_price?: number | string | null;
+            /** Discount Percent */
+            discount_percent?: number | string | null;
+            /** Unit Of Measure Code */
+            unit_of_measure_code?: string | null;
+        };
+        /** QuoteUpdate */
+        QuoteUpdate: {
+            /** Status Code */
+            status_code?: string | null;
+            /** Valid Until */
+            valid_until?: string | null;
+            /** Payment Method Guid */
+            payment_method_guid?: string | null;
+            /** Payment Term Guid */
+            payment_term_guid?: string | null;
+            /** Billing Location Guid */
+            billing_location_guid?: string | null;
+            /** Shipping Location Guid */
+            shipping_location_guid?: string | null;
             /** Note */
             note?: string | null;
         };
@@ -5270,6 +5327,40 @@ export interface operations {
             };
         };
     };
+    list_article_orders_articles__article_guid__orders_get: {
+        parameters: {
+            query?: {
+                offset?: number;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                article_guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_OrderOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_warehouses_warehouses_get: {
         parameters: {
             query?: never;
@@ -5326,6 +5417,7 @@ export interface operations {
     list_orders_orders_get: {
         parameters: {
             query?: {
+                search?: string | null;
                 party_guid?: string | null;
                 status_code?: string | null;
                 date_from?: string | null;
@@ -5379,39 +5471,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OrderOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    search_orders_orders_search_get: {
-        parameters: {
-            query: {
-                q: string;
-                offset?: number;
-                limit?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Page_OrderOut_"];
                 };
             };
             /** @description Validation Error */
@@ -7690,6 +7749,332 @@ export interface operations {
             };
         };
     };
+    list_quotes_quotes_get: {
+        parameters: {
+            query?: {
+                search?: string | null;
+                party_guid?: string | null;
+                status_code?: string | null;
+                date_from?: string | null;
+                date_to?: string | null;
+                offset?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_QuoteOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_quote_quotes_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuoteCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuoteOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_quote_quotes__quote_guid__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuoteDetailOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_quote_quotes__quote_guid__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_quote_quotes__quote_guid__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuoteUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuoteOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_quote_row_quotes__quote_guid__rows_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuoteRowCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuoteRowOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_quote_row_quote_rows__row_guid__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                row_guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_quote_row_quote_rows__row_guid__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                row_guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuoteRowUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuoteRowOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    download_quote_pdf_quotes__quote_guid__pdf_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    convert_to_order_quotes__quote_guid__convert_to_order_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_dashboard_stats_dashboard_get: {
         parameters: {
             query?: {
@@ -8654,6 +9039,154 @@ export interface operations {
             };
         };
     };
+    list_quote_statuses_quote_statuses_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LookupOut"][];
+                };
+            };
+        };
+    };
+    create_quote_statuse_quote_statuses_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LookupCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LookupOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_quote_statuse_quote_statuses__code__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                code: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LookupOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_quote_statuse_quote_statuses__code__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                code: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_quote_statuse_quote_statuses__code__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                code: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LookupUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LookupOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_order_statuses_order_statuses_get: {
         parameters: {
             query?: never;
@@ -9529,301 +10062,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["LookupOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    list_quotes_quotes_get: {
-        parameters: {
-            query?: {
-                party_guid?: string | null;
-                status_code?: string | null;
-                search?: string | null;
-                date_from?: string | null;
-                date_to?: string | null;
-                offset?: number;
-                limit?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Page_QuoteOut_"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    create_quote_quotes_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["QuoteCreate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["QuoteOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_quote_quotes__quote_guid__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                quote_guid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["QuoteDetailOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    delete_quote_quotes__quote_guid__delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                quote_guid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    update_quote_quotes__quote_guid__patch: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                quote_guid: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["QuoteUpdate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["QuoteOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    create_quote_row_quotes__quote_guid__rows_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                quote_guid: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["QuoteRowCreate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["QuoteRowOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    delete_quote_row_quote_rows__quote_row_guid__delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                quote_row_guid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    update_quote_row_quote_rows__quote_row_guid__patch: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                quote_row_guid: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["QuoteRowUpdate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["QuoteRowOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    convert_quote_to_order_quotes__quote_guid__convert_to_order_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                quote_guid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrderOut"];
                 };
             };
             /** @description Validation Error */

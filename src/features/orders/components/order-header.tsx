@@ -83,21 +83,23 @@ export function OrderHeader({ order }: OrderHeaderProps) {
 
       <div className="flex items-center gap-1.5">
         <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 text-muted-foreground"
+          variant="outline"
+          size="sm"
+          className="h-8 text-muted-foreground gap-1.5"
           aria-label="Stampa"
         >
-          <Printer className="h-4 w-4" />
+          <Printer className="h-3.5 w-3.5" />
+          Stampa
         </Button>
         {canCreatePickNote && (
           <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 text-muted-foreground"
+            variant="outline"
+            size="sm"
+            className="h-8 text-muted-foreground gap-1.5"
             aria-label="Crea Nota di Prelievo"
           >
-            <ClipboardList className="h-4 w-4" />
+            <ClipboardList className="h-3.5 w-3.5" />
+            Nota di Prelievo
           </Button>
         )}
         <Button

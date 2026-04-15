@@ -10,9 +10,12 @@ import {
   SlidersHorizontal,
   HelpCircle,
   FileText,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 import { env } from "@/config/env";
+import { useSidebarStore } from "./use-sidebar-store";
 
 const navItems = [
   { to: "/dashboard", label: "Cruscotto", icon: LayoutDashboard },
@@ -34,17 +37,19 @@ const linkClass = (isActive: boolean) =>
     "flex items-center h-9 rounded-lg text-[13px] font-medium transition-colors duration-100 whitespace-nowrap",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30",
     isActive
-      ? "bg-primary/[0.08] text-primary font-semibold"
+      ? "bg-primary/[0.14] text-primary font-semibold"
       : "text-muted-foreground hover:bg-muted hover:text-foreground",
   );
 
 export function SidebarNav() {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const { isPinned, togglePin } = useSidebarStore();
+  const [isHovered, setIsHovered] = useState(false);
+  const isExpanded = isPinned || isHovered;
 
   return (
     <aside
-      onMouseEnter={() => setIsExpanded(true)}
-      onMouseLeave={() => setIsExpanded(false)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       className={cn(
         "fixed left-0 top-0 z-40 flex h-screen flex-col border-r border-sidebar-border bg-sidebar overflow-hidden transition-all duration-300 ease-in-out",
         isExpanded ? "w-60 shadow-xl" : "w-16",
@@ -121,6 +126,30 @@ export function SidebarNav() {
             </span>
           </NavLink>
         ))}
+      </div>
+
+      {/* Pin/collapse toggle */}
+      <div className="border-t border-sidebar-border mx-3" />
+      <div className="px-2 py-3">
+        <button
+          type="button"
+          onClick={togglePin}
+          title={isPinned ? "Comprimi sidebar" : "Fissa sidebar"}
+          className={cn(
+            "flex items-center h-9 w-full rounded-lg text-[13px] font-medium transition-colors duration-100",
+            "text-muted-foreground hover:bg-muted hover:text-foreground",
+          )}
+        >
+          <div className="flex w-12 shrink-0 items-center justify-center">
+            {isPinned
+              ? <PanelLeftClose className="h-[18px] w-[18px]" />
+              : <PanelLeftOpen className="h-[18px] w-[18px]" />
+            }
+          </div>
+          <span className={cn("transition-opacity duration-200", isExpanded ? "opacity-100 delay-100" : "opacity-0")}>
+            {isPinned ? "Comprimi" : "Fissa sidebar"}
+          </span>
+        </button>
       </div>
     </aside>
   );

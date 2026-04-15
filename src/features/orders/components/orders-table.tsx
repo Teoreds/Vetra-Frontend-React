@@ -1,8 +1,8 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Pencil, Printer, Copy, MoreVertical, ClipboardList } from "lucide-react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { DataTable, type Column } from "@/shared/ui/data-table";
+import { DataTable, type Column, type SortDirection } from "@/shared/ui/data-table";
 import { StatusBadge } from "@/shared/ui/status-badge";
 import { getStatusVariant } from "@/shared/ui/status-variants";
 import { formatDate, formatCurrency } from "@/shared/lib/utils";
@@ -23,6 +23,19 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
   const { map: statusLabels } = useOrderStatuses();
   const { data: partiesData } = useParties({ limit: 200 });
 
+  type SortKey = "code" | "order_date" | "total";
+  const [sortKey, setSortKey] = useState<SortKey>("order_date");
+  const [sortDir, setSortDir] = useState<SortDirection>("desc");
+
+  function handleSort(key: SortKey) {
+    if (sortKey === key) {
+      setSortDir((d) => (d === "asc" ? "desc" : d === "desc" ? null : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDir("desc");
+    }
+  }
+
   const shippingGuids = useMemo(
     () => orders.map((o) => o.shipping_location_guid).filter(Boolean) as string[],
     [orders],
@@ -39,11 +52,31 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
     return map;
   }, [partiesData]);
 
+  const sortedOrders = useMemo(() => {
+    if (!sortDir) return orders;
+    return [...orders].sort((a, b) => {
+      let cmp = 0;
+      if (sortKey === "code") {
+        cmp = a.code.localeCompare(b.code);
+      } else if (sortKey === "order_date") {
+        cmp = a.order_date.localeCompare(b.order_date);
+      } else if (sortKey === "total") {
+        const aTotal = Number(a.total_net ?? 0) + Number(a.total_vat ?? 0);
+        const bTotal = Number(b.total_net ?? 0) + Number(b.total_vat ?? 0);
+        cmp = aTotal - bTotal;
+      }
+      return sortDir === "asc" ? cmp : -cmp;
+    });
+  }, [orders, sortKey, sortDir]);
+
   const columns: Column<OrderOut>[] = [
     {
       key: "code",
       header: "ID Ordine",
       className: "w-32",
+      sortable: true,
+      sortDirection: sortKey === "code" ? sortDir : null,
+      onSort: () => handleSort("code"),
       render: (row) => (
         <span className="text-[13px] font-semibold text-primary">
           #{row.code.replace(/^ORD-/i, "")}
@@ -95,13 +128,15 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
         }
         const loc = locationsMap?.get(row.shipping_location_guid);
         if (!loc) return null;
-        const parts = [loc.address_line, loc.city].filter(Boolean);
+        const city = [loc.city, loc.province].filter(Boolean).join(", ");
+        const fullAddress = [loc.address_line, loc.city, loc.province].filter(Boolean).join(", ");
         return (
-          <div className="max-w-[200px]">
-            <span className="text-[13px] text-muted-foreground truncate block">
-              {parts.join(", ") || "—"}
-            </span>
-          </div>
+          <span
+            className="text-[13px] text-muted-foreground"
+            title={fullAddress || undefined}
+          >
+            {city || "—"}
+          </span>
         );
       },
     },
@@ -109,6 +144,9 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
       key: "total",
       header: "Totale",
       className: "w-28 text-right",
+      sortable: true,
+      sortDirection: sortKey === "total" ? sortDir : null,
+      onSort: () => handleSort("total"),
       render: (row) => {
         const net = Number(row.total_net ?? 0);
         const vat = Number(row.total_vat ?? 0);
@@ -124,6 +162,9 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
       key: "order_date",
       header: "Data",
       className: "w-32 text-right",
+      sortable: true,
+      sortDirection: sortKey === "order_date" ? sortDir : null,
+      onSort: () => handleSort("order_date"),
       render: (row) => (
         <span className="text-[13px] text-muted-foreground">
           {formatDate(row.order_date)}
@@ -190,7 +231,7 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
   return (
     <DataTable
       columns={columns}
-      data={orders}
+      data={sortedOrders}
       keyExtractor={(row) => row.guid}
       onRowClick={(row) => navigate(`/orders/${row.guid}`)}
       isLoading={isLoading}

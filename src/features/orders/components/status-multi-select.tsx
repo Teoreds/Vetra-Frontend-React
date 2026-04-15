@@ -1,3 +1,4 @@
+import { Check } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 import { useOrderStatuses } from "@/shared/hooks/use-lookups";
 import { getStatusVariant } from "@/shared/ui/status-variants";
@@ -30,12 +31,13 @@ export function StatusMultiSelect({ value, onChange }: StatusMultiSelectProps) {
             type="button"
             onClick={() => toggle(s.code)}
             className={cn(
-              "inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold leading-none tracking-wide transition-all cursor-pointer",
+              "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold leading-none tracking-wide transition-all cursor-pointer",
               active
-                ? statusBadgeVariants({ variant })
-                : "border border-border/50 bg-transparent text-muted-foreground hover:border-border hover:text-foreground",
+                ? cn(statusBadgeVariants({ variant }), "ring-1 ring-current/30 shadow-sm")
+                : "border border-border/60 bg-background text-muted-foreground hover:border-border hover:text-foreground hover:bg-muted/50",
             )}
           >
+            {active && <Check className="h-2.5 w-2.5 stroke-[3]" />}
             {s.description}
           </button>
         );

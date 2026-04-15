@@ -1,12 +1,18 @@
 import type { ReactNode } from "react";
+import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 import { EmptyState } from "./empty-state";
+
+export type SortDirection = "asc" | "desc" | null;
 
 export interface Column<T> {
   key: string;
   header: string;
   render: (row: T) => ReactNode;
   className?: string;
+  sortable?: boolean;
+  sortDirection?: SortDirection;
+  onSort?: () => void;
 }
 
 interface DataTableProps<T> {
@@ -65,9 +71,22 @@ export function DataTable<T>({
                 className={cn(
                   "h-10 px-4 text-left align-middle text-[length:var(--text-caption)] font-semibold uppercase tracking-wider text-muted-foreground/70",
                   col.className,
+                  col.sortable && "cursor-pointer select-none hover:text-foreground transition-colors",
                 )}
+                onClick={col.sortable ? col.onSort : undefined}
               >
-                {col.header}
+                <span className="inline-flex items-center gap-1">
+                  {col.header}
+                  {col.sortable && (
+                    col.sortDirection === "asc" ? (
+                      <ArrowUp className="h-3 w-3 text-primary" />
+                    ) : col.sortDirection === "desc" ? (
+                      <ArrowDown className="h-3 w-3 text-primary" />
+                    ) : (
+                      <ArrowUpDown className="h-3 w-3 opacity-30" />
+                    )
+                  )}
+                </span>
               </th>
             ))}
           </tr>

@@ -15,7 +15,7 @@ interface StepperProps {
 export function Stepper({ steps, currentStep, className }: StepperProps) {
   return (
     <nav aria-label="Avanzamento">
-      <ol className={cn("mx-auto flex w-fit items-center", className)}>
+      <ol className={cn("mx-auto flex w-fit items-center gap-0", className)}>
         {steps.map((step, index) => {
           const stepNumber = index + 1;
           const isCompleted = stepNumber < currentStep;
@@ -24,45 +24,51 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
 
           return (
             <li key={step.label} className="flex items-center">
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 <div
                   className={cn(
-                    "flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-semibold transition-all duration-200",
-                    isCompleted &&
-                      "bg-primary/15 text-primary",
-                    isActive &&
-                      "bg-primary text-primary-foreground",
-                    !isCompleted &&
-                      !isActive &&
-                      "bg-muted text-muted-foreground",
+                    "flex h-6 w-6 items-center justify-center rounded-full transition-all duration-200",
+                    isCompleted && "bg-primary/15 text-primary",
+                    isActive && "bg-primary text-primary-foreground shadow-sm ring-4 ring-primary/15",
+                    !isCompleted && !isActive && "bg-muted border border-border text-muted-foreground/50",
                   )}
                 >
                   {isCompleted ? (
                     <Check className="h-3 w-3 stroke-[2.5]" />
                   ) : (
-                    <span>{stepNumber}</span>
+                    <span className="text-[10px] font-bold">{stepNumber}</span>
                   )}
                 </div>
-                <span
-                  className={cn(
-                    "text-[11px] font-medium whitespace-nowrap",
-                    isActive && "text-primary font-semibold",
-                    isCompleted && "text-primary/70",
-                    !isCompleted && !isActive && "text-muted-foreground/60",
+                <div>
+                  <span
+                    className={cn(
+                      "text-[12px] font-semibold whitespace-nowrap",
+                      isActive && "text-primary",
+                      isCompleted && "text-primary/70",
+                      !isCompleted && !isActive && "text-muted-foreground/50",
+                    )}
+                  >
+                    {step.label}
+                  </span>
+                  {step.description && (
+                    <p
+                      className={cn(
+                        "text-[10px] leading-none mt-0.5 whitespace-nowrap",
+                        isActive && "text-primary/60",
+                        !isActive && "text-muted-foreground/40",
+                      )}
+                    >
+                      {step.description}
+                    </p>
                   )}
-                >
-                  {step.label}
-                </span>
+                </div>
               </div>
 
-              {/* Connettore */}
               {!isLast && (
                 <div
                   className={cn(
-                    "mx-2.5 h-px w-8 shrink-0 transition-colors duration-300",
-                    stepNumber < currentStep
-                      ? "bg-primary/25"
-                      : "bg-border",
+                    "mx-4 h-0.5 w-12 shrink-0 rounded-full transition-colors duration-300",
+                    stepNumber < currentStep ? "bg-primary/30" : "bg-border",
                   )}
                 />
               )}

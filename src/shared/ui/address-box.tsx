@@ -1,14 +1,6 @@
 import { useState } from "react";
 import { Copy, Check, Pencil } from "lucide-react";
 
-export function getLabelClass(typeCode: string) {
-  switch (typeCode.toUpperCase()) {
-    case "SHIPPING": return "text-sky-700 dark:text-sky-400";
-    case "BILLING": return "text-violet-700 dark:text-violet-400";
-    default: return "text-slate-400 dark:text-slate-500";
-  }
-}
-
 interface AddressBoxProps {
   label: string;
   typeCode: string;
@@ -21,7 +13,7 @@ interface AddressBoxProps {
 
 export function AddressBox({
   label,
-  typeCode,
+  typeCode: _typeCode,
   addressLine,
   secondaryLine,
   isPrimary,
@@ -44,7 +36,7 @@ export function AddressBox({
   return (
     <div className="group relative rounded-lg border border-border/40 px-3 pt-2.5 pb-2.5">
       <div className="absolute -top-[9px] left-3 flex items-center gap-1 bg-card px-1">
-        <span className={`text-[10px] font-semibold uppercase tracking-wide ${getLabelClass(typeCode)}`}>
+        <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
           {label}
         </span>
         {isPrimary && (

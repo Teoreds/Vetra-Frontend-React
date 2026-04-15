@@ -217,7 +217,7 @@ export function OrderWizardPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6">
+    <div className="mx-auto max-w-5xl space-y-5">
       <PageHeader
         title={mode === "edit" ? "Modifica Ordine" : "Nuovo Ordine"}
         description={
@@ -229,9 +229,7 @@ export function OrderWizardPage() {
       />
 
       {/* Stepper */}
-      <div className="py-2">
-        <NewOrderStepper steps={STEPS} currentStep={currentStep} />
-      </div>
+      <NewOrderStepper steps={STEPS} currentStep={currentStep} />
 
       {/* Step content */}
       {currentStep === 1 && (
