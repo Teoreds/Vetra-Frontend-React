@@ -1,4 +1,4 @@
-import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { useForm, useFieldArray, Controller, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
 import { ArrowLeft, ArrowRight, Plus, Trash2, Mail, MapPin } from "lucide-react";
@@ -101,7 +101,7 @@ export function NewPartyStepContacts({ typeCode, defaultValues, onNext, onBack, 
     getValues,
     formState: { errors },
   } = useForm<PartyContactsData>({
-    resolver: zodResolver(buildStep2Schema(typeCode)),
+    resolver: zodResolver(buildStep2Schema(typeCode)) as unknown as Resolver<PartyContactsData>,
     defaultValues: {
       contacts: defaultValues?.contacts ?? [],
       addresses: defaultValues?.addresses?.length ? defaultValues.addresses : [EMPTY_ADDRESS],

@@ -86,6 +86,26 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
+        /** Aggiorna profilo utente corrente */
+        patch: operations["update_me_auth_me_patch"];
+        trace?: never;
+    };
+    "/auth/me/avatar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Scarica foto profilo */
+        get: operations["get_avatar_auth_me_avatar_get"];
+        put?: never;
+        /** Carica foto profilo */
+        post: operations["upload_avatar_auth_me_avatar_post"];
+        /** Elimina foto profilo */
+        delete: operations["delete_avatar_auth_me_avatar_delete"];
+        options?: never;
+        head?: never;
         patch?: never;
         trace?: never;
     };
@@ -2078,6 +2098,14 @@ export interface components {
              */
             file: string;
         };
+        /** Body_upload_avatar_auth_me_avatar_post */
+        Body_upload_avatar_auth_me_avatar_post: {
+            /**
+             * File
+             * Format: binary
+             */
+            file: string;
+        };
         /** Body_upload_image_articles__article_guid__image_post */
         Body_upload_image_articles__article_guid__image_post: {
             /**
@@ -2179,8 +2207,10 @@ export interface components {
             kpis: components["schemas"]["KPIs"];
             /** Orders By Status */
             orders_by_status: components["schemas"]["StatusBreakdown"][];
-            /** Monthly Trend */
-            monthly_trend: components["schemas"]["MonthlyTrend"][];
+            /** Trend */
+            trend: components["schemas"]["TrendPoint"][];
+            /** Granularity */
+            granularity: string;
             /** Recent Orders */
             recent_orders: components["schemas"]["RecentOrder"][];
             /** Overdue Orders */
@@ -2649,15 +2679,6 @@ export interface components {
             bank_iban?: string | null;
             /** Primary Color */
             primary_color?: string | null;
-        };
-        /** MonthlyTrend */
-        MonthlyTrend: {
-            /** Month */
-            month: string;
-            /** Order Count */
-            order_count: number;
-            /** Total Gross */
-            total_gross: string;
         };
         /** OrderCreate */
         OrderCreate: {
@@ -3565,6 +3586,17 @@ export interface components {
             /** Note */
             note?: string | null;
         };
+        /** ProfileUpdate */
+        ProfileUpdate: {
+            /** Display Name */
+            display_name?: string | null;
+            /** Email */
+            email?: string | null;
+            /** Current Password */
+            current_password?: string | null;
+            /** New Password */
+            new_password?: string | null;
+        };
         /** QuoteCreate */
         QuoteCreate: {
             /**
@@ -3929,6 +3961,15 @@ export interface components {
             /** Total Gross */
             total_gross: string;
         };
+        /** TrendPoint */
+        TrendPoint: {
+            /** Period */
+            period: string;
+            /** Order Count */
+            order_count: number;
+            /** Total Gross */
+            total_gross: string;
+        };
         /** UnitOfMeasureOut */
         UnitOfMeasureOut: {
             /** Code */
@@ -3994,6 +4035,8 @@ export interface components {
              * @default []
              */
             allowed_modules: string[];
+            /** Profile Picture Path */
+            profile_picture_path?: string | null;
         };
         /** UserUpdate */
         UserUpdate: {
@@ -4212,6 +4255,110 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["UserOut"];
                 };
+            };
+        };
+    };
+    update_me_auth_me_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProfileUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_avatar_auth_me_avatar_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    upload_avatar_auth_me_avatar_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_avatar_auth_me_avatar_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_avatar_auth_me_avatar_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

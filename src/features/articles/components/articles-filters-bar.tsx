@@ -30,7 +30,7 @@ export function ArticlesFiltersBar({
   const hasFilters = !!filters.search;
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="flex flex-1 items-center gap-3 min-w-0">
       <div className="relative">
         <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
         <Input
@@ -47,7 +47,7 @@ export function ArticlesFiltersBar({
             setSearchInput("");
             onReset();
           }}
-          className="ml-auto flex items-center gap-1 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+          className="ml-auto shrink-0 flex items-center gap-1 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
         >
           <X className="h-3.5 w-3.5" />
           Ripristina

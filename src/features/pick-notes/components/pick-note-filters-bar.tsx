@@ -75,23 +75,25 @@ export function PickNoteFiltersBar({
         </Select.Root>
       )}
 
-      <DateRangePicker
-        from={filters.date_from}
-        to={filters.date_to}
-        onChange={(range) =>
-          onFilterChange({ date_from: range.from, date_to: range.to })
-        }
-      />
+      <div className="flex flex-1 items-center gap-3 min-w-0">
+        <DateRangePicker
+          from={filters.date_from}
+          to={filters.date_to}
+          onChange={(range) =>
+            onFilterChange({ date_from: range.from, date_to: range.to })
+          }
+        />
 
-      {hasFilters && (
-        <button
-          onClick={onReset}
-          className="ml-auto flex items-center gap-1 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <X className="h-3.5 w-3.5" />
-          Ripristina
-        </button>
-      )}
+        {hasFilters && (
+          <button
+            onClick={onReset}
+            className="ml-auto shrink-0 flex items-center gap-1 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <X className="h-3.5 w-3.5" />
+            Ripristina
+          </button>
+        )}
+      </div>
     </div>
   );
 }

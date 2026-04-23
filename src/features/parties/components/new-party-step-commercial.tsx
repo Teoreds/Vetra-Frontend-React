@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { useForm, useFieldArray, Controller, type Resolver } from "react-hook-form";
 import { z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -120,9 +120,8 @@ export function NewPartyStepCommercial({ typeCode, defaultValues, onNext, onBack
     watch,
     setValue,
     getValues,
-    formState: { errors },
   } = useForm<PartyCommercialData>({
-    resolver: zodResolver(step3Schema),
+    resolver: zodResolver(step3Schema) as unknown as Resolver<PartyCommercialData>,
     defaultValues: {
       default_payment_method_guid: "",
       default_payment_term_guid: "",

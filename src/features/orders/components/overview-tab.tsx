@@ -19,7 +19,7 @@ import { usePaymentMethods, usePaymentTerms, useOrderStatuses } from "@/shared/h
 import { formatCurrency } from "@/shared/lib/utils";
 import { cn } from "@/shared/lib/utils";
 import { AddressBox } from "@/shared/ui/address-box";
-import type { OrderOut } from "../types/order.types";
+import type { OrderDetailOut } from "../types/order.types";
 
 const PIPELINE = [
   { code: "DRAFT" },
@@ -28,8 +28,6 @@ const PIPELINE = [
   { code: "FULFILLED" },
   { code: "COMPLETED" },
 ] as const;
-
-type PipelineCode = typeof PIPELINE[number]["code"];
 
 const STEP_INDEX: Record<string, number> = Object.fromEntries(
   PIPELINE.map((s, i) => [s.code, i]),
@@ -106,7 +104,7 @@ function StatusPipelineCard({ statusCode }: { statusCode: string }) {
 }
 
 interface OverviewTabProps {
-  order: OrderOut;
+  order: OrderDetailOut;
 }
 
 function Field({ label, value }: { label: string; value?: string | null }) {
@@ -118,19 +116,6 @@ function Field({ label, value }: { label: string; value?: string | null }) {
   );
 }
 
-function fmtAddress(loc: {
-  address_line: string | null;
-  city: string | null;
-  province: string | null;
-  post_code: string | null;
-}) {
-  const parts = [
-    loc.address_line,
-    [loc.post_code, loc.city].filter(Boolean).join(" "),
-    loc.province,
-  ].filter(Boolean);
-  return parts.join(", ") || null;
-}
 
 export function OverviewTab({ order }: OverviewTabProps) {
   const navigate = useNavigate();
@@ -212,11 +197,11 @@ export function OverviewTab({ order }: OverviewTabProps) {
                               {article?.description ?? row.article_guid.slice(0, 8)}
                             </p>
                             {article && (
-                              <p className="text-[11px] text-muted-foreground">{article.code}</p>
+                              <p className="font-mono text-[10px] text-muted-foreground">{article.code}</p>
                             )}
                           </div>
                         </TableCell>
-                        <TableCell className="px-2 py-2.5 text-right text-[13px] tabular-nums">
+                        <TableCell className="px-2 py-2.5 text-right font-mono text-[12px] tabular-nums">
                           {qty}
                           {row.unit_of_measure_code && (
                             <span className="ml-1 text-[10px] text-muted-foreground">
@@ -224,13 +209,13 @@ export function OverviewTab({ order }: OverviewTabProps) {
                             </span>
                           )}
                         </TableCell>
-                        <TableCell className="px-2 py-2.5 text-right text-[13px] tabular-nums">
+                        <TableCell className="px-2 py-2.5 text-right font-mono text-[12px] tabular-nums">
                           {formatCurrency(price)}
                         </TableCell>
-                        <TableCell className="px-2 py-2.5 text-right text-[13px] tabular-nums">
+                        <TableCell className="px-2 py-2.5 text-right font-mono text-[12px] tabular-nums">
                           {discount > 0 ? `${discount}%` : "—"}
                         </TableCell>
-                        <TableCell className="px-2 py-2.5 text-right text-[13px] font-medium tabular-nums">
+                        <TableCell className="px-2 py-2.5 text-right font-mono text-[12px] font-medium tabular-nums">
                           {formatCurrency(lineTotal)}
                         </TableCell>
                       </TableRow>
@@ -249,24 +234,24 @@ export function OverviewTab({ order }: OverviewTabProps) {
               <div className="flex items-center gap-6">
                 <div>
                   <p className="text-[11px] font-medium text-muted-foreground">Imponibile</p>
-                  <p className="text-sm font-semibold tabular-nums">{formatCurrency(totalNet)}</p>
+                  <p className="font-mono text-[13px] font-semibold tabular-nums">{formatCurrency(totalNet)}</p>
                 </div>
                 <div className="h-8 w-px bg-border/60" />
                 <div>
                   <p className="text-[11px] font-medium text-muted-foreground">Sconto</p>
-                  <p className="text-sm font-semibold tabular-nums text-destructive">
+                  <p className="font-mono text-[13px] font-semibold tabular-nums text-destructive">
                     {totalDiscount > 0 ? `−${formatCurrency(totalDiscount)}` : "—"}
                   </p>
                 </div>
                 <div className="h-8 w-px bg-border/60" />
                 <div>
                   <p className="text-[11px] font-medium text-muted-foreground">IVA</p>
-                  <p className="text-sm font-semibold tabular-nums">{formatCurrency(totalVat)}</p>
+                  <p className="font-mono text-[13px] font-semibold tabular-nums">{formatCurrency(totalVat)}</p>
                 </div>
               </div>
               <div className="text-right">
                 <p className="text-[11px] font-medium text-muted-foreground">Totale</p>
-                <p className="text-lg font-bold tabular-nums text-primary">{formatCurrency(totalGross)}</p>
+                <p className="font-mono text-[17px] font-bold tabular-nums text-primary">{formatCurrency(totalGross)}</p>
               </div>
             </div>
           </CardContent>

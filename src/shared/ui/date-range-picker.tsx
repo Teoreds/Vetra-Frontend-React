@@ -43,7 +43,7 @@ export function DateRangePicker({
   from,
   to,
   onChange,
-  placeholder = "Seleziona periodo",
+  placeholder: _placeholder = "Seleziona periodo",
   className,
 }: DateRangePickerProps) {
   const [open, setOpen] = useState(false);

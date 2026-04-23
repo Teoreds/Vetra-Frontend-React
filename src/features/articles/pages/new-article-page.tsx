@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { useForm, useFieldArray, Controller, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod/v4";
@@ -76,7 +76,7 @@ export function NewArticlePage() {
     getValues,
     formState: { errors },
   } = useForm<NewArticleForm>({
-    resolver: zodResolver(newArticleSchema),
+    resolver: zodResolver(newArticleSchema) as unknown as Resolver<NewArticleForm>,
     defaultValues: store.draft ?? {
       code: "",
       description: "",
@@ -90,7 +90,7 @@ export function NewArticlePage() {
 
   useEffect(() => {
     const { unsubscribe } = watch((values) => {
-      useNewArticleStore.getState().setDraft(values);
+      useNewArticleStore.getState().setDraft(values as never);
     });
     return unsubscribe;
   }, []); // eslint-disable-line react-hooks/exhaustive-deps

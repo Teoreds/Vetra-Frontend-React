@@ -1,4 +1,4 @@
-import { Building2, Truck, FileText, CreditCard, User } from "lucide-react";
+import { Building2, Truck, CreditCard, User } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
 import { usePartyTypes, useFiscalAreas, usePartyCategories, usePaymentMethods, usePaymentTerms } from "@/shared/hooks/use-lookups";
 import { useParties } from "../hooks/use-parties";

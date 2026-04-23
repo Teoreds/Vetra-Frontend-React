@@ -55,7 +55,7 @@ export function QuoteHeader({ quote }: QuoteHeaderProps) {
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
             <h1 className="text-[length:var(--text-page-title)] font-bold tracking-tight leading-none">
-              Preventivo #{quote.code.replace(/^QUO-/i, "")}
+              Preventivo #{quote.code?.replace(/^QUO-/i, "") ?? ""}
             </h1>
             <StatusBadge
               variant={getStatusVariant(quote.status_code)}

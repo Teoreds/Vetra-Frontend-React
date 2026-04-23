@@ -9,10 +9,10 @@ import { useWarehouseWorkers } from "@/features/warehouses/hooks/use-warehouse-w
 import { useOrderStatuses } from "@/shared/hooks/use-lookups";
 import { useParty } from "@/features/parties/hooks/use-party";
 import { PartyAvatar } from "@/features/parties/components/party-avatar";
-import type { OrderOut } from "../types/order.types";
+import type { OrderDetailOut } from "../types/order.types";
 
 interface OrderHeaderProps {
-  order: OrderOut;
+  order: OrderDetailOut;
 }
 
 export function OrderHeader({ order }: OrderHeaderProps) {
@@ -44,7 +44,7 @@ export function OrderHeader({ order }: OrderHeaderProps) {
           {/* Titolo + badge stato */}
           <div className="flex items-center gap-2.5">
             <h1 className="text-[length:var(--text-page-title)] font-bold tracking-tight leading-none">
-              Ordine #{order.code.replace(/^ORD-/i, "")}
+              Ordine <span className="font-mono">#{order.code?.replace(/^ORD-/i, "") ?? ""}</span>
             </h1>
             <StatusBadge
               variant={getStatusVariant(order.status_code)}
@@ -68,7 +68,7 @@ export function OrderHeader({ order }: OrderHeaderProps) {
                 <span className="text-muted-foreground/30 select-none">·</span>
               </>
             )}
-            <span className="text-[length:var(--text-caption)] text-muted-foreground">{createdAt}</span>
+            <span className="font-mono text-[length:var(--text-caption)] text-muted-foreground">{createdAt}</span>
             {worker && (
               <>
                 <span className="text-muted-foreground/30 select-none">·</span>

@@ -28,6 +28,7 @@ const NewPickNotePage = lazy(() => import("@/features/pick-notes/pages/new-pick-
 const PickNoteDetailPage = lazy(() => import("@/features/pick-notes/pages/pick-note-detail-page").then((m) => ({ default: m.PickNoteDetailPage })));
 const ShipmentsListPage = lazy(() => import("@/features/shipments/pages/shipments-list-page").then((m) => ({ default: m.ShipmentsListPage })));
 const AdminPage = lazy(() => import("@/features/admin/pages/admin-page").then((m) => ({ default: m.AdminPage })));
+const ProfilePage = lazy(() => import("@/features/profile/pages/profile-page").then((m) => ({ default: m.ProfilePage })));
 const QuoteListPage = lazy(() => import("@/features/quotes/pages/quote-list-page").then((m) => ({ default: m.QuoteListPage })));
 const QuoteDetailPage = lazy(() => import("@/features/quotes/pages/quote-detail-page").then((m) => ({ default: m.QuoteDetailPage })));
 const QuoteWizardPage = lazy(() => import("@/features/quotes/pages/quote-wizard-page").then((m) => ({ default: m.QuoteWizardPage })));
@@ -75,6 +76,7 @@ export const router = createBrowserRouter([
           { path: "/quotes/new", element: lz(QuoteWizardPage) },
           { path: "/quotes/:id", element: lz(QuoteDetailPage) },
           { path: "/quotes/:id/edit", element: lz(QuoteWizardPage) },
+          { path: "/profile", element: lz(ProfilePage) },
           { path: "/shipments", element: lz(ShipmentsListPage) },
           { path: "/admin", element: lz(AdminPage) },
           { path: "*", element: <NotFoundPage /> },

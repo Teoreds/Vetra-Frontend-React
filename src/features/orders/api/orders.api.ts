@@ -16,7 +16,7 @@ export const ordersApi = {
     apiClient.GET("/orders", { params: { query: params } }),
 
   search: (q: string, params?: { offset?: number; limit?: number }) =>
-    apiClient.GET("/orders/search", { params: { query: { q, ...params } } }),
+    apiClient.GET("/orders", { params: { query: { search: q, ...params } } }),
 
   get: (orderGuid: string) =>
     apiClient.GET("/orders/{order_guid}", {

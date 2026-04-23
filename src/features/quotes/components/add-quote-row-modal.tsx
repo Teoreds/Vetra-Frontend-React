@@ -1,4 +1,4 @@
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
 import { ModalDialog } from "@/shared/ui/modal-dialog";
@@ -40,7 +40,7 @@ export function AddQuoteRowModal({
     setValue,
     formState: { errors },
   } = useForm<AddRowFormValues>({
-    resolver: zodResolver(addRowSchema),
+    resolver: zodResolver(addRowSchema) as unknown as Resolver<AddRowFormValues>,
     defaultValues: { discount_percent: 0 },
   });
 

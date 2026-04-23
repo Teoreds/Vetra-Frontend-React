@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
-import { Button } from "@/shared/ui/button";
 import { BackButton } from "@/shared/ui/back-button";
 import { PageHeader } from "@/shared/ui/page-header";
 import { NewOrderStepper, type StepConfig } from "../components/new-order-stepper";
@@ -25,7 +24,6 @@ export interface WizardData {
 }
 
 export function OrderWizardPage() {
-  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const mode = id ? "edit" : "create";
 
@@ -222,7 +220,7 @@ export function OrderWizardPage() {
         title={mode === "edit" ? "Modifica Ordine" : "Nuovo Ordine"}
         description={
           mode === "edit"
-            ? `#${order?.code.replace(/^ORD-/i, "") ?? ""}`
+            ? `#${order?.code?.replace(/^ORD-/i, "") ?? ""}`
             : "Completa i passaggi per creare un nuovo ordine."
         }
         leading={<BackButton fallback={mode === "edit" ? `/orders/${id}` : "/orders"} />}

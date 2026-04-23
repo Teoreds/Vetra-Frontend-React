@@ -57,7 +57,7 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
     return [...orders].sort((a, b) => {
       let cmp = 0;
       if (sortKey === "code") {
-        cmp = a.code.localeCompare(b.code);
+        cmp = (a.code ?? "").localeCompare(b.code ?? "");
       } else if (sortKey === "order_date") {
         cmp = a.order_date.localeCompare(b.order_date);
       } else if (sortKey === "total") {
@@ -78,8 +78,8 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
       sortDirection: sortKey === "code" ? sortDir : null,
       onSort: () => handleSort("code"),
       render: (row) => (
-        <span className="text-[13px] font-semibold text-primary">
-          #{row.code.replace(/^ORD-/i, "")}
+        <span className="font-mono text-[12px] font-semibold text-primary">
+          #{row.code?.replace(/^ORD-/i, "") ?? ""}
         </span>
       ),
     },
@@ -152,7 +152,7 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
         const vat = Number(row.total_vat ?? 0);
         const total = net + vat;
         return (
-          <span className="text-[13px] font-medium tabular-nums">
+          <span className="font-mono text-[12px] font-medium tabular-nums">
             {formatCurrency(total)}
           </span>
         );
@@ -166,7 +166,7 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
       sortDirection: sortKey === "order_date" ? sortDir : null,
       onSort: () => handleSort("order_date"),
       render: (row) => (
-        <span className="text-[13px] text-muted-foreground">
+        <span className="font-mono text-[12px] text-muted-foreground tabular-nums">
           {formatDate(row.order_date)}
         </span>
       ),

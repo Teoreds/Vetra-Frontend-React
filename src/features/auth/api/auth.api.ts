@@ -23,4 +23,22 @@ export const authApi = {
 
   lookupTenant: (username: string) =>
     apiClient.GET("/auth/tenant", { params: { query: { username } } }),
+
+  updateProfile: (body: {
+    display_name?: string;
+    email?: string;
+    current_password?: string;
+    new_password?: string;
+  }) => apiClient.PATCH("/auth/me", { body }),
+
+  uploadAvatar: (file: File) => {
+    const form = new FormData();
+    form.append("file", file);
+    return apiClient.POST("/auth/me/avatar", {
+      body: form as unknown as never,
+      bodySerializer: (b) => b as unknown as FormData,
+    });
+  },
+
+  deleteAvatar: () => apiClient.DELETE("/auth/me/avatar"),
 };

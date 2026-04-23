@@ -12,7 +12,7 @@ export interface ShippingPickNoteListParams {
 
 export function useShippingPickNotes(params?: ShippingPickNoteListParams) {
   return useQuery({
-    queryKey: shipmentKeys.pickNoteList(params),
+    queryKey: shipmentKeys.pickNoteList(params as Record<string, unknown>),
     queryFn: async () => {
       const { data, error } = await shipmentsApi.listPickNotes(params);
       if (error) throw error;

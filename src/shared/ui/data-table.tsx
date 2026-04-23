@@ -95,7 +95,7 @@ export function DataTable<T>({
           {isLoading ? (
             <SkeletonRows columns={columns.length} />
           ) : (
-            data.map((row, idx) => (
+            data.map((row) => (
               <tr
                 key={keyExtractor(row)}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}

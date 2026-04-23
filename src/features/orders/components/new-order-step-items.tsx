@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
 import { ArrowRight, ArrowLeft, ArrowUp, ArrowDown, Trash2, Loader2, Plus } from "lucide-react";
@@ -78,7 +78,7 @@ export function NewOrderStepItems({
     setValue,
     formState: { errors },
   } = useForm<Step2FormValues>({
-    resolver: zodResolver(step2Schema),
+    resolver: zodResolver(step2Schema) as unknown as Resolver<Step2FormValues>,
     defaultValues: {
       available_rows: initialAvailableRows,
       commitment_rows: initialCommitmentRows,

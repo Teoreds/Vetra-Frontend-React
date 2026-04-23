@@ -34,7 +34,7 @@ export function Timeline({ items, className }: TimelineProps) {
             {item.description && (
               <p className="mt-0.5 text-[13px] text-muted-foreground">{item.description}</p>
             )}
-            <p className="mt-1 text-xs text-muted-foreground/70">{item.timestamp}</p>
+            <p className="mt-1 font-mono text-[11px] text-muted-foreground/70">{item.timestamp}</p>
           </div>
         </div>
       ))}

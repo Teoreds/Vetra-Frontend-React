@@ -1,6 +1,7 @@
 import type { components } from "@/shared/api/schema";
 
 export type OrderOut = components["schemas"]["OrderOut"];
+export type OrderDetailOut = components["schemas"]["OrderDetailOut"];
 export type OrderCreate = components["schemas"]["OrderCreate"];
 export type OrderUpdate = components["schemas"]["OrderUpdate"];
 export type OrderRowOut = components["schemas"]["OrderRowOut"];

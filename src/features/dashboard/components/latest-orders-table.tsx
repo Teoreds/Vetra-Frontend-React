@@ -20,40 +20,41 @@ export function LatestOrdersTable({ orders }: { orders: RecentOrder[] }) {
   }
 
   return (
-    <div className="space-y-0.5">
-      {orders.map((o) => (
-        <button
-          key={o.guid}
-          type="button"
-          onClick={() => navigate(`/orders/${o.guid}`)}
-          className="group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-muted/60"
-        >
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/6 text-[13px] font-semibold text-primary ring-1 ring-primary/10">
-            {(o.party_description ?? "?").charAt(0).toUpperCase()}
-          </span>
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2">
-              <p className="truncate text-[13px] font-medium group-hover:text-primary transition-colors">
-                {o.party_description}
-              </p>
+    <table className="w-full text-left">
+      <thead>
+        <tr>
+          <th className="pb-2.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 pr-4">Data</th>
+          <th className="pb-2.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 pr-4">Cliente</th>
+          <th className="pb-2.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 pr-4">Stato</th>
+          <th className="pb-2.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 text-right">Totale</th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-border">
+        {orders.map((o) => (
+          <tr
+            key={o.guid}
+            onClick={() => navigate(`/orders/${o.guid}`)}
+            className="cursor-pointer transition-colors hover:bg-muted/40"
+          >
+            <td className="py-2.5 pr-4 text-[12px] text-muted-foreground whitespace-nowrap">
+              {formatDate(o.order_date)}
+            </td>
+            <td className="py-2.5 pr-4 text-[13px] font-medium max-w-[180px] truncate">
+              {o.party_description}
+            </td>
+            <td className="py-2.5 pr-4">
               <StatusBadge
                 variant={getStatusVariant(o.status_code)}
                 label={statusLabels.get(o.status_code) ?? o.status_code}
-                className="text-[9px] px-1.5 py-0.5"
+                className="text-[10px] px-2 py-0.5 rounded"
               />
-            </div>
-            <p className="text-[11px] text-muted-foreground">
-              {formatDate(o.order_date)}
-              {o.total_gross != null && (
-                <span className="ml-1.5 font-medium text-foreground/60">{formatCurrency(Number(o.total_gross))}</span>
-              )}
-            </p>
-          </div>
-          <span className="shrink-0 text-[10px] font-mono text-muted-foreground/40 opacity-0 group-hover:opacity-100 transition-opacity">
-            #{o.guid.slice(0, 8).toUpperCase()}
-          </span>
-        </button>
-      ))}
-    </div>
+            </td>
+            <td className="py-2.5 text-[13px] font-medium tabular-nums text-right whitespace-nowrap">
+              {o.total_gross != null ? formatCurrency(Number(o.total_gross)) : "—"}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }

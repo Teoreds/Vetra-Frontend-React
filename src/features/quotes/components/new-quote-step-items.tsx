@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
 import { ArrowRight, ArrowLeft, Trash2, Loader2, Plus } from "lucide-react";
@@ -80,7 +80,7 @@ export function NewQuoteStepItems({
 
   const { register, control, handleSubmit, watch, setValue, formState: { errors } } =
     useForm<StepFormValues>({
-      resolver: zodResolver(stepSchema),
+      resolver: zodResolver(stepSchema) as unknown as Resolver<StepFormValues>,
       defaultValues: { rows: initialRows },
     });
 

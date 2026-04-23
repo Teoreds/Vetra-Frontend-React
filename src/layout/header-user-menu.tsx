@@ -1,6 +1,7 @@
 import { Bell } from "lucide-react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import * as Avatar from "@radix-ui/react-avatar";
+import { useNavigate } from "react-router-dom";
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
 import { useAuthStore } from "@/features/auth/hooks/use-auth-store";
 import { useQueryClient } from "@tanstack/react-query";
@@ -12,6 +13,7 @@ export function HeaderUserMenu() {
   const { data: user } = useCurrentUser();
   const storeLogout = useAuthStore((s) => s.logout);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const logout = () => {
     storeLogout();
@@ -24,6 +26,10 @@ export function HeaderUserMenu() {
     .join("")
     .toUpperCase()
     .slice(0, 2) ?? "??";
+
+  const avatarUrl = user?.profile_picture_path
+    ? `/api/auth/me/avatar`
+    : null;
 
   return (
     <header className="flex h-14 shrink-0 items-center justify-between border-b border-border/60 bg-background px-6">
@@ -43,9 +49,16 @@ export function HeaderUserMenu() {
             <button className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:ring-offset-1">
               <div className="text-right">
                 <p className="text-[13px] font-medium leading-tight">{user?.display_name ?? "Caricamento..."}</p>
-                <p className="text-[11px] text-muted-foreground capitalize">{user?.role_code ?? ""}</p>
+                <p className="text-[11px] text-muted-foreground capitalize">{user?.role_code?.toLowerCase() ?? ""}</p>
               </div>
-              <Avatar.Root className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/5">
+              <Avatar.Root className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/5 overflow-hidden">
+                {avatarUrl && (
+                  <Avatar.Image
+                    src={avatarUrl}
+                    alt={user?.display_name}
+                    className="h-full w-full object-cover"
+                  />
+                )}
                 <Avatar.Fallback className="text-xs font-semibold text-primary">
                   {initials}
                 </Avatar.Fallback>
@@ -59,10 +72,16 @@ export function HeaderUserMenu() {
               sideOffset={8}
               className="z-50 min-w-[180px] rounded-xl border border-border/60 bg-popover p-1.5 shadow-lg"
             >
-              <DropdownMenu.Item className="cursor-pointer rounded-lg px-3 py-2 text-[13px] outline-none transition-colors hover:bg-accent">
+              <DropdownMenu.Item
+                className="cursor-pointer rounded-lg px-3 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
+                onClick={() => navigate("/profile")}
+              >
                 Profilo
               </DropdownMenu.Item>
-              <DropdownMenu.Item className="cursor-pointer rounded-lg px-3 py-2 text-[13px] outline-none transition-colors hover:bg-accent">
+              <DropdownMenu.Item
+                className="cursor-pointer rounded-lg px-3 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
+                onClick={() => navigate("/admin")}
+              >
                 Impostazioni
               </DropdownMenu.Item>
               <DropdownMenu.Separator className="my-1 h-px bg-border/60" />

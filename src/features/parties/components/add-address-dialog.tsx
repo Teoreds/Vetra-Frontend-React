@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
 import { Loader2 } from "lucide-react";
@@ -48,7 +48,7 @@ export function AddAddressDialog({ open, onOpenChange, partyGuid }: Props) {
     reset,
     formState: { errors },
   } = useForm<FormValues>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema) as unknown as Resolver<FormValues>,
     defaultValues: { address_line: "", city: "", province: "", post_code: "", type_code: "", is_primary: false },
   });
 

@@ -63,38 +63,40 @@ export function QuoteFiltersBar({
         }
       />
 
-      <div className="h-4 w-px bg-border/50" />
+      <div className="flex flex-1 items-center gap-3 min-w-0">
+        <div className="h-4 w-px bg-border/50 shrink-0" />
 
-      <Select
-        value={filters.status_code ?? ""}
-        onValueChange={(val) =>
-          onFilterChange({ status_code: val || undefined })
-        }
-      >
-        <SelectTrigger className="h-9 w-36 text-[13px]">
-          <SelectValue placeholder="Tutti gli stati" />
-        </SelectTrigger>
-        <SelectContent>
-          {QUOTE_STATUSES.map((s) => (
-            <SelectItem key={s} value={s}>
-              {QUOTE_STATUS_LABELS[s]}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
-      {hasFilters && (
-        <button
-          onClick={() => {
-            setSearchInput("");
-            onReset();
-          }}
-          className="ml-auto flex items-center gap-1 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+        <Select
+          value={filters.status_code ?? ""}
+          onValueChange={(val) =>
+            onFilterChange({ status_code: val || undefined })
+          }
         >
-          <X className="h-3.5 w-3.5" />
-          Ripristina
-        </button>
-      )}
+          <SelectTrigger className="h-9 w-36 text-[13px]">
+            <SelectValue placeholder="Tutti gli stati" />
+          </SelectTrigger>
+          <SelectContent>
+            {QUOTE_STATUSES.map((s) => (
+              <SelectItem key={s} value={s}>
+                {QUOTE_STATUS_LABELS[s]}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {hasFilters && (
+          <button
+            onClick={() => {
+              setSearchInput("");
+              onReset();
+            }}
+            className="ml-auto shrink-0 flex items-center gap-1 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <X className="h-3.5 w-3.5" />
+            Ripristina
+          </button>
+        )}
+      </div>
     </div>
   );
 }

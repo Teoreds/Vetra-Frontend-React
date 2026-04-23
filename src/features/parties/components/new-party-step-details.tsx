@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, type Resolver } from "react-hook-form";
 import { z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, Tag, ImagePlus, User } from "lucide-react";
@@ -50,7 +50,7 @@ export function NewPartyStepDetails({ defaultValues, onNext, error, imagePreview
     setValue,
     formState: { errors },
   } = useForm<Step1Data>({
-    resolver: zodResolver(step1Schema),
+    resolver: zodResolver(step1Schema) as unknown as Resolver<Step1Data>,
     defaultValues: {
       description: "",
       vat_number: "",

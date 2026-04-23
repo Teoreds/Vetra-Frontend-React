@@ -7,7 +7,7 @@ export function useCreateParty() {
 
   return useMutation({
     mutationFn: async (body: { description: string; vat_number?: string | null; type_code: string }) => {
-      const { data, error } = await partiesApi.create(body);
+      const { data, error } = await partiesApi.create({ shipping_mode: "FRANCO", ...body });
       if (error) throw error;
       return data;
     },

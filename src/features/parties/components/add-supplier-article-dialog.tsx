@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
 import { Loader2, X } from "lucide-react";
@@ -40,7 +40,7 @@ export function AddSupplierArticleDialog({ open, onOpenChange, partyGuid }: Prop
     setValue,
     formState: { errors },
   } = useForm<FormValues>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema) as unknown as Resolver<FormValues>,
     defaultValues: { article_guid: "", supplier_code: "", purchase_price: undefined, is_preferred: false },
   });
 

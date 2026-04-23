@@ -297,14 +297,14 @@ export function QuoteOverviewTab({ quote }: QuoteOverviewTabProps) {
           </Card>
 
           {/* Note */}
-          {quote.notes && (
+          {quote.note && (
             <Card>
               <CardHeader>
                 <h2 className="text-[15px] font-semibold">Note</h2>
               </CardHeader>
               <CardContent>
                 <p className="text-[13px] text-muted-foreground whitespace-pre-wrap">
-                  {quote.notes}
+                  {quote.note}
                 </p>
               </CardContent>
             </Card>

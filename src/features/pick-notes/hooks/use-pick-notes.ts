@@ -12,7 +12,7 @@ export interface PickNoteListParams {
 
 export function usePickNotes(params?: PickNoteListParams) {
   return useQuery({
-    queryKey: pickNoteKeys.list(params),
+    queryKey: pickNoteKeys.list(params as Record<string, unknown>),
     queryFn: async () => {
       const { data, error } = await pickNotesApi.list(params);
       if (error) throw error;

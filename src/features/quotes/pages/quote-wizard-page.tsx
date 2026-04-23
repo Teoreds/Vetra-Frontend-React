@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Loader2, ArrowRight, MapPin, CreditCard, CalendarClock } from "lucide-react";
-import { useForm, Controller, useWatch } from "react-hook-form";
+import { useForm, Controller, useWatch, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
 import { Button } from "@/shared/ui/button";
@@ -28,7 +28,7 @@ import { useArticles } from "@/features/articles/hooks/use-articles";
 import { quotesApi } from "../api/quotes.api";
 import { quoteKeys } from "../api/quotes.queries";
 import { useQueryClient } from "@tanstack/react-query";
-import { NewQuoteStepItems } from "../components/new-quote-step-items";
+import { NewQuoteStepItems, type QuoteRowDraft } from "../components/new-quote-step-items";
 
 // ─── Step 1 schema ────────────────────────────────────────────────────────────
 
@@ -40,7 +40,7 @@ const step1Schema = z.object({
   payment_term_guid: z.string().optional(),
   shipping_location_guid: z.string().optional(),
   billing_location_guid: z.string().optional(),
-  notes: z.string().optional(),
+  note: z.string().optional(),
 });
 
 type Step1Values = z.infer<typeof step1Schema>;
@@ -95,7 +95,7 @@ export function QuoteWizardPage() {
   const today = new Date().toISOString().slice(0, 10);
 
   const { handleSubmit, control, reset, formState: { errors } } = useForm<Step1Values>({
-    resolver: zodResolver(step1Schema),
+    resolver: zodResolver(step1Schema) as unknown as Resolver<Step1Values>,
     defaultValues: { quote_date: today },
   });
 
@@ -110,7 +110,7 @@ export function QuoteWizardPage() {
         payment_term_guid: quote.payment_term_guid ?? undefined,
         shipping_location_guid: quote.shipping_location_guid ?? undefined,
         billing_location_guid: quote.billing_location_guid ?? undefined,
-        notes: quote.notes ?? undefined,
+        note: quote.note ?? undefined,
       });
     }
   }, [mode, quote, reset]);
@@ -153,13 +153,12 @@ export function QuoteWizardPage() {
     try {
       if (mode === "edit" && id) {
         const { error } = await quotesApi.update(id, {
-          quote_date: values.quote_date,
           valid_until: values.valid_until || null,
           payment_method_guid: values.payment_method_guid || null,
           payment_term_guid: values.payment_term_guid || null,
           shipping_location_guid: values.shipping_location_guid || null,
           billing_location_guid: values.billing_location_guid || null,
-          notes: values.notes || null,
+          note: values.note || null,
         });
         if (error) throw error;
         queryClient.invalidateQueries({ queryKey: quoteKeys.detail(id) });
@@ -173,7 +172,7 @@ export function QuoteWizardPage() {
           payment_term_guid: values.payment_term_guid || null,
           shipping_location_guid: values.shipping_location_guid || null,
           billing_location_guid: values.billing_location_guid || null,
-          notes: values.notes || null,
+          note: values.note || null,
         });
         if (error || !created) throw error ?? new Error("Creazione fallita");
         queryClient.invalidateQueries({ queryKey: quoteKeys.lists() });
@@ -210,7 +209,7 @@ export function QuoteWizardPage() {
         title={mode === "edit" ? "Modifica Preventivo" : "Nuovo Preventivo"}
         description={
           mode === "edit"
-            ? `#${quote?.code.replace(/^QUO-/i, "") ?? ""}`
+            ? `#${quote?.code?.replace(/^QUO-/i, "") ?? ""}`
             : "Completa i passaggi per creare un nuovo preventivo."
         }
         leading={<BackButton fallback={mode === "edit" ? `/quotes/${id}` : "/quotes"} />}
@@ -305,7 +304,7 @@ export function QuoteWizardPage() {
                   </label>
                   <Controller
                     control={control}
-                    name="notes"
+                    name="note"
                     render={({ field }) => (
                       <textarea
                         {...field}

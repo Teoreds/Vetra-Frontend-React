@@ -49,14 +49,14 @@ export const quotesApi = {
     quoteRowGuid: string,
     body: components["schemas"]["QuoteRowUpdate"],
   ) =>
-    apiClient.PATCH("/quote-rows/{quote_row_guid}", {
-      params: { path: { quote_row_guid: quoteRowGuid } },
+    apiClient.PATCH("/quote-rows/{row_guid}", {
+      params: { path: { row_guid: quoteRowGuid } },
       body,
     }),
 
   deleteRow: (quoteRowGuid: string) =>
-    apiClient.DELETE("/quote-rows/{quote_row_guid}", {
-      params: { path: { quote_row_guid: quoteRowGuid } },
+    apiClient.DELETE("/quote-rows/{row_guid}", {
+      params: { path: { row_guid: quoteRowGuid } },
     }),
 
   convertToOrder: (quoteGuid: string) =>

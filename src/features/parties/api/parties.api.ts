@@ -69,7 +69,7 @@ export const partiesApi = {
 
   createPartyLocation: (
     partyGuid: string,
-    body: { location_guid: string; type_code: string; is_primary?: boolean },
+    body: { location_guid: string; type_code: string; is_primary: boolean },
   ) =>
     apiClient.POST("/parties/{party_guid}/locations", {
       params: { path: { party_guid: partyGuid } },

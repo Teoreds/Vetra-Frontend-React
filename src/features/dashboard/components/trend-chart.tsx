@@ -2,41 +2,50 @@ import { useState } from "react";
 import { cn, formatCurrency, formatCurrencyCompact } from "@/shared/lib/utils";
 import type { components } from "@/shared/api/schema";
 
-type MonthlyTrend = components["schemas"]["TrendPoint"];
+type TrendPoint = components["schemas"]["TrendPoint"];
 
-interface MonthlyTrendChartProps {
-  data: MonthlyTrend[];
+interface TrendChartProps {
+  data: TrendPoint[];
+  granularity: string;
 }
 
-function fmtMonth(m: string) {
-  const [, mm] = m.split("-");
-  const months = ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"];
-  return months[parseInt(mm, 10) - 1] ?? mm;
+const MONTHS = ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"];
+
+function fmtPeriod(period: string, granularity: string): string {
+  if (granularity === "month") {
+    const [, mm] = period.split("-");
+    return MONTHS[parseInt(mm, 10) - 1] ?? mm;
+  }
+  // day: "YYYY-MM-DD" → "GG/MM"
+  const [, mm, dd] = period.split("-");
+  return `${dd}/${mm}`;
 }
 
-export function MonthlyTrendChart({ data }: MonthlyTrendChartProps) {
+export function TrendChart({ data, granularity }: TrendChartProps) {
   const [hovered, setHovered] = useState<number | null>(null);
 
   if (data.length === 0) {
     return (
       <p className="py-8 text-center text-[13px] text-muted-foreground">
-        Nessun dato disponibile.
+        Nessun dato nel periodo selezionato.
       </p>
     );
   }
 
   const maxGross = Math.max(...data.map((d) => Number(d.total_gross)), 1);
 
+  // When there are many bars, show labels only every N steps
+  const labelStep = data.length > 20 ? Math.ceil(data.length / 10) : 1;
+
   return (
     <div className="space-y-3">
-      {/* Y-axis hint + Bars */}
       <div className="relative">
         <div className="absolute inset-x-0 top-0 flex h-full flex-col justify-between pointer-events-none">
           <div className="border-b border-dashed border-border/40" />
           <div className="border-b border-dashed border-border/40" />
           <div />
         </div>
-        <div className="relative flex items-end justify-center gap-2" style={{ height: 160 }}>
+        <div className="relative flex items-end justify-center gap-1" style={{ height: 160 }}>
           {data.map((d, i) => {
             const gross = Number(d.total_gross);
             const grossH = (gross / maxGross) * 100;
@@ -45,23 +54,22 @@ export function MonthlyTrendChart({ data }: MonthlyTrendChartProps) {
               <div
                 key={d.period}
                 className="group/bar relative flex flex-col items-center justify-end cursor-default"
-                style={{ height: "100%", width: `${Math.min(100 / data.length, 12)}%`, minWidth: 12, maxWidth: 48 }}
+                style={{ height: "100%", flex: 1, minWidth: 4, maxWidth: 40 }}
                 onMouseEnter={() => setHovered(i)}
                 onMouseLeave={() => setHovered(null)}
               >
-                {/* Tooltip */}
                 {isActive && (
-                  <div className="absolute -top-1 z-10 rounded-lg border border-border/60 bg-card px-2.5 py-1.5 shadow-lg -translate-y-full">
-                    <p className="text-[11px] font-semibold tabular-nums whitespace-nowrap">{formatCurrency(gross)}</p>
+                  <div className="absolute -top-1 z-10 rounded-lg border border-border bg-card px-2.5 py-1.5 shadow-md -translate-y-full whitespace-nowrap">
+                    <p className="text-[11px] font-semibold tabular-nums">{formatCurrency(gross)}</p>
                     <p className="text-[11px] text-muted-foreground tabular-nums">{d.order_count} ordini</p>
                   </div>
                 )}
                 <div
                   className={cn(
-                    "w-full rounded-t-md transition-all duration-200",
+                    "w-full rounded-t-sm transition-all duration-150",
                     isActive ? "bg-primary" : "bg-primary/50",
                   )}
-                  style={{ height: `${Math.max(grossH, 4)}%` }}
+                  style={{ height: `${Math.max(grossH, gross > 0 ? 3 : 0)}%` }}
                 />
               </div>
             );
@@ -69,27 +77,27 @@ export function MonthlyTrendChart({ data }: MonthlyTrendChartProps) {
         </div>
       </div>
 
-      {/* X-axis labels */}
-      <div className="flex justify-center gap-2">
+      <div className="flex justify-center gap-1">
         {data.map((d, i) => (
           <div
             key={d.period}
             className={cn(
-              "text-center text-[11px] font-medium transition-colors",
-              hovered === i ? "text-foreground" : "text-muted-foreground",
+              "text-center text-[10px] transition-colors overflow-hidden",
+              hovered === i ? "text-foreground font-medium" : "text-muted-foreground",
             )}
-            style={{ width: `${Math.min(100 / data.length, 12)}%`, minWidth: 12, maxWidth: 48 }}
+            style={{ flex: 1, minWidth: 4, maxWidth: 40 }}
           >
-            {fmtMonth(d.period)}
+            {i % labelStep === 0 ? fmtPeriod(d.period, granularity) : ""}
           </div>
         ))}
       </div>
 
-      {/* Summary row */}
       <div className="flex items-center justify-between border-t border-border/40 pt-2.5">
         <div className="flex items-center gap-1.5">
           <div className="h-2 w-3 rounded-sm bg-primary/50" />
-          <span className="text-[11px] text-muted-foreground">Fatturato mensile</span>
+          <span className="text-[11px] text-muted-foreground">
+            Fatturato {granularity === "month" ? "mensile" : "giornaliero"}
+          </span>
         </div>
         <span className="text-[11px] font-medium tabular-nums text-muted-foreground">
           Max: {formatCurrencyCompact(maxGross)}

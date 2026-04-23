@@ -5,10 +5,10 @@ import { CommitmentsTab } from "./commitments-tab";
 import { PickNotesTab } from "./pick-notes-tab";
 import { DeliveryNotesTab } from "./delivery-notes-tab";
 import { AttachmentsTab } from "./attachments-tab";
-import type { OrderOut } from "../types/order.types";
+import type { OrderDetailOut } from "../types/order.types";
 
 interface OrderTabsProps {
-  order: OrderOut;
+  order: OrderDetailOut;
 }
 
 export function OrderTabs({ order }: OrderTabsProps) {

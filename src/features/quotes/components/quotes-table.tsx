@@ -61,7 +61,7 @@ export function QuotesTable({ quotes, isLoading }: QuotesTableProps) {
       className: "w-36",
       render: (row) => (
         <span className="text-[13px] font-semibold text-primary">
-          #{row.code.replace(/^QUO-/i, "")}
+          #{row.code?.replace(/^QUO-/i, "") ?? ""}
         </span>
       ),
     },

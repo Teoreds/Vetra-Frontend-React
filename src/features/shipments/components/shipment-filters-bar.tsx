@@ -16,7 +16,7 @@ export function ShipmentFiltersBar({
   const hasFilters = !!filters.date_from || !!filters.date_to;
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="flex flex-1 items-center gap-3 min-w-0">
       <DateRangePicker
         from={filters.date_from}
         to={filters.date_to}
@@ -28,7 +28,7 @@ export function ShipmentFiltersBar({
       {hasFilters && (
         <button
           onClick={onReset}
-          className="ml-auto flex items-center gap-1 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+          className="ml-auto shrink-0 flex items-center gap-1 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
         >
           <X className="h-3.5 w-3.5" />
           Ripristina
