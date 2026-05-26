@@ -32,7 +32,7 @@ export function HeaderUserMenu() {
     : null;
 
   return (
-    <header className="flex h-14 shrink-0 items-center justify-between border-b border-border/60 bg-background px-6">
+    <header className="flex h-[3.25rem] shrink-0 items-center justify-between border-b border-border bg-background/80 backdrop-blur-sm backdrop-saturate-150 px-6">
       <Breadcrumb />
 
       <div className="flex items-center gap-2">
@@ -42,7 +42,7 @@ export function HeaderUserMenu() {
           <Bell className="h-4 w-4" />
         </Button>
 
-        <div className="mx-1 h-6 w-px bg-border/60" />
+        <div className="mx-1 h-5 w-px bg-border" />
 
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
@@ -51,7 +51,7 @@ export function HeaderUserMenu() {
                 <p className="text-[13px] font-medium leading-tight">{user?.display_name ?? "Caricamento..."}</p>
                 <p className="text-[11px] text-muted-foreground capitalize">{user?.role_code?.toLowerCase() ?? ""}</p>
               </div>
-              <Avatar.Root className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/5 overflow-hidden">
+              <Avatar.Root className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-soft ring-2 ring-primary/5 overflow-hidden">
                 {avatarUrl && (
                   <Avatar.Image
                     src={avatarUrl}
@@ -59,7 +59,7 @@ export function HeaderUserMenu() {
                     className="h-full w-full object-cover"
                   />
                 )}
-                <Avatar.Fallback className="text-xs font-semibold text-primary">
+                <Avatar.Fallback className="text-xs font-semibold text-primary-text">
                   {initials}
                 </Avatar.Fallback>
               </Avatar.Root>
@@ -70,7 +70,7 @@ export function HeaderUserMenu() {
             <DropdownMenu.Content
               align="end"
               sideOffset={8}
-              className="z-50 min-w-[180px] rounded-xl border border-border/60 bg-popover p-1.5 shadow-lg"
+              className="z-50 min-w-[180px] rounded-lg border border-border bg-popover p-1.5 shadow-popover"
             >
               <DropdownMenu.Item
                 className="cursor-pointer rounded-lg px-3 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
@@ -84,7 +84,7 @@ export function HeaderUserMenu() {
               >
                 Impostazioni
               </DropdownMenu.Item>
-              <DropdownMenu.Separator className="my-1 h-px bg-border/60" />
+              <DropdownMenu.Separator className="my-1 h-px bg-border" />
               <DropdownMenu.Item
                 className="cursor-pointer rounded-lg px-3 py-2 text-[13px] text-destructive outline-none transition-colors hover:bg-destructive/10"
                 onClick={logout}

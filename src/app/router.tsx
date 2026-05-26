@@ -1,5 +1,5 @@
 import { lazy } from "react";
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import { AppLayout } from "@/layout/app-layout";
 import { AuthLayout } from "@/layout/auth-layout";
 import { AuthGuard } from "@/features/auth/components/auth-guard";
@@ -7,6 +7,7 @@ import { GuestGuard } from "@/features/auth/components/guest-guard";
 import { RouteErrorPage } from "./route-error-page";
 import { NotFoundPage } from "./not-found-page";
 import { LazyPage } from "./lazy-page";
+import { DefaultRouteRedirect } from "./default-route-redirect";
 
 // Lazy-loaded pages for code splitting
 const LoginPage = lazy(() => import("@/features/auth/pages/login-page").then((m) => ({ default: m.LoginPage })));
@@ -55,7 +56,7 @@ export const router = createBrowserRouter([
       {
         element: <AppLayout />,
         children: [
-          { index: true, element: <Navigate to="/dashboard" replace /> },
+          { index: true, element: <DefaultRouteRedirect /> },
           { path: "/dashboard", element: lz(DashboardPage) },
           { path: "/orders", element: lz(OrderListPage) },
           { path: "/orders/new", element: lz(NewOrderPage) },

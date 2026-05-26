@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useForm, Controller, type Resolver } from "react-hook-form";
 import { z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/ui/select";
+import { SearchableSelect } from "@/shared/ui/searchable-select";
 import { usePartyTypes, useFiscalAreas, usePartyCategories } from "@/shared/hooks/use-lookups";
 import type { PartyIdentityData } from "../stores/use-new-party-store";
 
@@ -41,6 +42,41 @@ export function NewPartyStepDetails({ defaultValues, onNext, error, imagePreview
   const { data: fiscalAreas } = useFiscalAreas();
   const { data: partyCategories } = usePartyCategories();
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragCounterRef = useRef(0);
+
+  useEffect(() => {
+    function onDragEnter(e: DragEvent) {
+      const hasImage = Array.from(e.dataTransfer?.items ?? []).some(
+        (item) => item.kind === "file" && item.type.startsWith("image/"),
+      );
+      if (!hasImage) return;
+      dragCounterRef.current++;
+      setIsDragging(true);
+    }
+    function onDragLeave() {
+      dragCounterRef.current--;
+      if (dragCounterRef.current <= 0) { dragCounterRef.current = 0; setIsDragging(false); }
+    }
+    function onDragOver(e: DragEvent) { e.preventDefault(); }
+    function onDrop(e: DragEvent) {
+      e.preventDefault();
+      dragCounterRef.current = 0;
+      setIsDragging(false);
+      const file = Array.from(e.dataTransfer?.files ?? []).find((f) => f.type.startsWith("image/"));
+      if (file) onImageSelect(file);
+    }
+    window.addEventListener("dragenter", onDragEnter);
+    window.addEventListener("dragleave", onDragLeave);
+    window.addEventListener("dragover", onDragOver);
+    window.addEventListener("drop", onDrop);
+    return () => {
+      window.removeEventListener("dragenter", onDragEnter);
+      window.removeEventListener("dragleave", onDragLeave);
+      window.removeEventListener("dragover", onDragOver);
+      window.removeEventListener("drop", onDrop);
+    };
+  }, [onImageSelect]);
 
   const {
     register,
@@ -102,7 +138,7 @@ export function NewPartyStepDetails({ defaultValues, onNext, error, imagePreview
               type="button"
               tabIndex={-1}
               onClick={() => imageInputRef.current?.click()}
-              className="group/avatar relative h-[88px] w-[88px] shrink-0 overflow-hidden rounded-full border border-border/60 bg-muted/50 transition-colors hover:border-primary/40"
+              className={`group/avatar relative h-[88px] w-[88px] shrink-0 overflow-hidden rounded-full border bg-muted/50 transition-all hover:border-primary/40 ${isDragging ? "border-primary/60 ring-2 ring-primary/20" : "border-border/60"}`}
             >
               {imagePreview ? (
                 <img src={imagePreview} alt="Anteprima" className="h-full w-full object-cover" />
@@ -111,8 +147,8 @@ export function NewPartyStepDetails({ defaultValues, onNext, error, imagePreview
                   <User className="h-7 w-7 text-muted-foreground/40" />
                 </div>
               )}
-              <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors group-hover/avatar:bg-black/40">
-                <ImagePlus className="h-5 w-5 text-white opacity-0 transition-opacity group-hover/avatar:opacity-100" />
+              <div className={`absolute inset-0 flex items-center justify-center transition-colors ${isDragging ? "bg-black/40" : "bg-black/0 group-hover/avatar:bg-black/40"}`}>
+                <ImagePlus className={`h-5 w-5 text-white transition-opacity ${isDragging ? "opacity-100" : "opacity-0 group-hover/avatar:opacity-100"}`} />
               </div>
             </button>
 
@@ -221,18 +257,12 @@ export function NewPartyStepDetails({ defaultValues, onNext, error, imagePreview
                 control={control}
                 name="category_code"
                 render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Nessuna…" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {partyCategories.map((c) => (
-                        <SelectItem key={c.code} value={c.code}>
-                          {c.description}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <SearchableSelect
+                    items={partyCategories.map((c) => ({ value: c.code, label: c.description }))}
+                    value={field.value ?? ""}
+                    onChange={field.onChange}
+                    placeholder="Cerca categoria…"
+                  />
                 )}
               />
             </div>

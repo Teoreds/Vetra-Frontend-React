@@ -87,9 +87,48 @@ export function ShipmentsTable({ pickNotes, isLoading }: ShipmentsTableProps) {
       ),
     },
     {
+      key: "ddt",
+      header: "DDT",
+      className: "w-40",
+      render: (row) => {
+        const deliveryNote = deliveryNoteByPickNote.get(row.guid);
+        if (row.status_code === "CHECKED") {
+          return (
+            <button
+              type="button"
+              className="flex items-center gap-1.5 rounded-md px-2 py-1 text-[13px] font-medium text-primary transition-colors hover:bg-primary/8"
+              onClick={(e) => {
+                e.stopPropagation();
+                setDdtGuid(row.guid);
+              }}
+            >
+              <FileText className="h-3.5 w-3.5" />
+              Crea DDT
+            </button>
+          );
+        }
+        if (row.status_code === "CLOSED" && deliveryNote) {
+          return (
+            <button
+              type="button"
+              className="flex items-center gap-1.5 rounded-md px-2 py-1 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
+              onClick={(e) => {
+                e.stopPropagation();
+                shipmentsApi.downloadDeliveryNotePdf(deliveryNote.guid).catch(() => {});
+              }}
+            >
+              <Download className="h-3.5 w-3.5" />
+              {deliveryNote.number != null ? `DDT n. ${deliveryNote.number}` : "DDT"}
+            </button>
+          );
+        }
+        return <span className="text-[13px] text-muted-foreground/40">\u2014</span>;
+      },
+    },
+    {
       key: "created_at",
       header: "Data creazione",
-      className: "w-40 text-right",
+      className: "w-36 text-right",
       render: (row) => (
         <span className="text-[13px] text-muted-foreground">
           {row.created_at ? formatDateTime(row.created_at) : "\u2014"}
@@ -103,33 +142,7 @@ export function ShipmentsTable({ pickNotes, isLoading }: ShipmentsTableProps) {
       render: (row) => {
         const deliveryNote = deliveryNoteByPickNote.get(row.guid);
         return (
-          <div className="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover/row:opacity-100">
-            {row.status_code === "CHECKED" && (
-              <button
-                type="button"
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-md px-2 py-1 text-[13px] font-medium text-primary transition-colors hover:bg-primary/8"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setDdtGuid(row.guid);
-                }}
-              >
-                <FileText className="h-3.5 w-3.5" />
-                Crea DDT
-              </button>
-            )}
-            {row.status_code === "CLOSED" && deliveryNote && (
-              <button
-                type="button"
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-md px-2 py-1 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  shipmentsApi.downloadDeliveryNotePdf(deliveryNote.guid).catch(() => {});
-                }}
-              >
-                <Download className="h-3.5 w-3.5" />
-                {deliveryNote.number != null ? `DDT n. ${deliveryNote.number}` : "DDT"}
-              </button>
-            )}
+          <div className="flex justify-end opacity-0 transition-opacity group-hover/row:opacity-100">
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
                 <button

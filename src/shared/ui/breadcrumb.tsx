@@ -39,7 +39,7 @@ export function Breadcrumb() {
         return (
           <span key={path} className="flex items-center gap-1">
             {index > 0 && (
-              <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/50" />
+              <ChevronRight className="h-3.5 w-3.5 text-faint-foreground" />
             )}
             {isLast ? (
               <span className="font-medium text-foreground">

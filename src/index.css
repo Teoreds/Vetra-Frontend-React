@@ -1,61 +1,123 @@
 @import "tailwindcss";
 
 @theme {
-  /* Surface & text */
-  --color-background: #ffffff;
-  --color-foreground: #0f172a;
-  --color-page: #f1f5f9;
-  --color-card: #ffffff;
-  --color-card-foreground: #0f172a;
+  /* ─── Surfaces ───────────────────────────────────────────────────────────── */
+  --color-background: #fafafa;           /* app shell / page fill              */
+  --color-foreground: #18181b;           /* primary text                       */
+  --color-page: #f4f4f5;                 /* section bg, table headers, sidebar */
+  --color-card: #ffffff;                 /* card / panel surface               */
+  --color-card-foreground: #18181b;
   --color-popover: #ffffff;
-  --color-popover-foreground: #0f172a;
+  --color-popover-foreground: #18181b;
+  --color-surface-hover: #fafafa;        /* table-row hover, list-item hover   */
 
-  /* Brand */
-  --color-primary: #2563eb;
+  /* ─── Text hierarchy ─────────────────────────────────────────────────────── */
+  --color-muted-foreground: #52525b;     /* secondary text                     */
+  --color-subtle-foreground: #8a8a93;   /* tertiary — labels, metadata         */
+  --color-faint-foreground: #b3b3b9;    /* quaternary — placeholders, disabled */
+
+  /* ─── Primary — indigo ───────────────────────────────────────────────────── */
+  --color-primary: oklch(0.52 0.18 270);
   --color-primary-foreground: #ffffff;
-  --color-primary-hover: #1d4ed8;
-  --color-primary-light: #3b82f6;
+  --color-primary-hover: oklch(0.47 0.19 270);
+  --color-primary-light: oklch(0.62 0.18 270);
+  --color-primary-soft: oklch(0.96 0.025 270);  /* soft fill for active states */
+  --color-primary-text: oklch(0.42 0.18 270);   /* text on soft-primary bg     */
 
-  /* Neutrals */
-  --color-secondary: #f1f5f9;
-  --color-secondary-foreground: #0f172a;
-  --color-muted: #f8fafc;
-  --color-muted-foreground: #64748b;
-  --color-accent: #f1f5f9;
-  --color-accent-foreground: #0f172a;
+  /* ─── Neutrals ───────────────────────────────────────────────────────────── */
+  --color-secondary: #f4f4f5;
+  --color-secondary-foreground: #18181b;
+  --color-muted: #f7f7f8;               /* subtle fill, skeleton, disabled bg  */
+  --color-accent: #f7f7f8;
+  --color-accent-foreground: #18181b;
 
-  /* Semantic */
-  --color-destructive: #ef4444;
+  /* ─── Status: success (green) ────────────────────────────────────────────── */
+  --color-success: oklch(0.52 0.12 155);
+  --color-success-soft: oklch(0.96 0.03 155);
+  --color-success-foreground: oklch(0.42 0.12 155);
+
+  /* ─── Status: warning (amber) ────────────────────────────────────────────── */
+  --color-warning: oklch(0.6 0.14 70);
+  --color-warning-soft: oklch(0.96 0.04 80);
+  --color-warning-foreground: oklch(0.45 0.13 65);
+
+  /* ─── Status: danger (red) ───────────────────────────────────────────────── */
+  --color-danger: oklch(0.55 0.18 25);
+  --color-danger-soft: oklch(0.96 0.03 25);
+  --color-danger-foreground: oklch(0.46 0.17 25);
+  /* Legacy alias — keeps existing text-destructive / bg-destructive working   */
+  --color-destructive: oklch(0.55 0.18 25);
   --color-destructive-foreground: #ffffff;
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
 
-  /* Borders & rings */
-  --color-border: #e2e8f0;
-  --color-border-subtle: #f1f5f9;
-  --color-input: #e2e8f0;
-  --color-ring: #2563eb;
+  /* ─── Status: info (blue) ────────────────────────────────────────────────── */
+  --color-info: oklch(0.55 0.14 245);
+  --color-info-soft: oklch(0.96 0.03 245);
+  --color-info-foreground: oklch(0.45 0.15 245);
 
-  /* Sidebar */
+  /* ─── Status: fulfilled (violet — evaso / shipped) ──────────────────────── */
+  --color-fulfilled: oklch(0.55 0.16 295);
+  --color-fulfilled-soft: oklch(0.96 0.03 295);
+  --color-fulfilled-foreground: oklch(0.45 0.16 295);
+
+  /* ─── Status: neutral (slate — bozza / draft) ───────────────────────────── */
+  --color-neutral: oklch(0.55 0.01 260);
+  --color-neutral-soft: oklch(0.96 0.005 260);
+  --color-neutral-foreground: oklch(0.4 0.01 260);
+
+  /* ─── Borders ────────────────────────────────────────────────────────────── */
+  --color-border: #ececef;
+  --color-border-strong: #d8d8dd;       /* inputs, strong separators           */
+  --color-border-subtle: #f4f4f5;       /* very faint dividers                 */
+  --color-input: #d8d8dd;               /* input border (= border-strong)      */
+  --color-ring: oklch(0.52 0.18 270);   /* focus ring                          */
+
+  /* ─── Sidebar ────────────────────────────────────────────────────────────── */
   --color-sidebar: #ffffff;
-  --color-sidebar-foreground: #475569;
-  --color-sidebar-accent: #eff6ff;
-  --color-sidebar-accent-foreground: #1d4ed8;
-  --color-sidebar-border: #f1f5f9;
+  --color-sidebar-foreground: #52525b;
+  --color-sidebar-accent: oklch(0.96 0.025 270);
+  --color-sidebar-accent-foreground: oklch(0.42 0.18 270);
+  --color-sidebar-border: #ececef;
 
-  /* Radii */
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
+  /* ─── Radii ──────────────────────────────────────────────────────────────── */
+  --radius-sm: 0.25rem;   /* 4px  */
+  --radius-md: 0.375rem;  /* 6px  */
+  --radius-lg: 0.5rem;    /* 8px  */
+  --radius-xl: 0.75rem;   /* 12px */
 
-  /* Typography scale */
-  --text-page-title: 1.25rem;       /* 20px — h1 page titles */
-  --text-section-title: 0.8125rem;  /* 13px — section headers, uppercase */
-  --text-body: 0.8125rem;           /* 13px — primary body text */
-  --text-caption: 0.6875rem;        /* 11px — labels, badges, metadata */
-  --leading-page-title: 1.75rem;    /* 28px */
-  --leading-body: 1.25rem;          /* 20px */
+  /* ─── Shadows ────────────────────────────────────────────────────────────── */
+  --shadow-card: 0 1px 0 oklch(0 0 0 / 0.04), 0 1px 2px oklch(0 0 0 / 0.04);
+  --shadow-popover: 0 1px 2px oklch(0 0 0 / 0.06), 0 8px 24px oklch(0 0 0 / 0.08);
+  --shadow-modal: 0 4px 12px oklch(0 0 0 / 0.08), 0 20px 60px oklch(0 0 0 / 0.16);
+
+  /* ─── Typography ─────────────────────────────────────────────────────────── */
+  --text-page-title: 1.375rem;       /* 22px — h1 page titles                  */
+  --text-section-title: 0.8125rem;   /* 13px — section headers, uppercase      */
+  --text-body: 0.8125rem;            /* 13px — primary body text               */
+  --text-caption: 0.6875rem;         /* 11px — labels, badges, metadata        */
+  --leading-page-title: 1.75rem;     /* 28px                                   */
+  --leading-body: 1.25rem;           /* 20px                                   */
+
+  /* ─── Font families ──────────────────────────────────────────────────────── */
+  --font-sans: "Geist", "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "Geist Mono", "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+/* ─── Table density — consumed via CSS custom properties, not Tailwind ─────── */
+/* Apply [data-density="compact"|"roomy"] to <html> or a container to override. */
+:root {
+  --row-height: 2.75rem;          /* 44px — balanced default */
+  --row-pad-y: 0.625rem;          /* 10px */
+  --table-font-size: 0.8125rem;   /* 13px */
+}
+[data-density="compact"] {
+  --row-height: 2.25rem;          /* 36px */
+  --row-pad-y: 0.375rem;          /* 6px  */
+  --table-font-size: 0.78125rem;  /* 12.5px */
+}
+[data-density="roomy"] {
+  --row-height: 3.25rem;          /* 52px */
+  --row-pad-y: 0.875rem;          /* 14px */
+  --table-font-size: 0.84375rem;  /* 13.5px */
 }
 
 *,
@@ -93,12 +155,8 @@
 }
 
 body {
-  font-family:
-    "Inter",
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    sans-serif;
+  font-family: var(--font-sans);
+  font-feature-settings: "cv11", "ss01", "ss03";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--color-page);
@@ -133,18 +191,18 @@ input:-webkit-autofill:focus {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #d4d4d8;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #a1a1aa;
 }
 
 /* Firefox scrollbar */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 transparent;
+  scrollbar-color: #d4d4d8 transparent;
 }
 
 /* Tabular numbers for financial/quantity data */

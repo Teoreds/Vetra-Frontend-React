@@ -17,13 +17,14 @@ export function AppLayout() {
   useApplyTenantTheme();
   const { isPinned } = useSidebarStore();
   return (
-    <div className="flex h-screen overflow-hidden bg-page">
+    <div className="flex h-screen overflow-hidden bg-background">
       <NavigationTracker />
       <SidebarNav />
-      <div className={isPinned ? "w-60 shrink-0" : "w-16 shrink-0"} />
+      {/* Spacer mirrors the fixed sidebar width so content doesn't slide under it */}
+      <div className={isPinned ? "w-[14.5rem] shrink-0" : "w-14 shrink-0"} />
       <div className="flex flex-1 flex-col overflow-hidden">
         <HeaderUserMenu />
-        <main className="flex-1 overflow-y-auto px-8 py-6">
+        <main className="flex-1 overflow-y-auto px-8 py-7">
           <Outlet />
         </main>
       </div>

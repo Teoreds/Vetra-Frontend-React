@@ -65,7 +65,9 @@ export function NewArticlePage() {
   const { data: rates } = useCurrencyRates();
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const dragCounterRef = useRef(0);
 
   const {
     register,
@@ -104,12 +106,16 @@ export function NewArticlePage() {
     setCurrency(newCurrency);
   }
 
-  function handleImageSelect(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  function applyImageFile(file: File) {
     setImageFile(file);
     const url = URL.createObjectURL(file);
     setImagePreview((prev) => { if (prev) URL.revokeObjectURL(prev); return url; });
+  }
+
+  function handleImageSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    applyImageFile(file);
     e.target.value = "";
   }
 
@@ -117,6 +123,39 @@ export function NewArticlePage() {
     setImageFile(null);
     setImagePreview((prev) => { if (prev) URL.revokeObjectURL(prev); return null; });
   }
+
+  useEffect(() => {
+    function onDragEnter(e: DragEvent) {
+      const hasImage = Array.from(e.dataTransfer?.items ?? []).some(
+        (item) => item.kind === "file" && item.type.startsWith("image/"),
+      );
+      if (!hasImage) return;
+      dragCounterRef.current++;
+      setIsDragging(true);
+    }
+    function onDragLeave() {
+      dragCounterRef.current--;
+      if (dragCounterRef.current <= 0) { dragCounterRef.current = 0; setIsDragging(false); }
+    }
+    function onDragOver(e: DragEvent) { e.preventDefault(); }
+    function onDrop(e: DragEvent) {
+      e.preventDefault();
+      dragCounterRef.current = 0;
+      setIsDragging(false);
+      const file = Array.from(e.dataTransfer?.files ?? []).find((f) => f.type.startsWith("image/"));
+      if (file) applyImageFile(file);
+    }
+    window.addEventListener("dragenter", onDragEnter);
+    window.addEventListener("dragleave", onDragLeave);
+    window.addEventListener("dragover", onDragOver);
+    window.addEventListener("drop", onDrop);
+    return () => {
+      window.removeEventListener("dragenter", onDragEnter);
+      window.removeEventListener("dragleave", onDragLeave);
+      window.removeEventListener("dragover", onDragOver);
+      window.removeEventListener("drop", onDrop);
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -202,7 +241,7 @@ export function NewArticlePage() {
                 type="button"
                 tabIndex={-1}
                 onClick={() => imageInputRef.current?.click()}
-                className="group/avatar relative h-[88px] w-[88px] shrink-0 overflow-hidden rounded-xl border border-border/60 bg-muted/50 transition-colors hover:border-primary/40"
+                className={`group/avatar relative h-[88px] w-[88px] shrink-0 overflow-hidden rounded-xl border bg-muted/50 transition-all hover:border-primary/40 ${isDragging ? "border-primary/60 ring-2 ring-primary/20" : "border-border/60"}`}
               >
                 {imagePreview ? (
                   <img src={imagePreview} alt="Anteprima" className="h-full w-full object-cover" />
@@ -211,8 +250,8 @@ export function NewArticlePage() {
                     <Package className="h-7 w-7 text-muted-foreground/40" />
                   </div>
                 )}
-                <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors group-hover/avatar:bg-black/40">
-                  <ImagePlus className="h-5 w-5 text-white opacity-0 transition-opacity group-hover/avatar:opacity-100" />
+                <div className={`absolute inset-0 flex items-center justify-center transition-colors ${isDragging ? "bg-black/40" : "bg-black/0 group-hover/avatar:bg-black/40"}`}>
+                  <ImagePlus className={`h-5 w-5 text-white transition-opacity ${isDragging ? "opacity-100" : "opacity-0 group-hover/avatar:opacity-100"}`} />
                 </div>
               </button>
 

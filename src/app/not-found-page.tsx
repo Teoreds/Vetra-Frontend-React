@@ -1,8 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { getDefaultPath } from "./module-access";
+import { useAllowedModules } from "@/features/auth/hooks/use-allowed-modules";
 
 export function NotFoundPage() {
   const navigate = useNavigate();
+  const { allowedModules } = useAllowedModules();
 
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
@@ -12,11 +15,11 @@ export function NotFoundPage() {
         L'indirizzo richiesto non esiste o è stato rimosso.
       </p>
       <button
-        onClick={() => navigate("/dashboard")}
+        onClick={() => navigate(getDefaultPath(allowedModules))}
         className="mt-6 inline-flex h-9 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
       >
         <ArrowLeft className="h-4 w-4" />
-        Torna alla Dashboard
+        Torna all'area principale
       </button>
     </div>
   );
