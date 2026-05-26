@@ -17,6 +17,7 @@ const TAB_LIST = [
   { value: "pick-notes", label: "Note di Prelievo" },
   { value: "delivery-notes", label: "Consegne" },
   { value: "attachments", label: "Documenti" },
+  { value: "logs", label: "Registro" },
 ] as const;
 
 export function OrderDetailPage() {

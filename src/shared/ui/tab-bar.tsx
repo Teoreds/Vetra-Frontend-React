@@ -9,7 +9,7 @@ interface TabBarProps {
 /** Consistent tab list container with bottom border */
 export function TabBar({ children, className }: TabBarProps) {
   return (
-    <Tabs.List className={cn("flex gap-0 border-b border-border/60", className)}>
+    <Tabs.List className={cn("flex gap-0 border-b border-border", className)}>
       {children}
     </Tabs.List>
   );

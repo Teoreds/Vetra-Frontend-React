@@ -34,7 +34,7 @@ export function AddressBox({
   }
 
   return (
-    <div className="group relative rounded-lg border border-border/40 px-3 pt-2.5 pb-2.5">
+    <div className="group relative rounded-lg border border-border px-3 pt-2.5 pb-2.5">
       <div className="absolute -top-[9px] left-3 flex items-center gap-1 bg-card px-1">
         <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
           {label}
@@ -48,7 +48,7 @@ export function AddressBox({
           type="button"
           onClick={handleCopy}
           disabled={!addressText || isLoading}
-          className="flex h-4 w-4 items-center justify-center rounded text-muted-foreground/40 transition-colors hover:text-muted-foreground disabled:pointer-events-none"
+          className="flex h-4 w-4 items-center justify-center rounded text-faint-foreground transition-colors hover:text-muted-foreground disabled:pointer-events-none"
         >
           {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
         </button>
@@ -73,7 +73,7 @@ export function AddressBox({
             )}
           </>
         ) : (
-          <p className="text-muted-foreground/50">—</p>
+          <p className="text-faint-foreground">—</p>
         )}
       </div>
     </div>

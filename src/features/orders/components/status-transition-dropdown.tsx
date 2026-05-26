@@ -34,13 +34,13 @@ export function StatusTransitionDropdown({
         <DropdownMenu.Content
           align="end"
           sideOffset={6}
-          className="z-50 min-w-[180px] rounded-xl border border-border/60 bg-popover p-1.5 shadow-lg"
+          className="z-50 min-w-[180px] rounded-lg border border-border bg-popover p-1.5 shadow-popover"
         >
           {validTransitions.map((status) => (
             <DropdownMenu.Item
               key={status}
               onClick={() => onTransition(status)}
-              className="cursor-pointer rounded-lg px-3 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
+              className="cursor-pointer rounded-md px-3 py-2 text-[13px] outline-none transition-colors hover:bg-muted"
             >
               {statusLabels.get(status) ?? status}
             </DropdownMenu.Item>

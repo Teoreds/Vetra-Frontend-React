@@ -2,6 +2,7 @@ import { Fragment } from "react";
 import { MapPin, Package, CreditCard, Check, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
+import { OrderActivitySidebar } from "./order-activity-sidebar";
 import { PartyAvatar } from "@/features/parties/components/party-avatar";
 import {
   Table,
@@ -43,10 +44,10 @@ function StatusPipelineCard({ statusCode }: { statusCode: string }) {
       <CardContent className="py-4">
         {isCancelled ? (
           <div className="flex items-center justify-center gap-2 py-1">
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-red-100">
-              <X className="h-3.5 w-3.5 stroke-[2.5] text-red-600" />
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-danger-soft">
+              <X className="h-3.5 w-3.5 stroke-[2.5] text-danger-foreground" />
             </div>
-            <span className="text-[13px] font-semibold text-red-600">Ordine annullato</span>
+            <span className="text-[13px] font-semibold text-danger-foreground">Ordine annullato</span>
           </div>
         ) : (
           <ol className="flex items-center">
@@ -61,9 +62,9 @@ function StatusPipelineCard({ statusCode }: { statusCode: string }) {
                     <div
                       className={cn(
                         "flex h-7 w-7 items-center justify-center rounded-full transition-all",
-                        isCompleted && "bg-primary/15 text-primary",
+                        isCompleted && "bg-primary-soft text-primary-text",
                         isActive && "bg-primary text-primary-foreground shadow-md ring-4 ring-primary/15",
-                        !isCompleted && !isActive && "bg-muted text-muted-foreground/40 border border-border",
+                        !isCompleted && !isActive && "bg-muted text-faint-foreground border border-border",
                       )}
                     >
                       {isCompleted ? (
@@ -78,8 +79,8 @@ function StatusPipelineCard({ statusCode }: { statusCode: string }) {
                       className={cn(
                         "text-[11px] font-medium whitespace-nowrap",
                         isActive && "text-primary font-semibold",
-                        isCompleted && "text-primary/70",
-                        !isCompleted && !isActive && "text-muted-foreground/40",
+                        isCompleted && "text-primary-light",
+                        !isCompleted && !isActive && "text-faint-foreground",
                       )}
                     >
                       {statusLabels.get(step.code) ?? step.code}
@@ -111,7 +112,7 @@ function Field({ label, value }: { label: string; value?: string | null }) {
   return (
     <div className="space-y-0.5">
       <p className="text-[length:var(--text-caption)] font-medium text-muted-foreground uppercase tracking-wide">{label}</p>
-      <p className="text-[length:var(--text-body)]">{value || <span className="text-muted-foreground/50">—</span>}</p>
+      <p className="text-[length:var(--text-body)]">{value || <span className="text-faint-foreground">—</span>}</p>
     </div>
   );
 }
@@ -174,11 +175,11 @@ export function OverviewTab({ order }: OverviewTabProps) {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="h-7 px-2 text-left text-foreground/60">Articolo</TableHead>
-                    <TableHead className="h-7 w-20 px-2 text-right text-foreground/60">Qtà</TableHead>
-                    <TableHead className="h-7 w-28 px-2 text-right text-foreground/60">Prezzo</TableHead>
-                    <TableHead className="h-7 w-16 px-2 text-right text-foreground/60">Sc.%</TableHead>
-                    <TableHead className="h-7 w-28 px-2 text-right text-foreground/60">Totale</TableHead>
+                    <TableHead className="h-7 px-2 text-left text-subtle-foreground">Articolo</TableHead>
+                    <TableHead className="h-7 w-20 px-2 text-right text-subtle-foreground">Qtà</TableHead>
+                    <TableHead className="h-7 w-28 px-2 text-right text-subtle-foreground">Prezzo</TableHead>
+                    <TableHead className="h-7 w-16 px-2 text-right text-subtle-foreground">Sc.%</TableHead>
+                    <TableHead className="h-7 w-28 px-2 text-right text-subtle-foreground">Totale</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -236,14 +237,14 @@ export function OverviewTab({ order }: OverviewTabProps) {
                   <p className="text-[11px] font-medium text-muted-foreground">Imponibile</p>
                   <p className="font-mono text-[13px] font-semibold tabular-nums">{formatCurrency(totalNet)}</p>
                 </div>
-                <div className="h-8 w-px bg-border/60" />
+                <div className="h-8 w-px bg-border" />
                 <div>
                   <p className="text-[11px] font-medium text-muted-foreground">Sconto</p>
-                  <p className="font-mono text-[13px] font-semibold tabular-nums text-destructive">
+                  <p className="font-mono text-[13px] font-semibold tabular-nums text-danger-foreground">
                     {totalDiscount > 0 ? `−${formatCurrency(totalDiscount)}` : "—"}
                   </p>
                 </div>
-                <div className="h-8 w-px bg-border/60" />
+                <div className="h-8 w-px bg-border" />
                 <div>
                   <p className="text-[11px] font-medium text-muted-foreground">IVA</p>
                   <p className="font-mono text-[13px] font-semibold tabular-nums">{formatCurrency(totalVat)}</p>
@@ -281,7 +282,7 @@ export function OverviewTab({ order }: OverviewTabProps) {
               <button
                 type="button"
                 onClick={() => navigate(`/parties/${order.party_guid}`)}
-                className="text-[12px] text-primary/60 transition-colors hover:text-primary"
+                className="text-[12px] text-subtle-foreground transition-colors hover:text-primary"
               >
                 Apri anagrafica →
               </button>
@@ -336,6 +337,9 @@ export function OverviewTab({ order }: OverviewTabProps) {
             </CardContent>
           </Card>
         )}
+
+        {/* Attività */}
+        <OrderActivitySidebar orderGuid={order.guid} />
       </div>
     </div>
     </div>

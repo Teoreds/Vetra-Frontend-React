@@ -32,12 +32,12 @@ export function DeliveryTrackingCard({
       </CardHeader>
       <CardContent className="pt-0">
         {!hasNotes ? (
-          <div className="rounded-xl border border-dashed border-border/60 bg-muted/20 px-6 py-8 text-center">
+          <div className="rounded-xl border border-dashed border-border bg-muted px-6 py-8 text-center">
             <FileText className="mx-auto h-8 w-8 text-muted-foreground/40" />
             <p className="mt-2 text-[13px] font-medium text-muted-foreground">
               Nessuna nota di consegna
             </p>
-            <p className="mt-0.5 text-[11px] text-muted-foreground/70">
+            <p className="mt-0.5 text-[11px] text-muted-foreground">
               Le note di consegna verranno create dalle note di prelievo completate.
             </p>
           </div>
@@ -46,9 +46,9 @@ export function DeliveryTrackingCard({
             {deliveryNotes.map((dn) => (
               <div
                 key={dn.guid}
-                className="flex items-center gap-4 rounded-lg border border-border/60 bg-card px-4 py-3 transition-colors hover:bg-muted/30"
+                className="flex items-center gap-4 rounded-lg border border-border bg-card px-4 py-3 transition-colors hover:bg-muted"
               >
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/8">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary-soft">
                   <FileText className="h-4 w-4 text-primary" />
                 </div>
                 <div className="min-w-0 flex-1">
@@ -60,7 +60,7 @@ export function DeliveryTrackingCard({
                     <span>{formatDate(dn.delivery_date)}</span>
                   </div>
                 </div>
-                <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground/50" />
+                <ArrowRight className="h-4 w-4 shrink-0 text-faint-foreground" />
               </div>
             ))}
           </div>

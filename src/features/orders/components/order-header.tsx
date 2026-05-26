@@ -9,6 +9,8 @@ import { useWarehouseWorkers } from "@/features/warehouses/hooks/use-warehouse-w
 import { useOrderStatuses } from "@/shared/hooks/use-lookups";
 import { useParty } from "@/features/parties/hooks/use-party";
 import { PartyAvatar } from "@/features/parties/components/party-avatar";
+import { StatusTransitionDropdown } from "./status-transition-dropdown";
+import { useUpdateOrderStatus } from "../hooks/use-update-order-status";
 import type { OrderDetailOut } from "../types/order.types";
 
 interface OrderHeaderProps {
@@ -20,6 +22,7 @@ export function OrderHeader({ order }: OrderHeaderProps) {
   const { data: workersData } = useWarehouseWorkers();
   const { map: statusLabels } = useOrderStatuses();
   const { data: party } = useParty(order.party_guid);
+  const { mutate: transitionStatus, isPending: isTransitioning } = useUpdateOrderStatus(order.guid);
 
   const workers = workersData?.items ?? [];
   const worker = order.warehouse_worker_guid
@@ -65,13 +68,13 @@ export function OrderHeader({ order }: OrderHeaderProps) {
                 <span className="text-[length:var(--text-caption)] text-muted-foreground font-medium">
                   {party.description}
                 </span>
-                <span className="text-muted-foreground/30 select-none">·</span>
+                <span className="text-faint-foreground select-none">·</span>
               </>
             )}
             <span className="font-mono text-[length:var(--text-caption)] text-muted-foreground">{createdAt}</span>
             {worker && (
               <>
-                <span className="text-muted-foreground/30 select-none">·</span>
+                <span className="text-faint-foreground select-none">·</span>
                 <span className="text-[length:var(--text-caption)] text-muted-foreground">
                   da {worker.name} {worker.surname}
                 </span>
@@ -84,8 +87,7 @@ export function OrderHeader({ order }: OrderHeaderProps) {
       <div className="flex items-center gap-1.5">
         <Button
           variant="outline"
-          size="sm"
-          className="h-8 text-muted-foreground gap-1.5"
+          className="text-muted-foreground gap-1.5"
           aria-label="Stampa"
         >
           <Printer className="h-3.5 w-3.5" />
@@ -94,16 +96,19 @@ export function OrderHeader({ order }: OrderHeaderProps) {
         {canCreatePickNote && (
           <Button
             variant="outline"
-            size="sm"
-            className="h-8 text-muted-foreground gap-1.5"
+            className="text-muted-foreground gap-1.5"
             aria-label="Crea Nota di Prelievo"
           >
             <ClipboardList className="h-3.5 w-3.5" />
             Nota di Prelievo
           </Button>
         )}
+        <StatusTransitionDropdown
+          currentStatus={order.status_code}
+          onTransition={(status) => transitionStatus({ status_code: status })}
+          disabled={isTransitioning}
+        />
         <Button
-          size="sm"
           onClick={() => navigate(`/orders/${order.guid}/edit`)}
           disabled={!isOrderEditable(order.status_code)}
         >

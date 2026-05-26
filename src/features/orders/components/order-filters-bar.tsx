@@ -48,7 +48,7 @@ export function OrderFiltersBar({
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           placeholder="Cerca per cliente o articolo..."
-          className="h-9 w-56 pl-9 text-[13px]"
+          className="h-8 w-56 pl-9 text-[13px]"
         />
       </div>
 
@@ -61,7 +61,7 @@ export function OrderFiltersBar({
       />
 
       <div className="flex flex-1 items-center gap-3 min-w-0">
-        <div className="h-4 w-px bg-border/50 shrink-0" />
+        <div className="h-4 w-px bg-border shrink-0" />
 
         <StatusMultiSelect
           value={statusValues}

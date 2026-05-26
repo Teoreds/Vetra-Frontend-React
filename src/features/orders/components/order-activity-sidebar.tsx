@@ -79,7 +79,7 @@ export function OrderActivitySidebar({ orderGuid }: OrderActivitySidebarProps) {
               <div key={log.guid} className="flex gap-3">
                 {/* Icona + connettore verticale */}
                 <div className="flex flex-col items-center">
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/8 text-primary ring-2 ring-background">
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary-text ring-2 ring-background">
                     {getIcon(log.action_code)}
                   </div>
                   {index < logs.length - 1 && (
@@ -103,7 +103,7 @@ export function OrderActivitySidebar({ orderGuid }: OrderActivitySidebarProps) {
                       {log.note}
                     </p>
                   )}
-                  <p className="mt-0.5 text-[11px] text-muted-foreground/70">
+                  <p className="mt-0.5 text-[11px] text-muted-foreground">
                     {formatDateTime(log.created_at)}
                   </p>
                 </div>

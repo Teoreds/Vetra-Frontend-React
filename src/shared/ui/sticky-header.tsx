@@ -14,7 +14,7 @@ export function StickyHeader({ children, className }: StickyHeaderProps) {
   return (
     <div
       className={cn(
-        "sticky -top-6 z-30 -mx-8 -mt-6 bg-page/80 backdrop-blur-sm px-8 pt-6",
+        "sticky -top-6 z-30 -mx-8 -mt-6 bg-background/80 backdrop-blur-sm backdrop-saturate-150 px-8 pt-6",
         className,
       )}
     >

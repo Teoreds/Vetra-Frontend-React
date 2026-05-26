@@ -124,19 +124,24 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
       header: "Spedizione",
       render: (row) => {
         if (!row.shipping_location_guid) {
-          return <span className="text-[13px] text-muted-foreground/50">—</span>;
+          return <span className="text-faint-foreground">—</span>;
         }
         const loc = locationsMap?.get(row.shipping_location_guid);
         if (!loc) return null;
-        const city = [loc.city, loc.province].filter(Boolean).join(", ");
-        const fullAddress = [loc.address_line, loc.city, loc.province].filter(Boolean).join(", ");
+        const line1 = loc.address_line;
+        const cityParts = [
+          loc.post_code,
+          loc.city,
+          loc.province ? `(${loc.province})` : null,
+        ].filter(Boolean).join(" ");
+        if (!line1 && !cityParts) {
+          return <span className="text-faint-foreground">—</span>;
+        }
         return (
-          <span
-            className="text-[13px] text-muted-foreground"
-            title={fullAddress || undefined}
-          >
-            {city || "—"}
-          </span>
+          <div className="flex flex-col gap-0.5">
+            {line1 && <span className="text-[13px] text-foreground">{line1}</span>}
+            {cityParts && <span className="text-[11px] text-muted-foreground">{cityParts}</span>}
+          </div>
         );
       },
     },
@@ -181,7 +186,7 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
             <DropdownMenu.Trigger asChild>
               <button
                 type="button"
-                className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 onClick={(e) => e.stopPropagation()}
               >
                 <MoreVertical className="h-4 w-4" />
@@ -191,31 +196,31 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
               <DropdownMenu.Content
                 align="end"
                 sideOffset={4}
-                className="z-50 min-w-[160px] rounded-xl border border-border/60 bg-popover p-1 shadow-lg animate-in fade-in-0 zoom-in-95"
+                className="z-50 min-w-[160px] rounded-lg border border-border bg-popover p-1 shadow-popover animate-in fade-in-0 zoom-in-95"
                 onClick={(e) => e.stopPropagation()}
               >
                 <DropdownMenu.Item
-                  className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
+                  className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-muted"
                   onSelect={() => navigate(`/orders/${row.guid}/edit`)}
                 >
                   <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
                   Modifica
                 </DropdownMenu.Item>
                 <DropdownMenu.Item
-                  className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
+                  className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-muted"
                   onSelect={() => navigate(`/pick-notes/new?order=${row.guid}`)}
                 >
                   <ClipboardList className="h-3.5 w-3.5 text-muted-foreground" />
                   Nota di Prelievo
                 </DropdownMenu.Item>
                 <DropdownMenu.Item
-                  className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
+                  className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-muted"
                 >
                   <Printer className="h-3.5 w-3.5 text-muted-foreground" />
                   Stampa
                 </DropdownMenu.Item>
                 <DropdownMenu.Item
-                  className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
+                  className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-muted"
                 >
                   <Copy className="h-3.5 w-3.5 text-muted-foreground" />
                   Duplica

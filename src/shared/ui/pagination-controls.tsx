@@ -37,7 +37,7 @@ export function PaginationControls({
 
   return (
     <div className="flex items-center justify-between border-t border-border px-4 py-3">
-      <p className="text-sm text-muted-foreground">
+      <p className="text-[13px] text-muted-foreground">
         <span className="font-medium text-foreground">
           {from}-{to}
         </span>{" "}
@@ -73,7 +73,7 @@ export function PaginationControls({
                 "flex h-8 min-w-[32px] items-center justify-center rounded-md px-2 text-sm font-medium transition-colors",
                 page === currentPage
                   ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-muted-foreground hover:bg-accent hover:text-foreground",
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
               )}
             >
               {page}
@@ -116,7 +116,7 @@ function NavButton({
       onClick={onClick}
       disabled={disabled}
       aria-label={label}
-      className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
+      className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
     >
       {children}
     </button>

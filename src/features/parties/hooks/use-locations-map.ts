@@ -5,6 +5,7 @@ interface LocationSummary {
   address_line: string | null;
   city: string | null;
   province: string | null;
+  post_code: string | null;
 }
 
 /**
@@ -30,6 +31,7 @@ export function useLocationsMap(guids: string[]) {
             address_line: data.address_line ?? null,
             city: data.city ?? null,
             province: data.province ?? null,
+            post_code: data.post_code ?? null,
           });
         }
       }

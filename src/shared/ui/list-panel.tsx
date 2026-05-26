@@ -12,7 +12,7 @@ import { cn } from "@/shared/lib/utils";
  */
 function ListPanel({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={cn("rounded-xl border border-border/60 bg-card overflow-hidden", className)}>
+    <div className={cn("rounded-lg border border-border bg-card overflow-hidden shadow-card", className)}>
       {children}
     </div>
   );
@@ -30,7 +30,7 @@ function ListPanelToolbar({ left, right, className }: ListPanelToolbarProps) {
   return (
     <div
       className={cn(
-        "flex items-center justify-between gap-4 border-b border-border/50 px-4 py-3",
+        "flex items-center justify-between gap-4 border-b border-border px-4 py-3",
         className,
       )}
     >

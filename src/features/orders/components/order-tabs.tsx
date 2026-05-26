@@ -5,6 +5,7 @@ import { CommitmentsTab } from "./commitments-tab";
 import { PickNotesTab } from "./pick-notes-tab";
 import { DeliveryNotesTab } from "./delivery-notes-tab";
 import { AttachmentsTab } from "./attachments-tab";
+import { LogsTab } from "./logs-tab";
 import type { OrderDetailOut } from "../types/order.types";
 
 interface OrderTabsProps {
@@ -31,6 +32,9 @@ export function OrderTabs({ order }: OrderTabsProps) {
       </Tabs.Content>
       <Tabs.Content value="attachments">
         <AttachmentsTab orderGuid={order.guid} />
+      </Tabs.Content>
+      <Tabs.Content value="logs">
+        <LogsTab orderGuid={order.guid} />
       </Tabs.Content>
     </>
   );

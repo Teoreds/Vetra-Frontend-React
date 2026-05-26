@@ -11,9 +11,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       <input
         type={type}
         className={cn(
-          "flex h-9 w-full rounded-lg border bg-background px-3 py-2 text-[13px] transition-colors",
+          "flex h-9 w-full rounded-md border bg-background px-3 py-2 text-[13px] transition-colors",
           "placeholder:text-muted-foreground",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/20 focus-visible:border-primary",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:border-primary",
           "disabled:cursor-not-allowed disabled:opacity-50",
           error
             ? "border-destructive focus-visible:ring-destructive/20 focus-visible:border-destructive"

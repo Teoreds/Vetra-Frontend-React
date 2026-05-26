@@ -29,9 +29,9 @@ function SkeletonRows({ columns, rows = 5 }: { columns: number; rows?: number })
   return (
     <>
       {Array.from({ length: rows }).map((_, i) => (
-        <tr key={i} className="border-b border-border/50">
+        <tr key={i} className="border-b border-border">
           {Array.from({ length: columns }).map((__, j) => (
-            <td key={j} className="p-4">
+            <td key={j} className="px-4 [padding-block:var(--row-pad-y)]">
               <div className="h-4 w-3/4 animate-pulse rounded bg-muted" />
             </td>
           ))}
@@ -62,14 +62,14 @@ export function DataTable<T>({
 
   return (
     <div className="w-full overflow-hidden rounded-b-xl">
-      <table className="w-full caption-bottom text-sm">
-        <thead className="bg-muted/30">
-          <tr className="border-b border-border/60">
+      <table className="w-full caption-bottom [font-size:var(--table-font-size)]">
+        <thead className="bg-muted">
+          <tr className="border-b border-border">
             {columns.map((col) => (
               <th
                 key={col.key}
                 className={cn(
-                  "h-10 px-4 text-left align-middle text-[length:var(--text-caption)] font-semibold uppercase tracking-wider text-muted-foreground/70",
+                  "h-10 px-4 text-left align-middle text-[length:var(--text-caption)] font-semibold uppercase tracking-wider text-subtle-foreground",
                   col.className,
                   col.sortable && "cursor-pointer select-none hover:text-foreground transition-colors",
                 )}
@@ -100,15 +100,15 @@ export function DataTable<T>({
                 key={keyExtractor(row)}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
                 className={cn(
-                  "group/row border-b border-border/50 last:border-0 transition-colors duration-75",
-                  "hover:bg-accent/60",
+                  "group/row border-b border-border last:border-0 transition-colors duration-75",
+                  "hover:bg-muted",
                   onRowClick && "cursor-pointer",
                 )}
               >
                 {columns.map((col) => (
                   <td
                     key={col.key}
-                    className={cn("px-4 py-3.5 align-middle", col.className)}
+                    className={cn("px-4 [padding-block:var(--row-pad-y)] align-middle", col.className)}
                   >
                     {col.render(row)}
                   </td>
