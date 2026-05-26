@@ -95,7 +95,7 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
                 partyGuid={party.guid}
                 name={party.name}
                 imagePath={party.imagePath}
-                className="h-7 w-7 text-[11px]"
+                className="h-6 w-6 text-[10px] rounded-md"
               />
               <span className="text-[13px] font-medium">{party.name}</span>
             </div>
@@ -178,10 +178,10 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
     },
     {
       key: "actions",
-      header: "",
-      className: "w-0",
+      header: "Azioni",
+      className: "w-20 text-right",
       render: (row) => (
-        <div className="flex justify-end opacity-0 transition-opacity group-hover/row:opacity-100">
+        <div className="flex justify-end opacity-40 transition-opacity group-hover/row:opacity-100">
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
               <button

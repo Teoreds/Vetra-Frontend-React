@@ -1,99 +1,17 @@
 import { Bell } from "lucide-react";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import * as Avatar from "@radix-ui/react-avatar";
-import { useNavigate } from "react-router-dom";
-import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
-import { useAuthStore } from "@/features/auth/hooks/use-auth-store";
-import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/shared/ui/button";
 import { Breadcrumb } from "@/shared/ui/breadcrumb";
 import { TenantBadge } from "@/layout/tenant-badge";
 
 export function HeaderUserMenu() {
-  const { data: user } = useCurrentUser();
-  const storeLogout = useAuthStore((s) => s.logout);
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
-
-  const logout = () => {
-    storeLogout();
-    queryClient.clear();
-  };
-
-  const initials = user?.display_name
-    ?.split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2) ?? "??";
-
-  const avatarUrl = user?.profile_picture_path
-    ? `/api/auth/me/avatar`
-    : null;
-
   return (
     <header className="flex h-[3.25rem] shrink-0 items-center justify-between border-b border-border bg-background/80 backdrop-blur-sm backdrop-saturate-150 px-6">
       <Breadcrumb />
-
       <div className="flex items-center gap-2">
         <TenantBadge />
-
         <Button variant="ghost" size="icon" className="relative h-8 w-8 text-muted-foreground">
           <Bell className="h-4 w-4" />
         </Button>
-
-        <div className="mx-1 h-5 w-px bg-border" />
-
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger asChild>
-            <button className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:ring-offset-1">
-              <div className="text-right">
-                <p className="text-[13px] font-medium leading-tight">{user?.display_name ?? "Caricamento..."}</p>
-                <p className="text-[11px] text-muted-foreground capitalize">{user?.role_code?.toLowerCase() ?? ""}</p>
-              </div>
-              <Avatar.Root className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-soft ring-2 ring-primary/5 overflow-hidden">
-                {avatarUrl && (
-                  <Avatar.Image
-                    src={avatarUrl}
-                    alt={user?.display_name}
-                    className="h-full w-full object-cover"
-                  />
-                )}
-                <Avatar.Fallback className="text-xs font-semibold text-primary-text">
-                  {initials}
-                </Avatar.Fallback>
-              </Avatar.Root>
-            </button>
-          </DropdownMenu.Trigger>
-
-          <DropdownMenu.Portal>
-            <DropdownMenu.Content
-              align="end"
-              sideOffset={8}
-              className="z-50 min-w-[180px] rounded-lg border border-border bg-popover p-1.5 shadow-popover"
-            >
-              <DropdownMenu.Item
-                className="cursor-pointer rounded-lg px-3 py-2 text-[13px] outline-none transition-colors hover:bg-muted"
-                onClick={() => navigate("/profile")}
-              >
-                Profilo
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                className="cursor-pointer rounded-lg px-3 py-2 text-[13px] outline-none transition-colors hover:bg-muted"
-                onClick={() => navigate("/admin")}
-              >
-                Impostazioni
-              </DropdownMenu.Item>
-              <DropdownMenu.Separator className="my-1 h-px bg-border" />
-              <DropdownMenu.Item
-                className="cursor-pointer rounded-lg px-3 py-2 text-[13px] text-danger-foreground outline-none transition-colors hover:bg-danger-soft"
-                onClick={logout}
-              >
-                Esci
-              </DropdownMenu.Item>
-            </DropdownMenu.Content>
-          </DropdownMenu.Portal>
-        </DropdownMenu.Root>
       </div>
     </header>
   );

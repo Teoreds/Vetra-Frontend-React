@@ -87,10 +87,10 @@ export function PartiesTable({ parties, isLoading }: PartiesTableProps) {
     },
     {
       key: "actions",
-      header: "",
-      className: "w-0",
+      header: "Azioni",
+      className: "w-20 text-right",
       render: (row) => (
-        <div className="flex justify-end opacity-0 transition-opacity group-hover/row:opacity-100">
+        <div className="flex justify-end opacity-40 transition-opacity group-hover/row:opacity-100">
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
               <button

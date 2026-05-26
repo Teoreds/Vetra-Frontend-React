@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus, RefreshCw } from "lucide-react";
 import { Button } from "@/shared/ui/button";
@@ -23,15 +23,32 @@ export function PartiesListPage() {
 
   const { data, isLoading, refetch, isRefetching } = useParties(filters);
 
+  const hasActiveFilters = !!(filters.search || filters.type_code);
+  const baseTotalRef = useRef<number | null>(null);
+  const [baseTotal, setBaseTotal] = useState<number | null>(null);
+  useEffect(() => {
+    if (!hasActiveFilters && data?.total != null) {
+      baseTotalRef.current = data.total;
+      setBaseTotal(data.total);
+    }
+  }, [data?.total, hasActiveFilters]);
+
+  const badgeText =
+    data != null
+      ? hasActiveFilters && baseTotal != null
+        ? `${data.total} di ${baseTotal}`
+        : String(data.total)
+      : null;
+
   return (
     <div className="space-y-5">
       <PageHeader
         title="Anagrafiche"
         description="Gestisci clienti, fornitori, trasporti ed altro."
         badge={
-          data ? (
+          badgeText != null ? (
             <span className="rounded-full bg-primary-soft px-2 py-0.5 text-[length:var(--text-caption)] font-semibold text-primary-text">
-              {data.total}
+              {badgeText}
             </span>
           ) : undefined
         }
@@ -54,8 +71,8 @@ export function PartiesListPage() {
                 type="button"
                 onClick={() => refetch()}
                 disabled={isRefetching}
-                className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
                 title="Aggiorna"
+                className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
               >
                 <RefreshCw className={`h-3.5 w-3.5 ${isRefetching ? "animate-spin" : ""}`} />
               </button>
