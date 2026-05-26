@@ -63,7 +63,7 @@ function StatusPipelineCard({ statusCode }: { statusCode: string }) {
                       className={cn(
                         "flex h-7 w-7 items-center justify-center rounded-full transition-all",
                         isCompleted && "bg-primary-soft text-primary-text",
-                        isActive && "bg-primary text-primary-foreground shadow-md ring-4 ring-primary/15",
+                        isActive && "bg-primary text-primary-foreground ring-4 ring-primary/15",
                         !isCompleted && !isActive && "bg-muted text-faint-foreground border border-border",
                       )}
                     >

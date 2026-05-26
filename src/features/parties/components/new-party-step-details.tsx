@@ -163,7 +163,7 @@ export function NewPartyStepDetails({ defaultValues, onNext, error, imagePreview
                     autoFocus
                   />
                   {errors.description && (
-                    <p className="text-[11px] text-destructive">{errors.description.message}</p>
+                    <p className="text-[11px] text-danger-foreground">{errors.description.message}</p>
                   )}
                 </div>
                 <div className="space-y-1.5">
@@ -176,7 +176,7 @@ export function NewPartyStepDetails({ defaultValues, onNext, error, imagePreview
                   type="button"
                   tabIndex={-1}
                   onClick={onImageClear}
-                  className="self-start text-[11px] text-muted-foreground hover:text-destructive"
+                  className="self-start text-[11px] text-muted-foreground hover:text-danger"
                 >
                   Rimuovi immagine
                 </button>
@@ -207,7 +207,7 @@ export function NewPartyStepDetails({ defaultValues, onNext, error, imagePreview
                 )}
               />
               {errors.type_code && (
-                <p className="text-[11px] text-destructive">{errors.type_code.message}</p>
+                <p className="text-[11px] text-danger-foreground">{errors.type_code.message}</p>
               )}
             </div>
             <div className="space-y-1.5">
@@ -239,7 +239,7 @@ export function NewPartyStepDetails({ defaultValues, onNext, error, imagePreview
                 maxLength={320}
               />
               {errors.sdi_code && (
-                <p className="text-[11px] text-destructive">{errors.sdi_code.message}</p>
+                <p className="text-[11px] text-danger-foreground">{errors.sdi_code.message}</p>
               )}
             </div>
           </div>
@@ -271,8 +271,8 @@ export function NewPartyStepDetails({ defaultValues, onNext, error, imagePreview
       </Card>
 
       {error && (
-        <div className="rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3">
-          <p className="text-[13px] text-destructive">{error}</p>
+        <div className="rounded-lg border border-danger/20 bg-danger-soft px-4 py-3">
+          <p className="text-[13px] text-danger-foreground">{error}</p>
         </div>
       )}
 

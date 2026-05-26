@@ -264,7 +264,7 @@ export function ArticleEditPage() {
             <button
               type="button"
               onClick={() => deleteImage.mutate()}
-              className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-white opacity-0 shadow-sm transition-opacity group-hover/avatar:opacity-100"
+              className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-danger text-white opacity-0 shadow-sm transition-opacity group-hover/avatar:opacity-100"
               title="Rimuovi foto"
             >
               <Trash2 className="h-2.5 w-2.5" />
@@ -310,7 +310,7 @@ export function ArticleEditPage() {
                 <label className="text-[13px] font-medium">Descrizione</label>
                 <Input {...register("description")} error={!!errors.description} />
                 {errors.description && (
-                  <p className="text-[11px] text-destructive">{errors.description.message}</p>
+                  <p className="text-[11px] text-danger-foreground">{errors.description.message}</p>
                 )}
               </div>
             </div>
@@ -338,7 +338,7 @@ export function ArticleEditPage() {
                   )}
                 />
                 {errors.unit_of_measure_code && (
-                  <p className="text-[11px] text-destructive">{errors.unit_of_measure_code.message}</p>
+                  <p className="text-[11px] text-danger-foreground">{errors.unit_of_measure_code.message}</p>
                 )}
               </div>
 
@@ -442,7 +442,7 @@ export function ArticleEditPage() {
                             )}
                           />
                           {errors.suppliers?.[index]?.party_guid && (
-                            <p className="mt-0.5 text-[11px] text-destructive">
+                            <p className="mt-0.5 text-[11px] text-danger-foreground">
                               {errors.suppliers[index].party_guid.message}
                             </p>
                           )}
@@ -480,7 +480,7 @@ export function ArticleEditPage() {
                             type="button"
                             variant="ghost"
                             size="icon"
-                            className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                            className="h-7 w-7 text-muted-foreground hover:text-danger"
                             onClick={() => remove(index)}
                           >
                             <Trash2 className="h-3.5 w-3.5" />

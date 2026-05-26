@@ -95,7 +95,7 @@ export function PartiesTable({ parties, isLoading }: PartiesTableProps) {
             <DropdownMenu.Trigger asChild>
               <button
                 type="button"
-                className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 onClick={(e) => e.stopPropagation()}
               >
                 <MoreVertical className="h-4 w-4" />
@@ -105,11 +105,11 @@ export function PartiesTable({ parties, isLoading }: PartiesTableProps) {
               <DropdownMenu.Content
                 align="end"
                 sideOffset={4}
-                className="z-50 min-w-[160px] rounded-xl border border-border/60 bg-popover p-1 shadow-lg animate-in fade-in-0 zoom-in-95"
+                className="z-50 min-w-[160px] rounded-lg border border-border bg-popover p-1 shadow-popover animate-in fade-in-0 zoom-in-95"
                 onClick={(e) => e.stopPropagation()}
               >
                 <DropdownMenu.Item
-                  className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
+                  className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-muted"
                   onSelect={() => navigate(`/parties/${row.guid}`)}
                 >
                   <Pencil className="h-3.5 w-3.5 text-muted-foreground" />

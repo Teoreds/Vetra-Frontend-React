@@ -9,14 +9,14 @@ interface StatusPipelineProps {
 }
 
 const STATUS_COLORS: Record<string, { bar: string; dot: string }> = {
-  DRAFT:     { bar: "bg-muted-foreground/60",  dot: "bg-muted-foreground/60" },
-  CONFIRMED: { bar: "bg-blue-500",     dot: "bg-blue-500" },
-  PARTIAL:   { bar: "bg-indigo-500",   dot: "bg-indigo-500" },
-  FULFILLED: { bar: "bg-emerald-500",  dot: "bg-emerald-500" },
-  PICKING:   { bar: "bg-amber-500",    dot: "bg-amber-500" },
-  SHIPPED:   { bar: "bg-teal-500",     dot: "bg-teal-500" },
-  COMPLETED: { bar: "bg-green-500",    dot: "bg-green-500" },
-  CANCELLED: { bar: "bg-red-400",      dot: "bg-red-400" },
+  DRAFT:     { bar: "bg-neutral",          dot: "bg-neutral" },
+  CONFIRMED: { bar: "bg-info",             dot: "bg-info" },
+  PARTIAL:   { bar: "bg-fulfilled",        dot: "bg-fulfilled" },
+  FULFILLED: { bar: "bg-success",          dot: "bg-success" },
+  PICKING:   { bar: "bg-warning",          dot: "bg-warning" },
+  SHIPPED:   { bar: "bg-primary-light",    dot: "bg-primary-light" },
+  COMPLETED: { bar: "bg-success",          dot: "bg-success" },
+  CANCELLED: { bar: "bg-danger",           dot: "bg-danger" },
 };
 
 export function StatusPipeline({ data }: StatusPipelineProps) {

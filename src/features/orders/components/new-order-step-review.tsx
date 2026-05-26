@@ -213,7 +213,7 @@ export function NewOrderStepReview({
                   </span>
                 </div>
               </div>
-              <div className="flex items-center gap-2 rounded-lg border border-border/60 bg-muted/30 px-3 py-2 text-[13px]">
+              <div className="flex items-center gap-2 rounded-lg border border-border bg-muted px-3 py-2 text-[13px]">
                 <MapPin className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                 <span className="text-muted-foreground">Spedizione</span>
                 <span className="font-medium">

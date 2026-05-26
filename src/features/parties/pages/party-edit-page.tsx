@@ -189,7 +189,7 @@ export function PartyEditPage() {
             <button
               type="button"
               onClick={() => deleteImage.mutate()}
-              className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-white opacity-0 shadow-sm transition-opacity group-hover/avatar:opacity-100"
+              className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-danger text-white opacity-0 shadow-sm transition-opacity group-hover/avatar:opacity-100"
               title="Rimuovi foto"
             >
               <Trash2 className="h-2.5 w-2.5" />
@@ -218,7 +218,7 @@ export function PartyEditPage() {
                   error={!!errors.description}
                 />
                 {errors.description && (
-                  <p className="text-[11px] text-destructive">{errors.description.message}</p>
+                  <p className="text-[11px] text-danger-foreground">{errors.description.message}</p>
                 )}
               </div>
               <div className="space-y-1.5">
@@ -423,7 +423,7 @@ export function PartyEditPage() {
                 <label className="text-[13px] font-medium">Codice SDI</label>
                 <Input {...register("sdi_code")} maxLength={320} placeholder="0000000 o indirizzo PEC" />
                 {errors.sdi_code && (
-                  <p className="text-[11px] text-destructive">{errors.sdi_code.message}</p>
+                  <p className="text-[11px] text-danger-foreground">{errors.sdi_code.message}</p>
                 )}
               </div>
               <div className="space-y-1.5">
@@ -457,8 +457,8 @@ export function PartyEditPage() {
         </Card>
 
         {updateParty.isError && (
-          <div className="rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3">
-            <p className="text-[13px] text-destructive">Impossibile aggiornare l'anagrafica. Riprova.</p>
+          <div className="rounded-lg border border-danger/20 bg-danger-soft px-4 py-3">
+            <p className="text-[13px] text-danger-foreground">Impossibile aggiornare l'anagrafica. Riprova.</p>
           </div>
         )}
 

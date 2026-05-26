@@ -28,7 +28,7 @@ export function ArticlesListPage() {
         description="Gestisci il catalogo articoli."
         badge={
           data ? (
-            <span className="rounded-full bg-primary/8 px-2 py-0.5 text-[length:var(--text-caption)] font-semibold text-primary">
+            <span className="rounded-full bg-primary-soft px-2 py-0.5 text-[length:var(--text-caption)] font-semibold text-primary-text">
               {data.total}
             </span>
           ) : undefined

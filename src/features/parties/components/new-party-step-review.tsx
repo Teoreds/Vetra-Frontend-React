@@ -136,7 +136,7 @@ export function NewPartyStepReview({
                     <span className="text-[11px] text-muted-foreground">{c.label}</span>
                   )}
                   {c.is_primary && (
-                    <span className="rounded-full bg-primary/8 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                    <span className="rounded-full bg-primary-soft px-2 py-0.5 text-[10px] font-semibold text-primary-text">
                       Primario
                     </span>
                   )}
@@ -172,7 +172,7 @@ export function NewPartyStepReview({
                   </p>
                 </div>
                 {a.is_primary && (
-                  <span className="rounded-full bg-primary/8 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                  <span className="rounded-full bg-primary-soft px-2 py-0.5 text-[10px] font-semibold text-primary-text">
                     Primario
                   </span>
                 )}
@@ -274,7 +274,7 @@ export function NewPartyStepReview({
                     <span className="text-[13px] font-semibold tabular-nums">{a.purchase_price}</span>
                   )}
                   {a.is_preferred && (
-                    <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-600">
+                    <span className="rounded-full bg-warning-soft px-2 py-0.5 text-[10px] font-semibold text-warning-foreground">
                       Preferito
                     </span>
                   )}
@@ -287,8 +287,8 @@ export function NewPartyStepReview({
 
       {/* ── Footer ───────────────────────────────────── */}
       {error && (
-        <div className="rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3">
-          <p className="text-[13px] text-destructive">{error}</p>
+        <div className="rounded-lg border border-danger/20 bg-danger-soft px-4 py-3">
+          <p className="text-[13px] text-danger-foreground">{error}</p>
         </div>
       )}
 

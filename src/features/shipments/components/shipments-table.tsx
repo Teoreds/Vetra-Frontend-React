@@ -96,7 +96,7 @@ export function ShipmentsTable({ pickNotes, isLoading }: ShipmentsTableProps) {
           return (
             <button
               type="button"
-              className="flex items-center gap-1.5 rounded-md px-2 py-1 text-[13px] font-medium text-primary transition-colors hover:bg-primary/8"
+              className="flex items-center gap-1.5 rounded-md px-2 py-1 text-[13px] font-medium text-primary transition-colors hover:bg-primary-soft"
               onClick={(e) => {
                 e.stopPropagation();
                 setDdtGuid(row.guid);
@@ -147,7 +147,7 @@ export function ShipmentsTable({ pickNotes, isLoading }: ShipmentsTableProps) {
               <DropdownMenu.Trigger asChild>
                 <button
                   type="button"
-                  className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                  className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <MoreVertical className="h-4 w-4" />
@@ -157,11 +157,11 @@ export function ShipmentsTable({ pickNotes, isLoading }: ShipmentsTableProps) {
                 <DropdownMenu.Content
                   align="end"
                   sideOffset={4}
-                  className="z-50 min-w-[160px] rounded-xl border border-border/60 bg-popover p-1 shadow-lg animate-in fade-in-0 zoom-in-95"
+                  className="z-50 min-w-[160px] rounded-lg border border-border bg-popover p-1 shadow-popover animate-in fade-in-0 zoom-in-95"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <DropdownMenu.Item
-                    className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
+                    className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-muted"
                     onSelect={() => navigate(`/pick-notes/${row.guid}`)}
                   >
                     <Eye className="h-3.5 w-3.5 text-muted-foreground" />
@@ -169,7 +169,7 @@ export function ShipmentsTable({ pickNotes, isLoading }: ShipmentsTableProps) {
                   </DropdownMenu.Item>
                   {row.status_code === "CHECKED" && (
                     <DropdownMenu.Item
-                      className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
+                      className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-muted"
                       onSelect={() => setDdtGuid(row.guid)}
                     >
                       <FileText className="h-3.5 w-3.5 text-muted-foreground" />
@@ -178,7 +178,7 @@ export function ShipmentsTable({ pickNotes, isLoading }: ShipmentsTableProps) {
                   )}
                   {row.status_code === "CLOSED" && deliveryNote && (
                     <DropdownMenu.Item
-                      className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
+                      className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-muted"
                       onSelect={() => shipmentsApi.downloadDeliveryNotePdf(deliveryNote.guid).catch(() => {})}
                     >
                       <Download className="h-3.5 w-3.5 text-muted-foreground" />
@@ -186,7 +186,7 @@ export function ShipmentsTable({ pickNotes, isLoading }: ShipmentsTableProps) {
                     </DropdownMenu.Item>
                   )}
                   <DropdownMenu.Item
-                    className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
+                    className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-[13px] outline-none transition-colors hover:bg-muted"
                   >
                     <Printer className="h-3.5 w-3.5 text-muted-foreground" />
                     Stampa

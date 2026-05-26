@@ -64,7 +64,7 @@ export function DiscountsTab({ partyGuid, onAddDiscount, onAddIntentLetter }: Di
                       <td className="px-3 py-2.5 font-medium">{typeLabel(d.article_type_code)}</td>
                       <td className="px-3 py-2.5 text-right tabular-nums">{Number(d.discount_percent).toFixed(2)}%</td>
                       <td className="px-3 py-2.5">
-                        <span className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium ${d.is_active ? "bg-emerald-500/10 text-emerald-600" : "bg-muted text-muted-foreground"}`}>
+                        <span className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium ${d.is_active ? "bg-success-soft text-success-foreground" : "bg-muted text-muted-foreground"}`}>
                           {d.is_active ? "Attivo" : "Inattivo"}
                         </span>
                       </td>
@@ -120,7 +120,7 @@ export function DiscountsTab({ partyGuid, onAddDiscount, onAddIntentLetter }: Di
                         {formatDate(l.valid_from)} → {formatDate(l.valid_to)}
                       </td>
                       <td className="px-3 py-2.5">
-                        <span className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium ${l.is_active ? "bg-emerald-500/10 text-emerald-600" : "bg-muted text-muted-foreground"}`}>
+                        <span className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium ${l.is_active ? "bg-success-soft text-success-foreground" : "bg-muted text-muted-foreground"}`}>
                           {l.is_active ? "Attiva" : "Inattiva"}
                         </span>
                       </td>

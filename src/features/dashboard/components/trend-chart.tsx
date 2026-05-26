@@ -59,7 +59,7 @@ export function TrendChart({ data, granularity }: TrendChartProps) {
                 onMouseLeave={() => setHovered(null)}
               >
                 {isActive && (
-                  <div className="absolute -top-1 z-10 rounded-lg border border-border bg-card px-2.5 py-1.5 shadow-md -translate-y-full whitespace-nowrap">
+                  <div className="absolute -top-1 z-10 rounded-lg border border-border bg-popover px-2.5 py-1.5 shadow-popover -translate-y-full whitespace-nowrap">
                     <p className="text-[11px] font-semibold tabular-nums">{formatCurrency(gross)}</p>
                     <p className="text-[11px] text-muted-foreground tabular-nums">{d.order_count} ordini</p>
                   </div>

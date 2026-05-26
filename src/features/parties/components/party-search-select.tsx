@@ -170,7 +170,7 @@ export function PartySearchSelect({ value, onChange, disabled, typeCode }: Party
               onMouseEnter={() => setFocusedIndex(index)}
               className={cn(
                 "flex w-full items-center gap-3 px-3 py-2 text-left transition-colors",
-                index === focusedIndex ? "bg-accent" : "hover:bg-accent/60",
+                index === focusedIndex ? "bg-muted" : "hover:bg-muted/60",
               )}
             >
               <div className="min-w-0 flex-1">

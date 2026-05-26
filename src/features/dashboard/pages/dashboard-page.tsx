@@ -91,16 +91,16 @@ function SectionCard({
   return (
     <Card className={cn(className, isWarning && "overflow-hidden")}>
       {isWarning && (
-        <div className="h-[3px] w-full bg-gradient-to-r from-amber-400 to-orange-400" />
+        <div className="h-[3px] w-full bg-gradient-to-r from-warning-soft via-warning to-warning-foreground" />
       )}
       <div className="flex items-center justify-between px-5 py-3.5 border-b border-border">
         <div className="flex items-center gap-2">
           {icon && (
-            <span className={isWarning ? "text-amber-500/70" : "text-muted-foreground/40"}>
+            <span className={isWarning ? "text-warning-foreground/70" : "text-muted-foreground/40"}>
               {icon}
             </span>
           )}
-          <h2 className={`text-[11px] font-semibold uppercase tracking-wider ${isWarning ? "text-amber-600/80" : "text-muted-foreground"}`}>
+          <h2 className={`text-[11px] font-semibold uppercase tracking-wider ${isWarning ? "text-warning-foreground/80" : "text-muted-foreground"}`}>
             {title}
           </h2>
         </div>
@@ -175,26 +175,26 @@ export function DashboardPage() {
           value={kpis.orders_count}
           prevValue={kpis.orders_count_prev}
           format="number"
-          dotClass="bg-blue-500"
+          dotClass="bg-info"
         />
         <KpiCard
           title="Fatturato Lordo"
           value={kpis.total_gross}
           prevValue={Number(kpis.total_gross_prev)}
           format="currency"
-          dotClass="bg-emerald-500"
+          dotClass="bg-success"
         />
         <KpiCard
           title="Backlog"
           value={kpis.backlog_count}
           format="number"
-          dotClass="bg-amber-500"
+          dotClass="bg-warning"
         />
         <KpiCard
           title="Tempo Medio Evasione"
           value={kpis.avg_fulfillment_days ?? 0}
           format="days"
-          dotClass="bg-violet-500"
+          dotClass="bg-fulfilled"
         />
       </div>
 

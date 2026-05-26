@@ -24,7 +24,7 @@ export function ShipmentsListPage() {
         description="Note di prelievo pronte per la spedizione. Crea i documenti di trasporto."
         badge={
           data ? (
-            <span className="rounded-full bg-primary/8 px-2 py-0.5 text-[length:var(--text-caption)] font-semibold text-primary">
+            <span className="rounded-full bg-primary-soft px-2 py-0.5 text-[length:var(--text-caption)] font-semibold text-primary-text">
               {data.total}
             </span>
           ) : undefined

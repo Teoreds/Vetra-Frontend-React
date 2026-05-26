@@ -207,7 +207,7 @@ export function NewPartyStepContacts({ typeCode, defaultValues, onNext, onBack, 
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="h-9 w-9 shrink-0 text-muted-foreground hover:text-destructive"
+                className="h-9 w-9 shrink-0 text-muted-foreground hover:text-danger"
                 onClick={() => contactFields.remove(index)}
               >
                 <Trash2 className="h-3.5 w-3.5" />
@@ -256,7 +256,7 @@ export function NewPartyStepContacts({ typeCode, defaultValues, onNext, onBack, 
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                    className="h-7 w-7 text-muted-foreground hover:text-danger"
                     onClick={() => addressFields.remove(index)}
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -273,7 +273,7 @@ export function NewPartyStepContacts({ typeCode, defaultValues, onNext, onBack, 
                     error={!!errors.addresses?.[index]?.address_line}
                   />
                   {errors.addresses?.[index]?.address_line && (
-                    <p className="text-[11px] text-destructive">{errors.addresses[index].address_line.message}</p>
+                    <p className="text-[11px] text-danger-foreground">{errors.addresses[index].address_line.message}</p>
                   )}
                 </div>
                 <div className="space-y-1">
@@ -312,7 +312,7 @@ export function NewPartyStepContacts({ typeCode, defaultValues, onNext, onBack, 
                     )}
                   />
                   {errors.addresses?.[index]?.type_code && (
-                    <p className="text-[11px] text-destructive">{errors.addresses[index].type_code.message}</p>
+                    <p className="text-[11px] text-danger-foreground">{errors.addresses[index].type_code.message}</p>
                   )}
                 </div>
                 <div className="flex items-end pb-1">
@@ -329,14 +329,14 @@ export function NewPartyStepContacts({ typeCode, defaultValues, onNext, onBack, 
           ))}
 
           {addressRootError && (
-            <p className="text-[11px] text-destructive">{addressRootError}</p>
+            <p className="text-[11px] text-danger-foreground">{addressRootError}</p>
           )}
         </CardContent>
       </Card>
 
       {error && (
-        <div className="rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3">
-          <p className="text-[13px] text-destructive">{error}</p>
+        <div className="rounded-lg border border-danger/20 bg-danger-soft px-4 py-3">
+          <p className="text-[13px] text-danger-foreground">{error}</p>
         </div>
       )}
 

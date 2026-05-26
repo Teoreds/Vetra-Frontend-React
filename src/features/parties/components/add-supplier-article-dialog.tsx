@@ -85,7 +85,7 @@ export function AddSupplierArticleDialog({ open, onOpenChange, partyGuid }: Prop
                   setSelectedArticleLabel(null);
                   setValue("article_guid", "");
                 }}
-                className="shrink-0 rounded-md p-0.5 text-muted-foreground hover:text-destructive"
+                className="shrink-0 rounded-md p-0.5 text-muted-foreground hover:text-danger"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -99,7 +99,7 @@ export function AddSupplierArticleDialog({ open, onOpenChange, partyGuid }: Prop
             />
           )}
           {errors.article_guid && (
-            <p className="text-[11px] text-destructive">{errors.article_guid.message}</p>
+            <p className="text-[11px] text-danger-foreground">{errors.article_guid.message}</p>
           )}
         </div>
 

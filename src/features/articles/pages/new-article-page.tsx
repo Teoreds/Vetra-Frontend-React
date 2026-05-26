@@ -241,7 +241,7 @@ export function NewArticlePage() {
                 type="button"
                 tabIndex={-1}
                 onClick={() => imageInputRef.current?.click()}
-                className={`group/avatar relative h-[88px] w-[88px] shrink-0 overflow-hidden rounded-xl border bg-muted/50 transition-all hover:border-primary/40 ${isDragging ? "border-primary/60 ring-2 ring-primary/20" : "border-border/60"}`}
+                className={`group/avatar relative h-[88px] w-[88px] shrink-0 overflow-hidden rounded-lg border bg-muted/50 transition-all hover:border-primary/40 ${isDragging ? "border-primary/60 ring-2 ring-primary/20" : "border-border"}`}
               >
                 {imagePreview ? (
                   <img src={imagePreview} alt="Anteprima" className="h-full w-full object-cover" />
@@ -266,7 +266,7 @@ export function NewArticlePage() {
                       error={!!errors.code}
                     />
                     {errors.code && (
-                      <p className="text-[11px] text-destructive">{errors.code.message}</p>
+                      <p className="text-[11px] text-danger-foreground">{errors.code.message}</p>
                     )}
                   </div>
                   <div className="space-y-1.5">
@@ -277,7 +277,7 @@ export function NewArticlePage() {
                       error={!!errors.description}
                     />
                     {errors.description && (
-                      <p className="text-[11px] text-destructive">{errors.description.message}</p>
+                      <p className="text-[11px] text-danger-foreground">{errors.description.message}</p>
                     )}
                   </div>
                 </div>
@@ -286,7 +286,7 @@ export function NewArticlePage() {
                     type="button"
                     tabIndex={-1}
                     onClick={clearImage}
-                    className="self-start text-[11px] text-muted-foreground hover:text-destructive"
+                    className="self-start text-[11px] text-muted-foreground hover:text-danger"
                   >
                     Rimuovi immagine
                   </button>
@@ -317,7 +317,7 @@ export function NewArticlePage() {
                   )}
                 />
                 {errors.unit_of_measure_code && (
-                  <p className="text-[11px] text-destructive">
+                  <p className="text-[11px] text-danger-foreground">
                     {errors.unit_of_measure_code.message}
                   </p>
                 )}
@@ -397,11 +397,11 @@ export function NewArticlePage() {
           </CardHeader>
           <CardContent>
             {fields.length === 0 ? (
-              <p className="rounded-lg border border-border/60 bg-muted/40 px-3 py-6 text-center text-[13px] text-muted-foreground">
+              <p className="rounded-lg border border-border bg-muted px-3 py-6 text-center text-[13px] text-muted-foreground">
                 Nessun fornitore aggiunto. Puoi aggiungerli dopo la creazione.
               </p>
             ) : (
-              <div className="overflow-hidden rounded-lg border border-border/60">
+              <div className="overflow-hidden rounded-lg border border-border">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -427,7 +427,7 @@ export function NewArticlePage() {
                             )}
                           />
                           {errors.suppliers?.[index]?.party_guid && (
-                            <p className="mt-0.5 text-[11px] text-destructive">
+                            <p className="mt-0.5 text-[11px] text-danger-foreground">
                               {errors.suppliers[index].party_guid.message}
                             </p>
                           )}
@@ -470,7 +470,7 @@ export function NewArticlePage() {
                             type="button"
                             variant="ghost"
                             size="icon"
-                            className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                            className="h-7 w-7 text-muted-foreground hover:text-danger"
                             onClick={() => remove(index)}
                           >
                             <Trash2 className="h-3.5 w-3.5" />
@@ -487,8 +487,8 @@ export function NewArticlePage() {
 
         {/* Error banner */}
         {createArticle.isError && (
-          <div className="rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3">
-            <p className="text-[13px] text-destructive">
+          <div className="rounded-lg border border-danger/20 bg-danger-soft px-4 py-3">
+            <p className="text-[13px] text-danger-foreground">
               Impossibile creare l'articolo. Riprova.
             </p>
           </div>

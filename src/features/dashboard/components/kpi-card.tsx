@@ -36,12 +36,12 @@ export function KpiCard({ title, value, prevValue, dotClass, format = "number" }
         <div className="mt-3 text-[12px]">
           {changePercent > 0 ? (
             <>
-              <span className="text-emerald-600">↑ {Math.abs(changePercent).toFixed(1)}%</span>
+              <span className="text-success-foreground">↑ {Math.abs(changePercent).toFixed(1)}%</span>
               <span className="ml-1.5 text-muted-foreground/60">vs periodo prec.</span>
             </>
           ) : changePercent < 0 ? (
             <>
-              <span className="text-red-500">↓ {Math.abs(changePercent).toFixed(1)}%</span>
+              <span className="text-danger-foreground">↓ {Math.abs(changePercent).toFixed(1)}%</span>
               <span className="ml-1.5 text-muted-foreground/60">vs periodo prec.</span>
             </>
           ) : (

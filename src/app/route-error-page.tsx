@@ -18,8 +18,8 @@ export function RouteErrorPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="mx-auto max-w-md text-center">
-        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
-          <AlertTriangle className="h-6 w-6 text-destructive" />
+        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-danger-soft">
+          <AlertTriangle className="h-6 w-6 text-danger-foreground" />
         </div>
         <h1 className="text-lg font-semibold">Errore di navigazione</h1>
         <p className="mt-2 text-[13px] text-muted-foreground">{message}</p>

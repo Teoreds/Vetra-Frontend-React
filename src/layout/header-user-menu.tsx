@@ -73,20 +73,20 @@ export function HeaderUserMenu() {
               className="z-50 min-w-[180px] rounded-lg border border-border bg-popover p-1.5 shadow-popover"
             >
               <DropdownMenu.Item
-                className="cursor-pointer rounded-lg px-3 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
+                className="cursor-pointer rounded-lg px-3 py-2 text-[13px] outline-none transition-colors hover:bg-muted"
                 onClick={() => navigate("/profile")}
               >
                 Profilo
               </DropdownMenu.Item>
               <DropdownMenu.Item
-                className="cursor-pointer rounded-lg px-3 py-2 text-[13px] outline-none transition-colors hover:bg-accent"
+                className="cursor-pointer rounded-lg px-3 py-2 text-[13px] outline-none transition-colors hover:bg-muted"
                 onClick={() => navigate("/admin")}
               >
                 Impostazioni
               </DropdownMenu.Item>
               <DropdownMenu.Separator className="my-1 h-px bg-border" />
               <DropdownMenu.Item
-                className="cursor-pointer rounded-lg px-3 py-2 text-[13px] text-destructive outline-none transition-colors hover:bg-destructive/10"
+                className="cursor-pointer rounded-lg px-3 py-2 text-[13px] text-danger-foreground outline-none transition-colors hover:bg-danger-soft"
                 onClick={logout}
               >
                 Esci

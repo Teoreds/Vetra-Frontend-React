@@ -210,7 +210,7 @@ export function CreateDdtPanel({
                     <User className="h-3.5 w-3.5 text-muted-foreground" />
                     Cliente
                   </label>
-                  <div className="flex h-9 w-full items-center rounded-lg border border-border/60 bg-muted/40 px-3 text-[13px] text-muted-foreground">
+                  <div className="flex h-9 w-full items-center rounded-lg border border-border bg-muted px-3 text-[13px] text-muted-foreground">
                     {customerParty?.description ?? (pickNote.party_guid ? `#${pickNote.party_guid.slice(0, 8)}` : "Non disponibile")}
                   </div>
                 </div>
@@ -221,7 +221,7 @@ export function CreateDdtPanel({
                     <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
                     Indirizzo di spedizione
                   </label>
-                  <div className="flex h-9 w-full items-center rounded-lg border border-border/60 bg-muted/40 px-3 text-[13px] text-muted-foreground">
+                  <div className="flex h-9 w-full items-center rounded-lg border border-border bg-muted px-3 text-[13px] text-muted-foreground">
                     {shippingAddress
                       ? [shippingAddress.address_line, shippingAddress.city].filter(Boolean).join(", ")
                       : pickNote.shipping_location_guid
@@ -256,15 +256,15 @@ export function CreateDdtPanel({
                   className={cn(
                     "rounded-xl border p-4 space-y-3 transition-colors",
                     !deliveryDate
-                      ? "border-amber-200 bg-amber-50/40"
-                      : "border-emerald-200 bg-emerald-50/40",
+                      ? "border-warning-soft bg-warning-soft/40"
+                      : "border-success-soft bg-success-soft/40",
                   )}
                 >
                   <div className="flex items-center gap-2">
-                    <Calendar className={`h-4 w-4 ${!deliveryDate ? "text-amber-500" : "text-emerald-500"}`} />
+                    <Calendar className={`h-4 w-4 ${!deliveryDate ? "text-warning-foreground" : "text-success-foreground"}`} />
                     <h3 className="text-[13px] font-semibold">Data di consegna</h3>
                     {!deliveryDate && (
-                      <Badge variant="secondary" className="ml-auto border-amber-200 bg-amber-100 text-amber-700 text-[10px]">
+                      <Badge variant="warning" className="ml-auto text-[10px]">
                         Richiesta
                       </Badge>
                     )}
@@ -282,7 +282,7 @@ export function CreateDdtPanel({
           {/* Footer */}
           <div className="border-t border-border/60 px-6 py-4 space-y-3">
             {submitError && (
-              <p className="text-[11px] font-medium text-destructive">{submitError}</p>
+              <p className="text-[11px] font-medium text-danger-foreground">{submitError}</p>
             )}
             <div className="flex gap-2">
               <Button

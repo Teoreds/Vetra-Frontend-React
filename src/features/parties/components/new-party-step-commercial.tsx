@@ -381,7 +381,7 @@ export function NewPartyStepCommercial({ typeCode, defaultValues, onNext, onBack
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="h-9 w-9 shrink-0 text-muted-foreground hover:text-destructive"
+                  className="h-9 w-9 shrink-0 text-muted-foreground hover:text-danger"
                   onClick={() => discountFields.remove(index)}
                 >
                   <Trash2 className="h-3.5 w-3.5" />
@@ -479,7 +479,7 @@ export function NewPartyStepCommercial({ typeCode, defaultValues, onNext, onBack
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="h-9 w-9 shrink-0 text-muted-foreground hover:text-destructive"
+                  className="h-9 w-9 shrink-0 text-muted-foreground hover:text-danger"
                   onClick={() => supplierFields.remove(index)}
                 >
                   <Trash2 className="h-3.5 w-3.5" />
@@ -492,8 +492,8 @@ export function NewPartyStepCommercial({ typeCode, defaultValues, onNext, onBack
 
       {/* ── Footer ───────────────────────────────────── */}
       {error && (
-        <div className="rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3">
-          <p className="text-[13px] text-destructive">{error}</p>
+        <div className="rounded-lg border border-danger/20 bg-danger-soft px-4 py-3">
+          <p className="text-[13px] text-danger-foreground">{error}</p>
         </div>
       )}
 

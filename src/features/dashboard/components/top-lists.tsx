@@ -6,9 +6,9 @@ type TopParty = components["schemas"]["TopParty"];
 type TopArticle = components["schemas"]["TopArticle"];
 
 const RANK_STYLES = [
-  "bg-amber-500/12 text-amber-600 ring-1 ring-amber-500/20",
-  "bg-muted-foreground/12 text-muted-foreground ring-1 ring-muted-foreground/20",
-  "bg-orange-400/12 text-orange-500 ring-1 ring-orange-400/20",
+  "bg-warning-soft text-warning-foreground ring-1 ring-warning/20",
+  "bg-neutral-soft text-neutral-foreground ring-1 ring-neutral/20",
+  "bg-warning-soft/60 text-warning-foreground/80 ring-1 ring-warning/10",
 ];
 
 // ── Top Clienti ──
