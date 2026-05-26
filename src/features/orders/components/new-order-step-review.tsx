@@ -196,12 +196,12 @@ export function NewOrderStepReview({
           <CardContent className="pt-0">
             <div className="space-y-2">
               <div className="grid grid-cols-2 gap-2">
-                <div className="flex items-center gap-2 rounded-lg border border-border/60 bg-muted/30 px-3 py-2 text-[13px]">
+                <div className="flex items-center gap-2 rounded-lg border border-border bg-muted px-3 py-2 text-[13px]">
                   <User className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                   <span className="text-muted-foreground">Cliente</span>
                   <span className="font-medium truncate">{party?.description ?? "—"}</span>
                 </div>
-                <div className="flex items-center gap-2 rounded-lg border border-border/60 bg-muted/30 px-3 py-2 text-[13px]">
+                <div className="flex items-center gap-2 rounded-lg border border-border bg-muted px-3 py-2 text-[13px]">
                   <CalendarDays className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                   <span className="text-muted-foreground">Data</span>
                   <span className="font-medium">
@@ -296,7 +296,7 @@ export function NewOrderStepReview({
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-[13px] text-muted-foreground">Sconto Totale</span>
-                  <span className="text-[13px] font-medium text-destructive">
+                  <span className="text-[13px] font-medium text-danger-foreground">
                     {totalDiscount > 0 ? `−${formatCurrency(totalDiscount)}` : "—"}
                   </span>
                 </div>
@@ -324,13 +324,13 @@ export function NewOrderStepReview({
         </Card>
 
         {/* Firma operatore */}
-        <Card className={!workerGuid ? "border-amber-200 bg-amber-50/40 dark:border-amber-900/40 dark:bg-amber-950/20" : "border-emerald-200 bg-emerald-50/40 dark:border-emerald-900/40 dark:bg-emerald-950/20"}>
+        <Card className={!workerGuid ? "border-warning-soft bg-warning-soft" : "border-success-soft bg-success-soft"}>
           <CardHeader>
             <div className="flex items-center gap-2">
-              <PenLine className={`h-4 w-4 ${!workerGuid ? "text-amber-500" : "text-emerald-500"}`} />
+              <PenLine className={`h-4 w-4 ${!workerGuid ? "text-warning-foreground" : "text-success-foreground"}`} />
               <h3 className="text-sm font-semibold">Firma Operatore</h3>
               {!workerGuid && (
-                <Badge variant="secondary" className="ml-auto border-amber-200 bg-amber-100 text-amber-700 dark:border-amber-900/40 dark:bg-amber-950 dark:text-amber-400">
+                <Badge variant="warning" className="ml-auto">
                   Richiesta
                 </Badge>
               )}
@@ -362,7 +362,7 @@ export function NewOrderStepReview({
               </Select>
             )}
             {confirmError && (
-              <p className="mt-2 text-[11px] font-medium text-destructive">{confirmError}</p>
+              <p className="mt-2 text-[11px] font-medium text-danger-foreground">{confirmError}</p>
             )}
           </CardContent>
         </Card>

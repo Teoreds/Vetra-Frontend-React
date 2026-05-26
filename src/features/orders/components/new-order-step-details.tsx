@@ -123,7 +123,7 @@ export function NewOrderStepDetails({ defaultValues, onNext, isPending, error, r
                 )}
               />
               {errors.party_guid && (
-                <p className="text-[11px] text-destructive">{errors.party_guid.message}</p>
+                <p className="text-[11px] text-danger-foreground">{errors.party_guid.message}</p>
               )}
             </div>
 
@@ -142,7 +142,7 @@ export function NewOrderStepDetails({ defaultValues, onNext, isPending, error, r
                 )}
               />
               {errors.order_date && (
-                <p className="text-[11px] text-destructive">{errors.order_date.message}</p>
+                <p className="text-[11px] text-danger-foreground">{errors.order_date.message}</p>
               )}
             </div>
           </div>
@@ -222,7 +222,7 @@ export function NewOrderStepDetails({ defaultValues, onNext, isPending, error, r
                 </label>
 
                 {!isLoadingLocations && shippingLocations.length === 0 ? (
-                  <p className="rounded-lg border border-border/60 bg-muted/40 px-3 py-2.5 text-[13px] text-muted-foreground">
+                  <p className="rounded-md border border-border bg-muted px-3 py-2.5 text-[13px] text-muted-foreground">
                     Nessun indirizzo di spedizione.
                   </p>
                 ) : (
@@ -263,7 +263,7 @@ export function NewOrderStepDetails({ defaultValues, onNext, isPending, error, r
                 </label>
 
                 {!isLoadingLocations && billingLocations.length === 0 ? (
-                  <p className="rounded-lg border border-border/60 bg-muted/40 px-3 py-2.5 text-[13px] text-muted-foreground">
+                  <p className="rounded-md border border-border bg-muted px-3 py-2.5 text-[13px] text-muted-foreground">
                     Nessun indirizzo di fatturazione.
                   </p>
                 ) : (
@@ -298,8 +298,8 @@ export function NewOrderStepDetails({ defaultValues, onNext, isPending, error, r
       </Card>
 
       {error && (
-        <div className="rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3">
-          <p className="text-[13px] text-destructive">{error}</p>
+        <div className="rounded-lg border border-danger/20 bg-danger-soft px-4 py-3">
+          <p className="text-[13px] text-danger-foreground">{error}</p>
         </div>
       )}
 

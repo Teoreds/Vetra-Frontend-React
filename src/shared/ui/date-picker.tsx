@@ -52,9 +52,9 @@ export function DatePicker({
           type="button"
           disabled={disabled}
           className={cn(
-            "flex h-9 w-full items-center justify-between rounded-lg border border-border/60 bg-background px-3 text-[13px] outline-none transition-all",
-            "hover:border-border focus-visible:outline-none focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20 data-[state=open]:border-primary/40 data-[state=open]:ring-2 data-[state=open]:ring-ring/20",
-            !displayValue && "text-muted-foreground/70",
+            "flex h-9 w-full items-center justify-between rounded-md border border-input bg-background px-3 text-[13px] outline-none transition-all",
+            "hover:border-border-strong focus-visible:outline-none focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/30 data-[state=open]:border-primary/40 data-[state=open]:ring-2 data-[state=open]:ring-ring/30",
+            !displayValue && "text-faint-foreground",
             disabled && "cursor-not-allowed opacity-50",
             className,
           )}
@@ -68,7 +68,7 @@ export function DatePicker({
         <Popover.Content
           align="start"
           sideOffset={4}
-          className="z-50 rounded-xl border border-border/60 bg-popover p-3 shadow-lg outline-none animate-in fade-in-0 zoom-in-95"
+          className="z-50 rounded-lg border border-border bg-popover p-3 shadow-popover outline-none animate-in fade-in-0 zoom-in-95"
         >
           <DayPicker
             mode="single"

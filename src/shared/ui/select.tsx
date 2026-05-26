@@ -30,10 +30,10 @@ export function SelectTrigger({
   return (
     <RadixSelect.Trigger
       className={cn(
-        "flex h-9 w-full items-center justify-between rounded-lg border border-border/60 bg-background px-3 text-[13px] outline-none transition-all",
-        "hover:border-border focus-visible:outline-none focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20",
+        "flex h-9 w-full items-center justify-between rounded-md border border-input bg-background px-3 text-[13px] outline-none transition-all",
+        "hover:border-border-strong focus-visible:outline-none focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/30",
         "disabled:cursor-not-allowed disabled:opacity-50",
-        "data-[placeholder]:text-muted-foreground/70",
+        "data-[placeholder]:text-faint-foreground",
         className,
       )}
       {...props}
@@ -58,7 +58,7 @@ export function SelectContent({
         position={position}
         sideOffset={4}
         className={cn(
-          "z-50 min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-xl border border-border/60 bg-popover shadow-lg",
+          "z-50 min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-lg border border-border bg-popover shadow-popover",
           "animate-in fade-in-0 zoom-in-95",
           className,
         )}
@@ -88,8 +88,8 @@ export function SelectItem({
   return (
     <RadixSelect.Item
       className={cn(
-        "relative flex cursor-default select-none items-center rounded-lg py-1.5 pl-8 pr-3 text-[13px] outline-none transition-colors",
-        "focus:bg-accent focus:text-accent-foreground",
+        "relative flex cursor-default select-none items-center rounded-md py-1.5 pl-8 pr-3 text-[13px] outline-none transition-colors",
+        "focus:bg-muted focus:text-foreground",
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-40",
         className,
       )}

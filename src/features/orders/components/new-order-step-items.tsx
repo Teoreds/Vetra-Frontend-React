@@ -278,7 +278,7 @@ export function NewOrderStepItems({
   }
 
   const inputCls =
-    "h-7 w-full rounded-md border border-border/60 bg-background px-2 text-[13px] outline-none transition-all focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20";
+    "h-7 w-full rounded-md border border-input bg-background px-2 text-[13px] outline-none transition-all focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/30";
   const th = "px-2 h-7";
   const td = "px-2 py-1";
 
@@ -335,7 +335,7 @@ export function NewOrderStepItems({
                     <select
                       {...register(`${prefix}.${index}.unit_of_measure_code`)}
                       onKeyDown={(e) => { if (e.key === "Escape") { e.preventDefault(); searchRef.current?.focus(); } }}
-                      className="absolute inset-0 h-full w-full cursor-pointer rounded-md border border-border/60 bg-background px-2 text-[11px] opacity-0 outline-none transition-all focus:opacity-100 focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20 appearance-none"
+                      className="absolute inset-0 h-full w-full cursor-pointer rounded-md border border-input bg-background px-2 text-[11px] opacity-0 outline-none transition-all focus:opacity-100 focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/30 appearance-none"
                     >
                       {(uomList ?? []).map((u) => (
                         <option key={u.code} value={u.code}>{u.description}</option>
@@ -356,7 +356,7 @@ export function NewOrderStepItems({
                       min="0"
                       {...register(`${prefix}.${index}.unit_price`, { valueAsNumber: true })}
                       onKeyDown={handleTableInputKeyDown}
-                      className="absolute inset-0 h-full w-full rounded-md border border-border/60 bg-background px-2 text-[13px] opacity-0 outline-none transition-all focus:opacity-100 focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      className="absolute inset-0 h-full w-full rounded-md border border-input bg-background px-2 text-[13px] opacity-0 outline-none transition-all focus:opacity-100 focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/30 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                     />
                   </div>
                 </TableCell>
@@ -372,7 +372,7 @@ export function NewOrderStepItems({
                       max="100"
                       {...register(`${prefix}.${index}.discount_percent`, { valueAsNumber: true })}
                       onKeyDown={handleTableInputKeyDown}
-                      className="absolute inset-0 h-full w-full rounded-md border border-border/60 bg-background px-2 text-[13px] opacity-0 outline-none transition-all focus:opacity-100 focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/20 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      className="absolute inset-0 h-full w-full rounded-md border border-input bg-background px-2 text-[13px] opacity-0 outline-none transition-all focus:opacity-100 focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/30 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                     />
                   </div>
                 </TableCell>
@@ -392,7 +392,7 @@ export function NewOrderStepItems({
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="h-6 w-6 text-destructive hover:text-destructive"
+                      className="h-6 w-6 text-danger-foreground hover:text-danger"
                       title="Rimuovi"
                       onClick={() => removeAction(index)}
                     >
@@ -432,7 +432,7 @@ export function NewOrderStepItems({
               <CurrencySelector value={currency} onChange={setCurrency} />
             </div>
             {errors.commitment_rows && (
-              <p className="text-[11px] text-destructive">
+              <p className="text-[11px] text-danger-foreground">
                 {errors.commitment_rows.message ?? errors.commitment_rows.root?.message}
               </p>
             )}
@@ -502,8 +502,8 @@ export function NewOrderStepItems({
 
           {/* Error */}
           {saveError && (
-            <div className="rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3">
-              <p className="text-[13px] text-destructive">{saveError}</p>
+            <div className="rounded-lg border border-danger/20 bg-danger-soft px-4 py-3">
+              <p className="text-[13px] text-danger-foreground">{saveError}</p>
             </div>
           )}
 

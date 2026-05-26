@@ -73,7 +73,7 @@ export function NewOrderSummaryCard({ availableRows, commitmentRows, vatRate, cu
           </div>
           <div className="flex items-center justify-between">
             <span className="text-[13px] text-muted-foreground">Sconto Totale</span>
-            <span className="text-[13px] font-medium text-destructive">
+            <span className="text-[13px] font-medium text-danger-foreground">
               {totalDiscount > 0 ? `−${formatCurrency(currencyRate * totalDiscount, { currency })}` : "—"}
             </span>
           </div>
@@ -97,7 +97,7 @@ export function NewOrderSummaryCard({ availableRows, commitmentRows, vatRate, cu
         </div>
 
         {/* Row counts */}
-        <div className="rounded-lg bg-muted/50 px-3 py-2.5 space-y-1">
+        <div className="rounded-lg bg-muted px-3 py-2.5 space-y-1">
           <div className="flex justify-between text-[11px]">
             <span className="text-muted-foreground">Righe disponibili</span>
             <span className="font-semibold">{availableRows.length}</span>
