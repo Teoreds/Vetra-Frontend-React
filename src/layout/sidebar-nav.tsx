@@ -73,7 +73,7 @@ export function SidebarNav() {
       <div className="flex flex-col h-full overflow-hidden">
         {/* Logo */}
         <div className="flex items-center h-[60px] px-[14px] shrink-0">
-          <div className="relative h-7 w-7 shrink-0 rounded-md overflow-hidden shadow-sm ml-[5px] bg-gradient-to-br from-primary to-fulfilled">
+          <div className="relative h-7 w-7 shrink-0 rounded-md overflow-hidden shadow-sm bg-gradient-to-br from-primary to-fulfilled">
             <img
               src="/logo_big.svg"
               alt="Logo"

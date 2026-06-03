@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { MapPin, Package, CreditCard, Check } from "lucide-react";
+import { MapPin, Package, CreditCard, Check, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
 import { PartyAvatar } from "@/features/parties/components/party-avatar";
@@ -34,56 +34,62 @@ function StatusPipelineCard({ statusCode }: { statusCode: string }) {
   return (
     <Card>
       <CardContent className="py-4">
-        <ol className="flex items-center">
-          {PIPELINE.map((step, index) => {
-            const isCompleted = index < currentIndex;
-            const isActive = index === currentIndex;
-            const isLast = index === PIPELINE.length - 1;
+        {isRejected ? (
+          <div className="flex items-center justify-center gap-2 py-1">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-danger-soft">
+              <X className="h-3.5 w-3.5 stroke-[2.5] text-danger-foreground" />
+            </div>
+            <span className="text-[13px] font-semibold text-danger-foreground">Preventivo rifiutato</span>
+          </div>
+        ) : (
+          <ol className="flex items-center">
+            {PIPELINE.map((step, index) => {
+              const isCompleted = index < currentIndex;
+              const isActive = index === currentIndex;
+              const isLast = index === PIPELINE.length - 1;
 
-            return (
-              <Fragment key={step}>
-                <li className="flex shrink-0 flex-col items-center gap-1.5">
-                  <div
-                    className={cn(
-                      "flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-semibold transition-all",
-                      isCompleted && "bg-primary/15 text-primary",
-                      isActive && !isRejected && "bg-primary text-primary-foreground shadow-sm",
-                      !isCompleted && !isActive && "bg-muted text-muted-foreground/50",
-                    )}
-                  >
-                    {isCompleted ? (
-                      <Check className="h-3.5 w-3.5 stroke-[2.5]" />
-                    ) : (
-                      <span>{index + 1}</span>
-                    )}
-                  </div>
-                  <span
-                    className={cn(
-                      "text-[11px] font-medium whitespace-nowrap",
-                      isActive && !isRejected && "text-primary font-semibold",
-                      isCompleted && "text-primary/70",
-                      !isCompleted && !isActive && "text-muted-foreground/40",
-                    )}
-                  >
-                    {QUOTE_STATUS_LABELS[step as PipelineCode]}
-                  </span>
-                </li>
-                {!isLast && (
-                  <div
-                    className={cn(
-                      "mb-5 h-px flex-1 mx-2 transition-colors",
-                      index < currentIndex ? "bg-primary/25" : "bg-border",
-                    )}
-                  />
-                )}
-              </Fragment>
-            );
-          })}
-        </ol>
-        {isRejected && (
-          <p className="mt-2 text-center text-[12px] font-medium text-destructive">
-            Preventivo rifiutato
-          </p>
+              return (
+                <Fragment key={step}>
+                  <li className="flex shrink-0 flex-col items-center gap-1.5">
+                    <div
+                      className={cn(
+                        "flex h-7 w-7 items-center justify-center rounded-full transition-all",
+                        isCompleted && "bg-primary-soft text-primary-text",
+                        isActive && "bg-primary text-primary-foreground ring-4 ring-primary/15",
+                        !isCompleted && !isActive && "bg-muted text-faint-foreground border border-border",
+                      )}
+                    >
+                      {isCompleted ? (
+                        <Check className="h-3.5 w-3.5 stroke-[2.5]" />
+                      ) : isActive ? (
+                        <div className="h-2 w-2 rounded-full bg-current" />
+                      ) : (
+                        <div className="h-1.5 w-1.5 rounded-full bg-current" />
+                      )}
+                    </div>
+                    <span
+                      className={cn(
+                        "text-[11px] font-medium whitespace-nowrap",
+                        isActive && "text-primary font-semibold",
+                        isCompleted && "text-primary-light",
+                        !isCompleted && !isActive && "text-faint-foreground",
+                      )}
+                    >
+                      {QUOTE_STATUS_LABELS[step as PipelineCode]}
+                    </span>
+                  </li>
+                  {!isLast && (
+                    <div
+                      className={cn(
+                        "mb-5 h-0.5 flex-1 mx-2 rounded-full transition-colors",
+                        index < currentIndex ? "bg-primary/30" : "bg-border",
+                      )}
+                    />
+                  )}
+                </Fragment>
+              );
+            })}
+          </ol>
         )}
       </CardContent>
     </Card>
