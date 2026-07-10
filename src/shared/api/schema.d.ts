@@ -582,7 +582,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Generate commitments for TO_ORDER rows */
+        /** Generate commitments for COMMITMENT rows */
         post: operations["generate_commitments_orders__order_guid__generate_commitments_post"];
         delete?: never;
         options?: never;
@@ -1381,6 +1381,146 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/invoices/billable-ddts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List billable delivery notes */
+        get: operations["list_billable_ddts_invoices_billable_ddts_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/invoices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List invoices */
+        get: operations["list_invoices_invoices_get"];
+        put?: never;
+        /** Create invoice from delivery notes */
+        post: operations["create_invoice_invoices_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/invoices/{invoice_guid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get invoice with rows */
+        get: operations["get_invoice_invoices__invoice_guid__get"];
+        put?: never;
+        post?: never;
+        /** Delete draft invoice */
+        delete: operations["delete_invoice_invoices__invoice_guid__delete"];
+        options?: never;
+        head?: never;
+        /** Update draft invoice */
+        patch: operations["update_invoice_invoices__invoice_guid__patch"];
+        trace?: never;
+    };
+    "/invoice-rows/{row_guid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete draft invoice row */
+        delete: operations["delete_invoice_row_invoice_rows__row_guid__delete"];
+        options?: never;
+        head?: never;
+        /** Update draft invoice row */
+        patch: operations["update_invoice_row_invoice_rows__row_guid__patch"];
+        trace?: never;
+    };
+    "/invoices/{invoice_guid}/issue": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Issue invoice (assign fiscal number) */
+        post: operations["issue_invoice_invoices__invoice_guid__issue_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/invoices/{invoice_guid}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Change invoice status */
+        post: operations["set_invoice_status_invoices__invoice_guid__status_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/invoices/{invoice_guid}/pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download invoice PDF */
+        get: operations["download_invoice_pdf_invoices__invoice_guid__pdf_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/invoices/{invoice_guid}/xml": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download invoice SDI XML */
+        get: operations["download_invoice_xml_invoices__invoice_guid__xml_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/stats/dashboard": {
         parameters: {
             query?: never;
@@ -2053,6 +2193,27 @@ export interface components {
             /** Created By User Guid */
             created_by_user_guid: string | null;
         };
+        /** BillableDdtOut */
+        BillableDdtOut: {
+            /**
+             * Guid
+             * Format: uuid
+             */
+            guid: string;
+            /** Number */
+            number: number | null;
+            /** Year */
+            year: number | null;
+            /**
+             * Delivery Date
+             * Format: date
+             */
+            delivery_date: string;
+            /** Rows Count */
+            rows_count: number;
+            /** Estimated Net */
+            estimated_net: string;
+        };
         /** Body_login_auth_login_post */
         Body_login_auth_login_post: {
             /** Grant Type */
@@ -2219,6 +2380,23 @@ export interface components {
             top_parties: components["schemas"]["TopParty"][];
             /** Top Articles */
             top_articles: components["schemas"]["TopArticle"][];
+        };
+        /** DdtRefOut */
+        DdtRefOut: {
+            /**
+             * Guid
+             * Format: uuid
+             */
+            guid: string;
+            /** Number */
+            number: number | null;
+            /** Year */
+            year: number | null;
+            /**
+             * Delivery Date
+             * Format: date
+             */
+            delivery_date: string;
         };
         /** DeliveryNoteCreate */
         DeliveryNoteCreate: {
@@ -2449,6 +2627,250 @@ export interface components {
             valid_to?: string | null;
             /** Is Active */
             is_active?: boolean | null;
+        };
+        /** InvoiceCreate */
+        InvoiceCreate: {
+            /**
+             * Party Guid
+             * Format: uuid
+             */
+            party_guid: string;
+            /** Delivery Note Guids */
+            delivery_note_guids: string[];
+            /**
+             * Invoice Date
+             * Format: date
+             */
+            invoice_date: string;
+            /**
+             * Tipo Documento
+             * @default TD24
+             */
+            tipo_documento: string;
+            /** Payment Method Guid */
+            payment_method_guid?: string | null;
+            /** Payment Term Guid */
+            payment_term_guid?: string | null;
+            /** Billing Location Guid */
+            billing_location_guid?: string | null;
+            /** Causale */
+            causale?: string | null;
+            /** Note */
+            note?: string | null;
+        };
+        /** InvoiceDetailOut */
+        InvoiceDetailOut: {
+            /**
+             * Guid
+             * Format: uuid
+             */
+            guid: string;
+            /**
+             * Master Data Guid
+             * Format: uuid
+             */
+            master_data_guid: string;
+            /**
+             * Customer Party Guid
+             * Format: uuid
+             */
+            customer_party_guid: string;
+            /** Customer Description */
+            customer_description?: string | null;
+            /** Status Code */
+            status_code: string;
+            /**
+             * Invoice Date
+             * Format: date
+             */
+            invoice_date: string;
+            /** Number */
+            number: number | null;
+            /** Year */
+            year: number;
+            /** Tipo Documento */
+            tipo_documento: string;
+            /** Causale */
+            causale: string | null;
+            /** Payment Method Guid */
+            payment_method_guid: string | null;
+            /** Payment Term Guid */
+            payment_term_guid: string | null;
+            /** Billing Location Guid */
+            billing_location_guid: string | null;
+            /** Intent Letter Guid */
+            intent_letter_guid: string | null;
+            /** Total Net */
+            total_net: string | null;
+            /** Total Vat */
+            total_vat: string | null;
+            /** Total Gross */
+            total_gross: string | null;
+            /** Total Discount */
+            total_discount: string | null;
+            /** Progressivo Invio */
+            progressivo_invio: string | null;
+            /** Sdi Sent At */
+            sdi_sent_at: string | null;
+            /** Note */
+            note: string | null;
+            /** Issued At */
+            issued_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Created By User Guid */
+            created_by_user_guid: string | null;
+            /** Rows */
+            rows: components["schemas"]["InvoiceRowOut"][];
+            /** Vat Summaries */
+            vat_summaries: components["schemas"]["VatSummaryOut"][];
+            /** Delivery Notes */
+            delivery_notes: components["schemas"]["DdtRefOut"][];
+        };
+        /** InvoiceOut */
+        InvoiceOut: {
+            /**
+             * Guid
+             * Format: uuid
+             */
+            guid: string;
+            /**
+             * Master Data Guid
+             * Format: uuid
+             */
+            master_data_guid: string;
+            /**
+             * Customer Party Guid
+             * Format: uuid
+             */
+            customer_party_guid: string;
+            /** Customer Description */
+            customer_description?: string | null;
+            /** Status Code */
+            status_code: string;
+            /**
+             * Invoice Date
+             * Format: date
+             */
+            invoice_date: string;
+            /** Number */
+            number: number | null;
+            /** Year */
+            year: number;
+            /** Tipo Documento */
+            tipo_documento: string;
+            /** Causale */
+            causale: string | null;
+            /** Payment Method Guid */
+            payment_method_guid: string | null;
+            /** Payment Term Guid */
+            payment_term_guid: string | null;
+            /** Billing Location Guid */
+            billing_location_guid: string | null;
+            /** Intent Letter Guid */
+            intent_letter_guid: string | null;
+            /** Total Net */
+            total_net: string | null;
+            /** Total Vat */
+            total_vat: string | null;
+            /** Total Gross */
+            total_gross: string | null;
+            /** Total Discount */
+            total_discount: string | null;
+            /** Progressivo Invio */
+            progressivo_invio: string | null;
+            /** Sdi Sent At */
+            sdi_sent_at: string | null;
+            /** Note */
+            note: string | null;
+            /** Issued At */
+            issued_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Created By User Guid */
+            created_by_user_guid: string | null;
+        };
+        /** InvoiceRowOut */
+        InvoiceRowOut: {
+            /**
+             * Guid
+             * Format: uuid
+             */
+            guid: string;
+            /**
+             * Invoice Guid
+             * Format: uuid
+             */
+            invoice_guid: string;
+            /** Line Number */
+            line_number: number;
+            /** Article Guid */
+            article_guid: string | null;
+            /** Article Code */
+            article_code?: string | null;
+            /** Description */
+            description: string;
+            /** Quantity */
+            quantity: string;
+            /** Unit Of Measure Code */
+            unit_of_measure_code: string;
+            /** Unit Price */
+            unit_price: string;
+            /** Discount Percent */
+            discount_percent: string;
+            /** Vat Rate */
+            vat_rate: string;
+            /** Vat Natura */
+            vat_natura: string | null;
+            /** Total */
+            total: string;
+            /** Delivery Note Guid */
+            delivery_note_guid: string | null;
+            /** Delivery Note Number */
+            delivery_note_number?: number | null;
+            /** Delivery Note Year */
+            delivery_note_year?: number | null;
+            /** Order Row Guid */
+            order_row_guid: string | null;
+        };
+        /** InvoiceRowUpdate */
+        InvoiceRowUpdate: {
+            /** Description */
+            description?: string | null;
+            /** Quantity */
+            quantity?: number | string | null;
+            /** Unit Price */
+            unit_price?: number | string | null;
+            /** Discount Percent */
+            discount_percent?: number | string | null;
+            /** Vat Rate */
+            vat_rate?: number | string | null;
+        };
+        /** InvoiceStatusUpdate */
+        InvoiceStatusUpdate: {
+            /** Status Code */
+            status_code: string;
+        };
+        /** InvoiceUpdate */
+        InvoiceUpdate: {
+            /** Invoice Date */
+            invoice_date?: string | null;
+            /** Payment Method Guid */
+            payment_method_guid?: string | null;
+            /** Payment Term Guid */
+            payment_term_guid?: string | null;
+            /** Billing Location Guid */
+            billing_location_guid?: string | null;
+            /** Causale */
+            causale?: string | null;
+            /** Note */
+            note?: string | null;
         };
         /** KPIs */
         KPIs: {
@@ -3055,6 +3477,17 @@ export interface components {
         Page_IntentLetterOut_: {
             /** Items */
             items: components["schemas"]["IntentLetterOut"][];
+            /** Total */
+            total: number;
+            /** Offset */
+            offset: number;
+            /** Limit */
+            limit: number;
+        };
+        /** Page[InvoiceOut] */
+        Page_InvoiceOut_: {
+            /** Items */
+            items: components["schemas"]["InvoiceOut"][];
             /** Total */
             total: number;
             /** Offset */
@@ -4063,6 +4496,17 @@ export interface components {
             input?: unknown;
             /** Context */
             ctx?: Record<string, never>;
+        };
+        /** VatSummaryOut */
+        VatSummaryOut: {
+            /** Vat Rate */
+            vat_rate: string;
+            /** Natura */
+            natura: string | null;
+            /** Taxable */
+            taxable: string;
+            /** Tax */
+            tax: string;
         };
         /** WarehouseCreate */
         WarehouseCreate: {
@@ -8209,6 +8653,396 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OrderOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_billable_ddts_invoices_billable_ddts_get: {
+        parameters: {
+            query: {
+                party_guid: string;
+                date_from?: string | null;
+                date_to?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BillableDdtOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_invoices_invoices_get: {
+        parameters: {
+            query?: {
+                search?: string | null;
+                party_guid?: string | null;
+                status_code?: string | null;
+                date_from?: string | null;
+                date_to?: string | null;
+                offset?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_InvoiceOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_invoice_invoices_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InvoiceCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvoiceOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_invoice_invoices__invoice_guid__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                invoice_guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvoiceDetailOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_invoice_invoices__invoice_guid__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                invoice_guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_invoice_invoices__invoice_guid__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                invoice_guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InvoiceUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvoiceOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_invoice_row_invoice_rows__row_guid__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                row_guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_invoice_row_invoice_rows__row_guid__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                row_guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InvoiceRowUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvoiceRowOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    issue_invoice_invoices__invoice_guid__issue_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                invoice_guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvoiceOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    set_invoice_status_invoices__invoice_guid__status_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                invoice_guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InvoiceStatusUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvoiceOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    download_invoice_pdf_invoices__invoice_guid__pdf_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                invoice_guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    download_invoice_xml_invoices__invoice_guid__xml_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                invoice_guid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */

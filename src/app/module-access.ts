@@ -7,6 +7,7 @@ export type FrontendModuleCode =
   | "documents"
   | "mail"
   | "quotes"
+  | "invoices"
   | "settings";
 
 const DEFAULT_MODULE_PATHS: Partial<Record<FrontendModuleCode, string>> = {
@@ -14,6 +15,7 @@ const DEFAULT_MODULE_PATHS: Partial<Record<FrontendModuleCode, string>> = {
   warehouse: "/pick-notes",
   shipping: "/shipments",
   quotes: "/quotes",
+  invoices: "/invoices",
   parties: "/parties",
   articles: "/articles",
   settings: "/admin",
@@ -24,6 +26,7 @@ const DEFAULT_MODULE_ORDER: FrontendModuleCode[] = [
   "warehouse",
   "shipping",
   "quotes",
+  "invoices",
   "parties",
   "articles",
   "settings",

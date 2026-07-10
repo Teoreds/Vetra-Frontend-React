@@ -18,6 +18,10 @@ const STATUS_VARIANT_MAP: Record<string, StatusBadgeVariant> = {
   SENT: "confirmed",
   ACCEPTED: "fulfilled",
   REJECTED: "cancelled",
+  // Invoice statuses
+  ISSUED: "confirmed",
+  SENT_SDI: "shipped",
+  PAID: "completed",
 };
 
 export function getStatusVariant(statusCode: string): StatusBadgeVariant {

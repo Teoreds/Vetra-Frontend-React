@@ -1,6 +1,7 @@
 import {
   ClipboardList,
   FileText,
+  Receipt,
   LayoutDashboard,
   Package,
   ShoppingCart,
@@ -27,6 +28,7 @@ export const mainNavigationItems: NavigationItem[] = [
   { to: "/orders", label: "Ordini", icon: ShoppingCart, moduleCode: "orders", section: "OPERATIVITÀ" },
   { to: "/pick-notes", label: "Note Prelievo", icon: ClipboardList, moduleCode: "warehouse", section: "OPERATIVITÀ" },
   { to: "/shipments", label: "Spedizioni", icon: Truck, moduleCode: "shipping", section: "OPERATIVITÀ" },
+  { to: "/invoices", label: "Fatture", icon: Receipt, moduleCode: "invoices", section: "OPERATIVITÀ" },
   { to: "/parties", label: "Anagrafiche", icon: Users, moduleCode: "parties", section: "ANAGRAFICA" },
   { to: "/articles", label: "Articoli", icon: Package, moduleCode: "articles", section: "ANAGRAFICA" },
 ];
